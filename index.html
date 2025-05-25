@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.2/css/bootstrap.min.css"
+		integrity="sha512-CpIKUSyh9QX2+zSdfGP+eWLx23C8Dj9/XmHjZY2uDtfkdLGo0uY12jgcnkX9vXOgYajEKb/jiw67EYm+kBf+6g=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet" href="style.css">
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body>
+	<div id="app">
+		<header>
+			<!-- place navbar here -->
+			<div class="center-content">
+				<img class="card-img-top logo-sm" src="https://raw.githubusercontent.com/Paciente8159/uCNC/master/docs/logo.png"
+					alt="µCNC logo">
+				<h1>µCNC config generator</h1>
+				<div class="alert alert-warning left-align alert-dismissible fade show" role="alert">
+					<h2 style="color: var(--bs-alert-color)">WARNING</h2>
+					<p>RP2350 core is still in early development stage and with limited functionalities.</p>
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+				<div class="info alert alert-primary left-align alert-dismissible fade show" role="alert">
+					<h2 style="color:blue">Issues</h2>
+					<p>If you encounter any issue please consider <a
+							href="https://github.com/Paciente8159/uCNC-config-builder/issues/new" target="_blank">submiting an issue
+							in
+							the Github project page</a>, with an
+						attached zip with all the override files and the json config file.</p>
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			</div>
+		</header>
+		<main>
+			<tabgroup id="my-tabs">
+				<tab id="basic-config" label="Basic Configuration" tabid="my-tabs" active>
+					<div class="mb-3">
+						<p>Hi there,</p>
+						<p>Welcome to µCNC basic configuration generator.</p>
+					</div>
+					<controlgroup label="Previous configuration settings">
+						<div class="mb-3 load-config">
+							<p>If you have a previous stored build configuration file (json) you can load it.</p>
+							<input class="form-control form-control" id="load_settings" type="file" accept=".json,.txt">
+						</div>
+					</controlgroup>
+					<controlgroup label="Basic settings">
+						<combobox name="VERSION" label="What version will you be using?" :opts="app_options.VERSIONS" keyname="tag"
+							valname="id"></combobox>
+						<combobox name="MCU" label="What MCU family will you be using?" :opts="app_options.MCUS" keyname="id"
+							valname="name" configfile="boardmap"></combobox>
+						<combobox name="KINEMATIC" label="What type of kinematic does your machine have?"
+							:opts="app_options.KINEMATICS" keyname="id" valname="name" configfile="boardmap"></combobox>
+						<check name="MP_SCARA" label="Is MP Scara. In MP SCARA both shoulder and elbow
+							motors are fixed to the base." if="app_state.KINEMATIC=='KINEMATIC_SCARA'"></check>
+						<range name="AXIS_COUNT" label="How many axis does your machine have?" min="1" max="6" step="1"
+							configfile="boardmap" initial="3"></range>
+						<combobox name="BAUDRATE" label="What is your COM port baudrate" :opts="app_options.BAUDRATE" keyname="id"
+							valname="id" configfile="boardmap"></combobox>
+						<check name="ENABLE_COOLANT" label="Enable coolant" configfile="hal"></check>
+					</controlgroup>
+				</tab>
+			</tabgroup>
+		</main>
+	</div>
+	<script src="options.js"></script>
+	<script src="controls.js"></script>
+	<script src="containers.js"></script>
+	<script>
+		// Vue.config.devtools = true;
+		const { createApp } = Vue;
+		window.appInstance = createApp({
+			components: {
+				'check': CheckComponent,
+				'combobox': ComboBoxComponent,
+				'range': RangeComponent,
+				'controlgroup': ControlGroupComponent,
+				'tabgroup': TabGroupComponent,
+				'tab': TabComponent
+			},
+			data() {
+				return app_vars;
+			},
+		}).mount('#app')
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+		integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
+		</script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.2/js/bootstrap.min.js"
+		integrity="sha512-5BqtYqlWfJemW5+v+TZUs22uigI8tXeVah5S/1Z6qBLVO7gakAOtkOzUtgq6dsIo5c0NJdmGPs0H9I+2OHUHVQ=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+
+</html>
