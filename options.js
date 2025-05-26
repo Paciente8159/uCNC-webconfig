@@ -2,7 +2,8 @@ const app_vars = {
 	app_state: {
 		VERSION: 99999,
 		MCU: 'MCU_AVR',
-		KINEMATIC: 'KINEMATIC_CARTESIAN'
+		KINEMATIC: 'KINEMATIC_CARTESIAN',
+		BAUDRATE: 115200
 	},
 	app_options: {
 		VERSIONS: [
