@@ -1,3 +1,11 @@
+window.addEventListener("ucnc_components", (e) => {
+	e.detail.component('controlgroup', ControlGroupComponent);
+	e.detail.component('tabgroup', TabGroupComponent);
+	e.detail.component('tab', TabComponent);
+	e.detail.component('repeater', RepeaterGroupComponent);
+	e.detail.component('vtable', TableComponent);
+});
+
 const ControlGroupComponent = {
 	props: {
 		label: { type: String, default: "Control group" },
@@ -64,7 +72,6 @@ const TabComponent = {
 
 		if (elementToMove && targetContainer) {
 			targetContainer.appendChild(elementToMove); // Move the element inside new parent
-			console.log(`Moved element #${this.id} into #${this.tabid}`);
 		} else {
 			console.warn("Target element or container not found!");
 		}
@@ -123,6 +130,7 @@ const TableComponent = {
 		filter: { type: String, default: "item" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
+		rowitem: { type: Object }
 	},
 	computed: {
 		filteredOpts() {
@@ -158,8 +166,37 @@ const TableComponent = {
 	</thead>
 	<tbody>
 	<tr v-for="o in filteredOpts" :key="o[keyname]" :value="o[keyname]">
-	<slot name="row" :value="o[keyname]"></slot>
+	<slot name="row" :rowitem="o"></slot>
 	</tr>
 	</tbody>
 	</table>`
+};
+
+const TableCellComponent = {
+	props: {
+		show: { type: String, default: "true" },
+		if: { type: String, default: "true" },
+		rowitem: { type: Object }
+	},
+	computed: {
+		showCondition() {
+			try {
+				return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		},
+		ifCondition() {
+			try {
+				return new Function('app_state', `return ${this.if};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		}
+	},
+	template: `<td v-if="ifCondition" v-show="showCondition">
+	<slot :rowitem="rowitem"></slot>
+	</td>`
 };

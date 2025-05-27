@@ -1,3 +1,13 @@
+window.addEventListener("ucnc_components", (e) => {
+	e.detail.component('toggle', ToggleComponent);
+	e.detail.component('check', CheckComponent);
+	e.detail.component('combobox', ComboBoxComponent);
+	e.detail.component('range', RangeComponent);
+	e.detail.component('alert', AlertComponent);
+	e.detail.component('textfield', TextFieldComponent);
+	e.detail.component('bitfield', BitFieldComponent);
+});
+
 // Initialize Bootstrap popovers with markdown support
 function componentTooltip(comp) {
 	if (!comp.ifCondition || !comp.tooltip.length) {
@@ -67,7 +77,7 @@ const ToggleComponent = {
 		data-bs-toggle="popover" :data-bs-title="tooltiptitle">
 		<input class="form-check-input" type="checkbox"
 		v-model="modelValue" :id="name" :name="name" :config-file="configfile" :var-type="vartype">
-		<label class="form-check-label" :for="name">{{ label }}</label>
+		<label class="form-check-label" :for="name" v-if="label.length">{{ label }}</label>
 		</div>`
 };
 
@@ -124,7 +134,7 @@ const CheckComponent = {
 		data-bs-toggle="popover" :data-bs-title="tooltiptitle">
 		<input class="form-check-input" type="checkbox"
 		v-model="modelValue" :id="name" :name="name" :config-file="configfile" :var-type="vartype">
-		<label class="form-check-label" :for="name">{{ label }}</label>
+		<label class="form-check-label" :for="name" v-if="label.length">{{ label }}</label>
 		</div>`
 };
 
@@ -148,14 +158,14 @@ const ComboBoxComponent = {
 	computed: {
 		modelValue: {
 			get() {
-				if (this.nullable && !this.$root.app_state[this.name]){
+				if (this.nullable && !this.$root.app_state[this.name]) {
 					return null;
 				}
 				return this.$root.app_state[this.name];
 			},
 			set(newValue) {
 				if (this.nullable && newValue.length == 0) {
-					if ((this.name in this.$root.app_state)) {Object.delete(this.$root.app_state, this.name);}
+					if ((this.name in this.$root.app_state)) { Object.delete(this.$root.app_state, this.name); }
 					return;
 				}
 				this.$root.app_state[this.name] = newValue;
@@ -166,6 +176,7 @@ const ComboBoxComponent = {
 				try {
 					return new Function('item', 'app_state', `return ${this.filter};`)(item, this.$root.app_state);
 				} catch (error) {
+					debugger;
 					console.error("Invalid expression:", error);
 					return true; // Default to returning all items if there's an error
 				}
@@ -202,9 +213,9 @@ const ComboBoxComponent = {
 	updated() {
 		componentTooltip(this);
 	},
-	template: `<div class="mb-3" v-if="ifCondition" v-show="showCondition"
+	template: `<div :class="label.length ? 'mb-3':''" v-if="ifCondition" v-show="showCondition"
 		data-bs-toggle="popover" :data-bs-title="tooltiptitle">
-		<label class="form-check-label" :for="name">{{ label }}</label>
+		<label class="form-check-label" :for="name"  v-if="label.length">{{ label }}</label>
 		<select class="form-select form-select-md" :name="name" :id="name" v-model="modelValue"
 		:config-file="configfile" :var-type="vartype">
 		<option v-if="nullable"></option>
@@ -268,10 +279,10 @@ const RangeComponent = {
 	updated() {
 		componentTooltip(this);
 	},
-	template: `<div class="mb-3" v-if="ifCondition" v-show="showCondition"
+	template: `<div :class="label.length ? 'mb-3':''" v-if="ifCondition" v-show="showCondition"
 		data-bs-toggle="popover"
 		:data-bs-title="tooltiptitle">
-		<label class="form-check-label" :for="name">{{ label }} <span>{{modelValue}}</span>{{units}}</label>
+		<label class="form-check-label" :for="name" v-if="label.length">{{ label }} <span>{{modelValue}}</span>{{units}}</label>
 		<input type="range" class="form-range" :min="min" :max="max" :step="step" :name="name"
 		:id="name" v-model="modelValue"
 		:config-file="configfile" :var-type="vartype">
@@ -399,11 +410,86 @@ const TextFieldComponent = {
 			regex.test(input.value) ? input.classList.remove("is-invalid") : input.classList.add("is-invalid");
 		}
 	},
-	template: `<div class="mb-3"  v-if="ifCondition" v-show="showCondition"
+	template: `<div :class="label.length ? 'mb-3':''"  v-if="ifCondition" v-show="showCondition"
 		data-bs-toggle="popover"
 		:data-bs-title="tooltiptitle">
-		<label for="" class="form-label">The board name printed with $I command? <span>{{modelValue}}</span></label>
+		<label for="" class="form-label" v-if="label.length">The board name printed with $I command? <span>{{modelValue}}</span></label>
 		<input type="text" class="form-control" :name="name" :id="name" v-model="modelValue"
 		:placeholder="placeholder" :config-file="configfile" :pattern="pattern" @input="validateInput">
 		</div>`
+};
+
+const BitFieldComponent = {
+	props: {
+		decval: { type: String, required: true },
+		bitval: { type: Array, default: Array(8).fill(false) },
+		label: { type: String, default: "Input text" },
+		show: { type: String, default: "true" },
+		if: { type: String, default: "true" },
+		configfile: { type: String, default: "" },
+		initial: { type: String, default: "0" },
+		tooltiptitle: { type: String, default: "Info" },
+		tooltip: { type: String, default: "" },
+		bitprefix: { type: String, default: "" },
+		bitsufix: { type: String, default: "" },
+	},
+	computed: {
+		modelValue: {
+			get() {
+				return this.$root.app_state[this.name];
+			},
+			set(newValue) {
+				this.$root.app_state[this.name] = newValue;
+			}
+		},
+		showCondition() {
+			try {
+				return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		},
+		ifCondition() {
+			try {
+				return new Function('app_state', `return ${this.if};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		}
+	},
+	created() {
+		if (!(this.name in this.$root.app_state)) {
+			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":"${this.initial}"}`));
+		}
+	},
+	methods: {
+		updateBits() {
+			debugger;
+			const value = Number(this.modelValue);
+			for (let i = 0; i < 8; i++) {
+				this.bitval[i] = Boolean(value & (1 << (7 - i)));
+			}
+		},
+
+		updateDecimal() {
+			debugger;
+			let value = 0;
+			this.bitval.forEach((bit, index) => {
+				if (bit) value |= (1 << (7 - index));
+			});
+			this.modelValue = value.toString();
+		}
+	},
+	template: `<div class="d-flex align-items-center" v-if="ifCondition" v-show="showCondition"
+		data-bs-toggle="popover"
+		:data-bs-title="tooltiptitle">
+	<label v-for="(bit, index) in bitval" :key="index" class="d-inline-flex">
+	{{bitprefix}}{{7 - index}}{{bitsufix}}
+	<input class="form-check-input" type="checkbox"
+	v-model="bitval[index]" @change="updateDecimal">
+	</label>
+	<input type="number" min="0" max="255" class="form-control" v-model="modelValue" @input="updateBits">
+	</div>`,
 };
