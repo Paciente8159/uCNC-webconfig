@@ -7,8 +7,8 @@ function componentTooltip(comp) {
 	let content = comp.tooltip;
 	var converter = new showdown.Converter({ openLinksInNewWindow: true });
 	var htmlContent = converter.makeHtml(content);
-	bootstrap.Popover.getOrCreateInstance(el, {
-		trigger: 'hover',
+	let popover = bootstrap.Popover.getOrCreateInstance(el, {
+		trigger: 'hover focus',
 		content: htmlContent,
 		html: true
 	});
@@ -19,8 +19,7 @@ const ToggleComponent = {
 		name: { type: String, required: true },
 		configfile: { type: String, default: "" },
 		label: { type: String, default: "Enables/Disables control" },
-		vartype: { type: String, default: "" },
-		filter: { type: String, default: "item" },
+		vartype: { type: String, default: "bool" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
 		initial: { type: Boolean, default: false },
@@ -35,16 +34,6 @@ const ToggleComponent = {
 			set(newValue) {
 				this.$root.app_state[this.name] = newValue;
 			}
-		},
-		filteredOpts() {
-			return this.opts.filter(item => {
-				try {
-					return new Function('item', `return ${this.filter};`)(item);
-				} catch (error) {
-					console.error("Invalid expression:", error);
-					return true; // Default to returning all items if there's an error
-				}
-			});
 		},
 		showCondition() {
 			try {
@@ -87,8 +76,7 @@ const CheckComponent = {
 		name: { type: String, required: true },
 		configfile: { type: String, default: "" },
 		label: { type: String, default: "Enables/Disables control" },
-		vartype: { type: String, default: "" },
-		filter: { type: String, default: "item" },
+		vartype: { type: String, default: "bool" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
 		initial: { type: Boolean, default: false },
@@ -103,16 +91,6 @@ const CheckComponent = {
 			set(newValue) {
 				this.$root.app_state[this.name] = newValue;
 			}
-		},
-		filteredOpts() {
-			return this.opts.filter(item => {
-				try {
-					return new Function('item', `return ${this.filter};`)(item);
-				} catch (error) {
-					console.error("Invalid expression:", error);
-					return true; // Default to returning all items if there's an error
-				}
-			});
 		},
 		showCondition() {
 			try {
@@ -164,14 +142,22 @@ const ComboBoxComponent = {
 		if: { type: String, default: "true" },
 		initial: { type: String, default: "" },
 		tooltiptitle: { type: String, default: "Info" },
-		tooltip: { type: String, default: "" }
+		tooltip: { type: String, default: "" },
+		nullable: { type: Boolean, default: false }
 	},
 	computed: {
 		modelValue: {
 			get() {
+				if (this.nullable && !this.$root.app_state[this.name]){
+					return null;
+				}
 				return this.$root.app_state[this.name];
 			},
 			set(newValue) {
+				if (this.nullable && newValue.length == 0) {
+					if ((this.name in this.$root.app_state)) {Object.delete(this.$root.app_state, this.name);}
+					return;
+				}
 				this.$root.app_state[this.name] = newValue;
 			}
 		},
@@ -204,6 +190,9 @@ const ComboBoxComponent = {
 	},
 	created() {
 		if (!(this.name in this.$root.app_state)) {
+			if (this.nullable && this.initial.length == 0) {
+				return;
+			}
 			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":"${this.initial}"}`));
 		}
 	},
@@ -218,6 +207,7 @@ const ComboBoxComponent = {
 		<label class="form-check-label" :for="name">{{ label }}</label>
 		<select class="form-select form-select-md" :name="name" :id="name" v-model="modelValue"
 		:config-file="configfile" :var-type="vartype">
+		<option v-if="nullable"></option>
 		<option v-for="o in filteredOpts" :key="o[keyname]" :value="o[keyname]">
 		{{ o[valname] }}
 		</option>
@@ -234,7 +224,6 @@ const RangeComponent = {
 		max: { type: String },
 		step: { type: String },
 		vartype: { type: String, default: "float" },
-		filter: { type: String, default: "item" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
 		initial: { type: String, default: "0" },
@@ -250,16 +239,6 @@ const RangeComponent = {
 			set(newValue) {
 				this.$root.app_state[this.name] = newValue;
 			}
-		},
-		filteredOpts() {
-			return this.opts.filter(item => {
-				try {
-					return new Function('item', `return ${this.filter};`)(item);
-				} catch (error) {
-					console.error("Invalid expression:", error);
-					return true; // Default to returning all items if there's an error
-				}
-			});
 		},
 		showCondition() {
 			try {
@@ -300,61 +279,131 @@ const RangeComponent = {
 };
 
 const AlertComponent = {
-  props: {
-    label: { type: String, default: "Alert" },
-    labelcolor: { type: String, default: "red" },
-    alerttype: { type: String, default: "danger" },
-    show: { type: String, default: "true" },
-    if: { type: String, default: "true" },
-  },
-  data() {
-    return {
-      convertedContent: '',
-    };
-  },
-  mounted() {
-    this.convertSlotContent();
-  },
-  computed: {
-    showCondition() {
-      try {
-        return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
-      } catch (error) {
-        console.error("Invalid expression:", error);
-        return true;
-      }
-    },
-    ifCondition() {
-      try {
-        return new Function('app_state', `return ${this.if};`)(this.$root.app_state);
-      } catch (error) {
-        console.error("Invalid expression:", error);
-        return true;
-      }
-    },
-    classVal() {
-      return `alert alert-${this.alerttype} left-align alert-dismissible fade show`;
-    },
-    titleColor() {
-      return `color:${this.labelcolor}`;
-    }
-  },
-  methods: {
-    convertSlotContent() {
-      let slotNode = this.$slots.default?.()[0]; // Access slot content
-      let rawText = slotNode?.children?.trim() || ''; // Extract raw text
+	props: {
+		label: { type: String, default: "Alert" },
+		labelcolor: { type: String, default: "red" },
+		alerttype: { type: String, default: "danger" },
+		show: { type: String, default: "true" },
+		if: { type: String, default: "true" }
+	},
+	data() {
+		return {
+			convertedContent: '',
+		};
+	},
+	mounted() {
+		this.convertSlotContent();
+	},
+	computed: {
+		showCondition() {
+			try {
+				return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true;
+			}
+		},
+		ifCondition() {
+			try {
+				return new Function('app_state', `return ${this.if};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true;
+			}
+		},
+		classVal() {
+			return `alert alert-${this.alerttype} left-align alert-dismissible fade show`;
+		},
+		titleColor() {
+			return `color:${this.labelcolor}`;
+		}
+	},
+	methods: {
+		convertSlotContent() {
+			let slotNode = this.$slots.default?.()[0]; // Access slot content
+			let rawText = slotNode?.children?.trim() || ''; // Extract raw text
 
-      let converter = new showdown.Converter({
+			let converter = new showdown.Converter({
 				openLinksInNewWindow: true,
 				simpleLineBreaks: true
-			 });
-			 converter.setOption('simpleLineBreaks', true);
-      this.convertedContent = converter.makeHtml(rawText); // Convert Markdown to HTML
-    }
-  },
-  template: `<div :class="classVal" role="alert">
+			});
+			converter.setOption('simpleLineBreaks', true);
+			this.convertedContent = converter.makeHtml(rawText); // Convert Markdown to HTML
+		}
+	},
+	template: `<div :class="classVal" role="alert" v-if="ifCondition" v-show="showCondition">
     <h2 :style="titleColor">{{label}}</h2>
     <p v-html="convertedContent"></p>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>`
+};
+
+const TextFieldComponent = {
+	props: {
+		name: { type: String, required: true },
+		configfile: { type: String, default: "" },
+		label: { type: String, default: "Input text" },
+		show: { type: String, default: "true" },
+		if: { type: String, default: "true" },
+		configfile: { type: String, default: "" },
+		placeholder: { type: String, default: "" },
+		initial: { type: String, default: "" },
+		tooltiptitle: { type: String, default: "Info" },
+		tooltip: { type: String, default: "" },
+		pattern: { type: String, default: "*" }
+	},
+	computed: {
+		modelValue: {
+			get() {
+				return this.$root.app_state[this.name];
+			},
+			set(newValue) {
+				this.$root.app_state[this.name] = newValue;
+			}
+		},
+		showCondition() {
+			try {
+				return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		},
+		ifCondition() {
+			try {
+				return new Function('app_state', `return ${this.if};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		}
+	},
+	created() {
+		if (!(this.name in this.$root.app_state)) {
+			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":"${this.initial}"}`));
+		}
+	},
+	mounted() {
+		componentTooltip(this);
+		const input = this.$el;
+		const regex = new RegExp(this.pattern);
+		regex.test(input.value) ? input.classList.remove("is-invalid") : input.classList.add("is-invalid");
+	},
+	updated() {
+		componentTooltip(this);
+	},
+	methods: {
+		validateInput(event) {
+			const input = event.target;
+			const regex = new RegExp(this.pattern);
+			regex.test(input.value) ? input.classList.remove("is-invalid") : input.classList.add("is-invalid");
+		}
+	},
+	template: `<div class="mb-3"  v-if="ifCondition" v-show="showCondition"
+		data-bs-toggle="popover"
+		:data-bs-title="tooltiptitle">
+		<label for="" class="form-label">The board name printed with $I command? <span>{{modelValue}}</span></label>
+		<input type="text" class="form-control" :name="name" :id="name" v-model="modelValue"
+		:placeholder="placeholder" :config-file="configfile" :pattern="pattern" @input="validateInput">
+		</div>`
 };

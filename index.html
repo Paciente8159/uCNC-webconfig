@@ -27,7 +27,8 @@
 				<img class="card-img-top logo-sm" src="https://raw.githubusercontent.com/Paciente8159/uCNC/master/docs/logo.png"
 					alt="µCNC logo">
 				<h1>µCNC configuration generator v2</h1>
-				<alert label="Important notice" labelcolor="darkred" alerttype="danger">Config files of the older web builder will not work correctly</alert>
+				<alert label="Important notice" labelcolor="darkred" alerttype="danger">Config files of the older web builder
+					will not work correctly</alert>
 				<alert label="Issues" labelcolor="black" alerttype="primary">If you encounter any issue please consider
 					[submiting an issue in the Github project
 					page](https://github.com/Paciente8159/uCNC-config-builder/issues/new), with an
@@ -35,8 +36,8 @@
 			</div>
 		</header>
 		<main>
-			<tabgroup id="my-tabs">
-				<tab id="basic-config" label="Basic Configuration" tabid="my-tabs" active>
+			<tabgroup id="config-tabs">
+				<tab id="basic-config" label="Basic Configuration" tabid="config-tabs" active>
 					<div class="mb-3">
 						<p>Hi there,</p>
 						<p>Welcome to µCNC basic configuration generator.</p>
@@ -144,7 +145,7 @@
 						<check name="ENABLE_NAMED_PARAMETERS" label="Enable named parameters" configfile="hal"
 							tooltip="This option enables a subset of named parameters. Example &lt_x&gt.
 							Read more about it in [LinuxCNC named parameters](https://linuxcnc.org/docs/html/gcode/overview.html#gcode:named-parameters)
-							The list of supported name parameters can be found [here](https://github.com/Paciente8159/uCNC/blob/67ded74286b4c7b89f4f4d9cefce221bf577a163/uCNC/src/core/parser_expr.c#L51)" initial=true
+							The list of supported name parameters can be found [here](https://github.com/Paciente8159/uCNC/blob/67ded74286b4c7b89f4f4d9cefce221bf577a163/uCNC/src/core/parser_expr.c#L51)" initial
 							if="app_state.ENABLE_RS274NGC_EXPRESSIONS">
 						</check>
 						<check name="ENABLE_O_CODES" label="Enable OCodes (Sub routines)" configfile="hal"
@@ -152,112 +153,179 @@
 							A sub routine should be place in a file in the root of the drive with extension .nc and the name of the OCode (example O100.nc).
 							To call that sub routine you can perform a O100 CALL command. OCode files do should contain the sub routine code only.
 							The Sub routine file self contains the routine, so you don't need to start the sub routine with O100 SUB and end with O100 ENDSUB. You can read more about [OCodes here](https://linuxcnc.org/docs/html/gcode/o-code.html)"
-							initial=true if="app_state.ENABLE_RS274NGC_EXPRESSIONS">
+							initial if="app_state.ENABLE_RS274NGC_EXPRESSIONS">
 						</check>
 
 					</controlgroup>
 
 				</tab>
-				<tab id="boardmap-config" label="Board" tabid="my-tabs">
+				<tab id="boardmap-config" label="Board" tabid="config-tabs">
 					<controlgroup label="Basic board settings">
 
 						<combobox name="BOARD" label="What board will you be using?" :opts="app_options.BOARDS" keyname="id"
-							valname="name" filter="item.mcu.includes(app_state.MCU)"></combobox>
-						<alert alerttype="info" labelcolor="var(--bs-alert-color)" label="Advanced configurations">
-							Custom boards might require aditional settings that may not be available in this tool.
-
-								**Check the Custom configurations tab**
-								Also might require either a different
-								base board selection on the ini file
-								(PlatformIO) or a board type (Arduino IDE). Please refer to the architecture
-								documentation or submit a question on Github
-								about custom boards.
-						</alert>
-					</controlgroup>
-
-					<controlgroup label="Advanced settings">
-
-						<toggle name="ENABLE_WIFI" label="Enable Wifi" configfile="boardmap"
-							tooltip="Available for boards with Wifi (ex: ESP32, RP2040W, etc..)"></toggle>
-
-						<toggle name="ENABLE_BLUETOOTH" label="Enable Bluetooth" configfile="boardmap"
-							tooltip="Available for boards with Bluetooth (ex: ESP32, RP2040W, etc..)"></toggle>
-
-						<toggle name="ENABLE_STEPPERS_DISABLE_TIMEOUT" label="Enable stepper idle timeout" configfile="boardmap"
-							tooltip="Enables setting $1 to turn off steppers after some idle time"></toggle>
-
-						<toggle name="ENABLE_SKEW_COMPENSATION" label="Enable X-Y-Z axis skew
-							compensation" configfile="hal"></toggle>
-
-						<check name="SKEW_COMPENSATION_XY_ONLY" label="Enable skew compensation for
-								X-Y axis only" configfile="hal" show="app_state.ENABLE_SKEW_COMPENSATION"></check>
-
-						<toggle name="ENABLE_LINACT_PLANNER" label="Enable linear actuator planner"
-							tooltip="This modifies the motion acceleration to support hard direction changes in machines with heavy mobile parts"
-							configfile="hal"></toggle>
-
-						<check name="ENABLE_LINACT_COLD_START" label="Linear actuator cold start"
-							tooltip="This forces a stop on every direction change" configfile="hal"
-							show="app_state.ENABLE_LINACT_PLANNER"></check>
-
-						<toggle name="ENABLE_BACKLASH_COMPENSATION" label="Enable backlash compensation" configfile="hal"></toggle>
-
-						<combobox name="ENABLE_S_CURVE_ACCELERATION" label="Enable S-Curve
-							acceleration" :opts="app_options.ACCELERATIONS" keyname="id" valname="name" configfile="boardmap" initial="0">
+							valname="name" filter="item.mcu.includes(app_state.MCU)" initial="src/hal/boards/avr/boardmap_uno.h">
 						</combobox>
 
-						<toggle name="BRESENHAM_16BIT" label="Use 16-bit Bresenham step generation" configfile="hal"
-							tooltip="Uses a 16-bit algorithm that is faster to compute. Good for machines/or processes that require lots of short length motions like deltas or laser engraving">
-						</toggle>
-
-						<toggle name="ENABLE_PIN_DEBUG_EXTRA_CMD" label="Enable extra pin state print commands" configfile="hal"
-							tooltip="Enables $P command to print all pins states, stepping positions, encoders positions and system runtime">
-						</toggle>
-
-						<toggle name="ENABLE_EXTRA_SETTINGS_CMDS" label="Enable extra settings storage commands" configfile="hal"
-							tooltip="Enables commands $SS (Save settings to storage), $SL (Load settings from storage), $SR (Reset settings from storage). This is a great for granullar settings read/write control, specially in Flash storaged settings.">
-						</toggle>
-
-						<toggle name="RAM_ONLY_SETTINGS" label="Disables settings storage" configfile="hal"
-							tooltip="Disables settings storage. Settings are only kept in RAM and get restored on every power cycle.">
-						</toggle>
-
-						<range name="STATUS_AUTOMATIC_REPORT_INTERVAL" label="Automatic
-							status report frequency: " min="0" max="1000" step="50" units="ms" configfile="boardmap" initial="0"
-							tooltip="Enables automatic status report with a set frequency. This can improve the update rate on your GUI. Values bellow 100ms will have no effect (off)">
-						</range>
-
-						<toggle name="ENABLE_G39_H_MAPPING" label="Enable height map generation" configfile="hal"
-							tooltip="Enables the creation of height maps that are stored internally and can be reusable.">
-						</toggle>
-
-						<range name="H_MAPING_GRID_FACTOR" label="Height map grid factor: " min="2" max="6" step="1" units=""
-							configfile="hal" if="app_state.ENABLE_G39_H_MAPPING" initial="2"
-							tooltip="Sets the height map number of points. The number of points is [grid factor]^2">
-						</range>
-
-						<toggle name="ENABLE_CANNED_CYCLES" label="Enable canned cycles subset" configfile="hal"
-							tooltip="Enables canned cycles (subset). G84 is not implemented.">
-						</toggle>
-
-						<toggle name="ENABLE_RS274NGC_EXPRESSIONS" label="Enable expression parsing and
-							numbered parameters" configfile="hal" tooltip="Enables RS274NGC expressions.">
-						</toggle>
-						<check name="ENABLE_NAMED_PARAMETERS" label="Enable named parameters" configfile="hal"
-							tooltip="This option enables a subset of named parameters. Example &lt_x&gt.
-							Read more about it in [LinuxCNC named parameters](https://linuxcnc.org/docs/html/gcode/overview.html#gcode:named-parameters)
-							The list of supported name parameters can be found [here](https://github.com/Paciente8159/uCNC/blob/67ded74286b4c7b89f4f4d9cefce221bf577a163/uCNC/src/core/parser_expr.c#L51)" initial=true
-							if="app_state.ENABLE_RS274NGC_EXPRESSIONS">
-						</check>
-						<check name="ENABLE_O_CODES" label="Enable OCodes (Sub routines)" configfile="hal"
-							tooltip="This option enables OCodes sub routines. µCNC sub routines require some sort of file system mounted (like SD card).
-							A sub routine should be place in a file in the root of the drive with extension .nc and the name of the OCode (example O100.nc).
-							To call that sub routine you can perform a O100 CALL command. OCode files do should contain the sub routine code only.
-							The Sub routine file self contains the routine, so you don't need to start the sub routine with O100 SUB and end with O100 ENDSUB. You can read more about [OCodes here](https://linuxcnc.org/docs/html/gcode/o-code.html)"
-							initial=true if="app_state.ENABLE_RS274NGC_EXPRESSIONS">
-						</check>
+						<alert alerttype="info" labelcolor="var(--bs-alert-color)" label="Advanced configurations"
+							show="app_state.BOARD=='boardmap_overrides.h'">
+							Custom boards might require aditional settings that may not be available in this tool.
+							**Check the Custom configurations tab**
+							Also might require either a different base board selection on the ini file
+							(PlatformIO) or a board type (Arduino IDE). Please refer to the architecture
+							documentation or submit a question on Github about custom boards.
+						</alert>
 
 					</controlgroup>
+
+					<tabgroup id="boardmap-tabs">
+						<tab id="board-basic-config" label="Board Ports and Timers" tabid="boardmap-tabs" active>
+
+							<textfield name="BOARD_NAME" label="The board name printed with $I command?" configfile="hal" tooltip="Name must be between quotation marks
+							(string). Ex. 'myboard'" pattern="^(['&quot;])(.*?)\1$" initial="''">
+							</textfield>
+
+							<controlgroup label="AVR interrupt on change ports" if="app_state.MCU=='MCU_AVR'">
+
+								<combobox name="PCINT0_PORT" label="In which port are PCINT pins 0 to 7?" :opts="app_options.PORTS"
+									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap">
+								</combobox>
+
+								<combobox name="PCINT1_PORT" label="In which port are PCINT pins 8 to 15?" :opts="app_options.PORTS"
+									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap">
+								</combobox>
+
+								<combobox name="PCINT2_PORT" label="In which port are PCINT pins 16 to 23?" :opts="app_options.PORTS"
+									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap">
+								</combobox>
+
+							</controlgroup>
+
+							<controlgroup label="UART">
+
+								<combobox name="UART_PORT" label="Which hardware port will be UART_PORT?" :opts="app_options.UCNCUARTS"
+									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
+									vartype="int" nullable>
+								</combobox>
+
+								<combobox name="UART2_PORT" label="Which hardware port will be UART2_PORT?"
+									:opts="app_options.UCNCUARTS" filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port"
+									configfile="boardmap" nullable>
+								</combobox>
+
+							</controlgroup>
+
+							<controlgroup label="SPI">
+
+								<combobox name="SPI_PORT" label="Which hardware port will be SPI_PORT?" :opts="app_options.UCNCSPI"
+									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
+									vartype="int" nullable>
+								</combobox>
+
+								<combobox name="SPI2_PORT" label="Which hardware port will be SPI2_PORT?" :opts="app_options.UCNCSPI"
+									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
+									nullable>
+								</combobox>
+
+							</controlgroup>
+
+							<controlgroup label="I2C">
+
+								<combobox name="I2C_PORT" label="Which hardware port will be I2C_PORT?" :opts="app_options.UCNCI2C"
+									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
+									vartype="int" nullable>
+								</combobox>
+
+							</controlgroup>
+
+							<repeater label="Timers" :opts="app_options.UCNCTIMERS" keyname="timer" valname="timer"
+								filter="item.mcu.includes(app_state.MCU)">
+								<template #default="{ value: timer }">
+									<combobox :name="timer+'_TIMER'" :label="'Which Timer will be used as ' + timer +'_TIMER?'"
+										:opts="app_options.TIMERS" filter="item.mcu.includes(app_state.MCU)" keyname="timer" valname="timer"
+										configfile="boardmap" vartype="int" nullable>
+									</combobox>
+								</template>
+							</repeater>
+
+						</tab>
+						<tab id="special-outputs-config" label="Special Outputs" tabid="boardmap-tabs">
+							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('stepper')">
+								<template #head>
+									<th scope="col">µCNC pin</th>
+									<th scope="col">Pin number</th>
+									<th scope="col">Pin port</th>
+									<th scope="col">IO OFFSET(74HC595)</th>
+								</template>
+								<template #row="{value: pin}">
+									<td><strong>{{pin}}</strong></td>
+									<td>
+										<combobox :name="pin+'_PIN'" label="" :opts="app_options.PINS"
+											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
+											vartype="int" nullable>
+										</combobox>
+									</td>
+									<td>
+										<combobox :name="pin+'_PORT'" label="" :opts="app_options.PORTS"
+											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
+											vartype="int" nullable>
+										</combobox>
+									</td>
+									<td>
+										<combobox :name="pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS"
+											filter="item.type.includes('special_output') || item.type=='pwm' || item.type=='servo' || item.type.includes('generic_output')"
+											keyname="offset" valname="offset" configfile="boardmap" vartype="int" nullable>
+										</combobox>
+									</td>
+								</template>
+							</vtable>
+						</tab>
+						<tab id="pwms-servos-config" label="PWM & Servos" tabid="boardmap-tabs">
+							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('pwm') || item.type.includes('servo')">
+								<template #head>
+									<th scope="col">µCNC pin</th>
+									<th scope="col">Pin number</th>
+									<th scope="col">Pin port</th>
+									<th scope="col">IO OFFSET(74HC595)</th>
+								</template>
+								<template #row="{value: pin}">
+									<td><strong>{{pin}}</strong></td>
+									<td>
+										<combobox :name="pin+'_PIN'" label="" :opts="app_options.PINS"
+											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
+											vartype="int" nullable>
+										</combobox>
+									</td>
+									<td>
+										<combobox :name="pin+'_PORT'" label="" :opts="app_options.PORTS"
+											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
+											vartype="int" nullable>
+										</combobox>
+									</td>
+									<td>
+										<combobox :name="pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS"
+											filter="item.type.includes('special_output') || item.type=='pwm' || item.type=='servo' || item.type.includes('generic_output')"
+											keyname="offset" valname="offset" configfile="boardmap" vartype="int" nullable>
+										</combobox>
+									</td>
+								</template>
+							</vtable>
+						</tab>
+						<tab id="generic-outputs-config" label="Generic outputs" tabid="boardmap-tabs">
+
+						</tab>
+						<tab id="special-inputs-config" label="Controls, Limits and Probe" tabid="boardmap-tabs">
+
+						</tab>
+						<tab id="analogs-config" label="Analog inputs" tabid="boardmap-tabs">
+
+						</tab>
+						<tab id="generic-inputs-config" label="Generic Inputs" tabid="boardmap-tabs">
+
+						</tab>
+						<tab id="communication-pins-config" label="Communications pinout" tabid="boardmap-tabs">
+
+						</tab>
+					</tabgroup>
 
 				</tab>
 			</tabgroup>
@@ -279,6 +347,9 @@
 				'controlgroup': ControlGroupComponent,
 				'tabgroup': TabGroupComponent,
 				'tab': TabComponent,
+				'textfield': TextFieldComponent,
+				'repeater': RepeaterGroupComponent,
+				'vtable': TableComponent
 			},
 			data() {
 				return app_vars;
