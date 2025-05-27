@@ -176,7 +176,6 @@ const ComboBoxComponent = {
 				try {
 					return new Function('item', 'app_state', `return ${this.filter};`)(item, this.$root.app_state);
 				} catch (error) {
-					debugger;
 					console.error("Invalid expression:", error);
 					return true; // Default to returning all items if there's an error
 				}
@@ -421,9 +420,10 @@ const TextFieldComponent = {
 
 const BitFieldComponent = {
 	props: {
+		name: { type: String, required: true },
 		decval: { type: String, required: true },
-		bitval: { type: Array, default: Array(8).fill(false) },
-		label: { type: String, default: "Input text" },
+		bitval: { type: Array, default: () => Array(8).fill(false) },
+		label: { type: String, default: "Bit mask" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
 		configfile: { type: String, default: "" },
@@ -440,6 +440,7 @@ const BitFieldComponent = {
 			},
 			set(newValue) {
 				this.$root.app_state[this.name] = newValue;
+				updateBits();
 			}
 		},
 		showCondition() {
@@ -461,35 +462,43 @@ const BitFieldComponent = {
 	},
 	created() {
 		if (!(this.name in this.$root.app_state)) {
-			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":"${this.initial}"}`));
+			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":${this.initial}}`));
 		}
+	},
+	mounted() {
+		this.updateBits();
+		componentTooltip(this);
+		const input = this.$el;
+		const regex = new RegExp(this.pattern);
+		regex.test(input.value) ? input.classList.remove("is-invalid") : input.classList.add("is-invalid");
+	},
+	updated() {
+		componentTooltip(this);
 	},
 	methods: {
 		updateBits() {
-			debugger;
 			const value = Number(this.modelValue);
 			for (let i = 0; i < 8; i++) {
-				this.bitval[i] = Boolean(value & (1 << (7 - i)));
+				this.bitval[i] = Boolean(value & (1 << i));
 			}
+			this.$forceUpdate();
 		},
 
 		updateDecimal() {
-			debugger;
 			let value = 0;
 			this.bitval.forEach((bit, index) => {
-				if (bit) value |= (1 << (7 - index));
+				if (bit) value |= (1 << index);
 			});
 			this.modelValue = value.toString();
 		}
 	},
-	template: `<div class="d-flex align-items-center" v-if="ifCondition" v-show="showCondition"
-		data-bs-toggle="popover"
-		:data-bs-title="tooltiptitle">
-	<label v-for="(bit, index) in bitval" :key="index" class="d-inline-flex">
-	{{bitprefix}}{{7 - index}}{{bitsufix}}
-	<input class="form-check-input" type="checkbox"
-	v-model="bitval[index]" @change="updateDecimal">
-	</label>
-	<input type="number" min="0" max="255" class="form-control" v-model="modelValue" @input="updateBits">
-	</div>`,
+	template: `<div class="p-1" v-if="ifCondition" v-show="showCondition" data-bs-toggle="popover" :data-bs-title="tooltiptitle">
+		<label class="form-check-label" :for="name"  v-if="label.length">{{ label }}</label>
+		<div class="d-flex align-items-center flex-wrap">
+		<label v-for="(bit, index) in bitval" :key="index" class="d-inline-flex p-1">
+		<input class="form-check-input" type="checkbox"	v-model="bitval[index]" @change="updateDecimal"><div class="d-flex ml-2">{{bitprefix}}{{index}}{{bitsufix}}</div>
+		</label>
+		<input type="number" min="0" max="255" class="form-control w-25" style="min-width:70px;" v-model="modelValue" @change="updateBits">
+		</div>
+		</div>`,
 };

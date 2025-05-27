@@ -4,6 +4,8 @@ window.addEventListener("ucnc_components", (e) => {
 	e.detail.component('tab', TabComponent);
 	e.detail.component('repeater', RepeaterGroupComponent);
 	e.detail.component('vtable', TableComponent);
+	e.detail.component('accordion-card', AccordionCardComponent);
+	e.detail.component('accordion', AccordionComponent);
 });
 
 const ControlGroupComponent = {
@@ -78,6 +80,80 @@ const TabComponent = {
 	}
 };
 
+const AccordionComponent = {
+	props: {
+		id: { type: String, required: true },
+		show: { type: String, default: "true" },
+		if: { type: String, default: "true" }
+	},
+	computed: {
+		showCondition() {
+			try {
+				return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		},
+		ifCondition() {
+			try {
+				return new Function('app_state', `return ${this.if};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		}
+	},
+	mounted() {
+		const bsCollapse = new bootstrap.Collapse('#' + this.id, {
+			toggle: true
+		});
+	},
+	template: `<div class="accordion" :id="id">
+		<slot></slot>
+		</div>`
+};
+
+const AccordionCardComponent = {
+	props: {
+		id: { type: String, required: true },
+		accordionid: { type: String, required: true },
+		label: { type: String, required: true },
+		show: { type: String, default: "true" },
+		if: { type: String, default: "true" }
+	},
+	computed: {
+		showCondition() {
+			try {
+				return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		},
+		ifCondition() {
+			try {
+				return new Function('app_state', `return ${this.if};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		}
+	},
+	template: `<div class="accordion-item"  v-if="ifCondition" v-show="showCondition">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" :data-bs-target="'#'+id" aria-expanded="false" :aria-controls="id">
+        {{label}}
+      </button>
+    </h2>
+    <div :id="id" class="accordion-collapse collapse" :data-bs-parent="'#'+accordionid">
+      <div class="accordion-body">
+       <slot></slot>
+      </div>
+    </div>
+  </div>`,
+};
+
 const RepeaterGroupComponent = {
 	props: {
 		label: { type: String, default: "Repeater group" },
@@ -118,7 +194,7 @@ const RepeaterGroupComponent = {
 	},
 	template: `<fieldset v-if="ifCondition" v-show="showCondition">
 					<legend>{{label}}</legend>
-					<slot v-for="o in filteredOpts" :key="o[keyname]" :value="o[keyname]"></slot>
+					<slot v-for="o in filteredOpts" :key="o[keyname]" :value="o[keyname]" :item="o"></slot>
 					</fieldset>`
 };
 

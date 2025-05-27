@@ -178,9 +178,8 @@
 
 					</controlgroup>
 
-					<tabgroup id="boardmap-tabs">
-						<tab id="board-basic-config" label="Board Ports and Timers" tabid="boardmap-tabs" active>
-
+					<accordion id="boardmap-accordion">
+						<accordion-card id="board-basic-config" accordionid="boardmap-accordion" label="Board Ports and Timers">
 							<textfield name="BOARD_NAME" label="The board name printed with $I command?" configfile="hal" tooltip="Name must be between quotation marks
 							(string). Ex. 'myboard'" pattern="^(['&quot;])(.*?)\1$" initial="''">
 							</textfield>
@@ -247,9 +246,8 @@
 									</combobox>
 								</template>
 							</repeater>
-
-						</tab>
-						<tab id="special-outputs-config" label="Special Outputs" tabid="boardmap-tabs">
+						</accordion-card>
+						<accordion-card id="special-outputs-config" label="Special Outputs" accordianid="boardmap-accordian">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('stepper')">
 								<template #head>
 									<th scope="col">µCNC pin</th>
@@ -279,8 +277,8 @@
 									</td>
 								</template>
 							</vtable>
-						</tab>
-						<tab id="pwms-servos-config" label="PWM & Servos" tabid="boardmap-tabs">
+						</accordion-card>
+						<accordion-card id="pwms-servos-config" label="PWM & Servos" accordianid="boardmap-accordian">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
 								filter="item.type.includes('pwm') || item.type.includes('servo')">
 								<template #head>
@@ -336,8 +334,8 @@
 									</td>
 								</template>
 							</vtable>
-						</tab>
-						<tab id="generic-outputs-config" label="Generic outputs" tabid="boardmap-tabs">
+						</accordion-card>
+						<accordion-card id="generic-outputs-config" label="Generic outputs" accordianid="boardmap-accordian">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('dout')">
 								<template #head>
 									<th scope="col">µCNC pin</th>
@@ -367,8 +365,8 @@
 									</td>
 								</template>
 							</vtable>
-						</tab>
-						<tab id="special-inputs-config" label="Controls, Limits and Probe" tabid="boardmap-tabs">
+						</accordion-card>
+						<accordion-card id="special-inputs-config" label="Controls, Limits and Probe" accordianid="boardmap-accordian">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
 								filter="item.type.includes('control') || item.type.includes('limit') || item.type.includes('probe')">
 								<template #head>
@@ -417,8 +415,8 @@
 									</td>
 								</template>
 							</vtable>
-						</tab>
-						<tab id="analogs-config" label="Analog inputs" tabid="boardmap-tabs">
+						</accordion-card>
+						<accordion-card id="analogs-config" label="Analog inputs" accordianid="boardmap-accordian">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
 								filter="item.type.includes('control') || item.type.includes('limit') || item.type.includes('probe')">
 								<template #head>
@@ -456,8 +454,8 @@
 									</td>
 								</template>
 							</vtable>
-						</tab>
-						<tab id="generic-inputs-config" label="Generic Inputs" tabid="boardmap-tabs">
+						</accordion-card>
+						<accordion-card id="generic-inputs-config" label="Generic Inputs" accordianid="boardmap-accordian">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('din')">
 								<template #head>
 									<th scope="col">µCNC pin</th>
@@ -507,8 +505,8 @@
 									</td>
 								</template>
 							</vtable>
-						</tab>
-						<tab id="communication-pins-config" label="Communications pinout" tabid="boardmap-tabs">
+						</accordion-card>
+						<accordion-card id="communication-pins-config" label="Communications pinout" accordianid="boardmap-accordian">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
 								filter="item.type.includes('communications')">
 								<template #head>
@@ -546,9 +544,8 @@
 									</td>
 								</template>
 							</vtable>
-						</tab>
-					</tabgroup>
-
+						</accordion-card>
+					</accordion>
 				</tab>
 				<tab id="hal-config" label="HAL" tabid="config-tabs">
 
@@ -609,8 +606,7 @@
 					<controlgroup label="Other IO settings">
 
 						<toggle name="DISABLE_HAL_CONFIG_PROTECTION" label="Allow generic inputs to be
-								configurable as outputs" configfile="hal"
-								tooltip="By default the user can not reprogram an input pin as an output pin to prevent accidentally connect to driving pins to each other.
+								configurable as outputs" configfile="hal" tooltip="By default the user can not reprogram an input pin as an output pin to prevent accidentally connect to driving pins to each other.
 								In some cases this may be needed if using generic input pins for communication
 								with peripherals using software emulated protocol.">
 						</toggle>
@@ -620,10 +616,24 @@
 					<controlgroup label="Multi motor axis">
 
 						<toggle name="ENABLE_MULTI_STEPPER_AXIS" label="Enable multi-drive axis" configfile="hal"
-								tooltip="Enable this if you have one ore more axis that have intependent motor driver signals.">
+							tooltip="Enable this if you have one ore more axis that have intependent motor driver signals.">
 						</toggle>
 
-						<bitfield bitprefix="STEP" name=""></bitfield>
+						<repeater label="Linear actuators masks" :opts="app_options.LINACTS" filter="item.axisnum&lt;app_state.AXIS_COUNT">
+							<template #default="{ item: i }">
+								<bitfield bitprefix="STEP" :name="i.name" :label="i.label" :initial="i.value"></bitfield>
+							</template>
+						</repeater>
+
+						<toggle name="ENABLE_AXIS_AUTOLEVEL" label="Enable AXIS Autolevel" configfile="hal"
+							tooltip="Axis autolevel uses multi limit switches coupled with axis with multiple motors, to perform the axis alignment on the homing motion.">
+						</toggle>
+
+						<repeater label="Linear actuators masks" :opts="app_options.LINACTS_LIMITS" if="app_state.ENABLE_AXIS_AUTOLEVEL">
+							<template #default="{ item: i }">
+								<bitfield bitprefix="STEP" :name="i.name" :label="i.label" :initial="i.value" tooltip="Assign a limit switch to the motor that it will stop when triggered. Limits names are not rigid. You can have a Z bed with 3 motors and you can assign limits Z Z2 and A for example to level the bed."></bitfield>
+							</template>
+						</repeater>
 
 					</controlgroup>
 
