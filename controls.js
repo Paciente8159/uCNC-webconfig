@@ -1,11 +1,13 @@
-window.addEventListener("ucnc_components", (e) => {
-	e.detail.component('toggle', ToggleComponent);
-	e.detail.component('check', CheckComponent);
-	e.detail.component('combobox', ComboBoxComponent);
-	e.detail.component('range', RangeComponent);
-	e.detail.component('alert', AlertComponent);
-	e.detail.component('textfield', TextFieldComponent);
-	e.detail.component('bitfield', BitFieldComponent);
+window.addEventListener("ucnc_load_components", (e) => {
+	window.ucnc_app.component('toggle', window.ToggleComponent);
+	window.ucnc_app.component('check', window.CheckComponent);
+	window.ucnc_app.component('combobox', window.ComboBoxComponent);
+	window.ucnc_app.component('range', window.RangeComponent);
+	window.ucnc_app.component('alert', window.AlertComponent);
+	window.ucnc_app.component('textfield', window.TextFieldComponent);
+	window.ucnc_app.component('bitfield', window.BitFieldComponent);
+	window.ucnc_app.component('message', window.MessageComponent);
+
 });
 
 // Initialize Bootstrap popovers with markdown support
@@ -24,7 +26,7 @@ function componentTooltip(comp) {
 	});
 }
 
-const ToggleComponent = {
+window.ToggleComponent = {
 	props: {
 		name: { type: String, required: true },
 		configfile: { type: String, default: "" },
@@ -81,7 +83,7 @@ const ToggleComponent = {
 		</div>`
 };
 
-const CheckComponent = {
+window.CheckComponent = {
 	props: {
 		name: { type: String, required: true },
 		configfile: { type: String, default: "" },
@@ -138,7 +140,7 @@ const CheckComponent = {
 		</div>`
 };
 
-const ComboBoxComponent = {
+window.ComboBoxComponent = {
 	props: {
 		name: { type: String, required: true },
 		configfile: { type: String, default: "" },
@@ -225,7 +227,7 @@ const ComboBoxComponent = {
 		</div>`
 };
 
-const RangeComponent = {
+window.RangeComponent = {
 	props: {
 		name: { type: String, required: true },
 		configfile: { type: String, default: "" },
@@ -288,7 +290,7 @@ const RangeComponent = {
 		</div>`
 };
 
-const AlertComponent = {
+window.AlertComponent = {
 	props: {
 		label: { type: String, default: "Alert" },
 		labelcolor: { type: String, default: "red" },
@@ -348,7 +350,71 @@ const AlertComponent = {
   </div>`
 };
 
-const TextFieldComponent = {
+window.MessageComponent = {
+	props: {
+		label: { type: String, default: "Alert" },
+		labelcolor: { type: String, default: "red" },
+		alerttype: { type: String, default: "danger" },
+		show: { type: String, default: "true" },
+		if: { type: String, default: "true" }
+	},
+	data() {
+		return {
+			convertedContent: '',
+		};
+	},
+	mounted() {
+		this.convertSlotContent();
+	},
+	computed: {
+		showCondition() {
+			try {
+				return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true;
+			}
+		},
+		ifCondition() {
+			try {
+				return new Function('app_state', `return ${this.if};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true;
+			}
+		},
+	},
+	methods: {
+		convertSlotContent() {
+			let slotNode = this.$slots.default?.()[0]; // Access slot content
+			let rawText = slotNode?.children?.trim() || ''; // Extract raw text
+
+			let converter = new showdown.Converter({
+				openLinksInNewWindow: true,
+				simpleLineBreaks: true
+			});
+			converter.setOption('simpleLineBreaks', true);
+			this.convertedContent = converter.makeHtml(rawText); // Convert Markdown to HTML
+
+			const toast = new bootstrap.Toast(this.$el, {
+				delay: 20000,
+			});
+			toast.show();
+		}
+	},
+	template: `<div class="toast" role="alert" aria-live="assertive" aria-atomic="true"  v-if="ifCondition" v-show="showCondition">
+		<div :class="'toast-header text-bg-' + alerttype">
+		<strong class="me-auto">{{label}}</strong>
+		<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+		</div>
+		<div class="toast-body" v-html="convertedContent">
+		</div>
+		</div>`
+};
+
+
+
+window.TextFieldComponent = {
 	props: {
 		name: { type: String, required: true },
 		configfile: { type: String, default: "" },
@@ -418,7 +484,7 @@ const TextFieldComponent = {
 		</div>`
 };
 
-const BitFieldComponent = {
+window.BitFieldComponent = {
 	props: {
 		name: { type: String, required: true },
 		decval: { type: String, required: true },
@@ -502,3 +568,4 @@ const BitFieldComponent = {
 		</div>
 		</div>`,
 };
+

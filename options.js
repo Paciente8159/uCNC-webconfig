@@ -1,4 +1,4 @@
-const app_vars = {
+window.app_vars = {
 	app_state: {
 		VERSION: 99999,
 		MCU: 'MCU_AVR',

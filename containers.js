@@ -1,14 +1,14 @@
-window.addEventListener("ucnc_components", (e) => {
-	e.detail.component('controlgroup', ControlGroupComponent);
-	e.detail.component('tabgroup', TabGroupComponent);
-	e.detail.component('tab', TabComponent);
-	e.detail.component('repeater', RepeaterGroupComponent);
-	e.detail.component('vtable', TableComponent);
-	e.detail.component('accordion-card', AccordionCardComponent);
-	e.detail.component('accordion', AccordionComponent);
+window.addEventListener("ucnc_load_components", (e) => {
+	window.ucnc_app.component('controlgroup', window.ControlGroupComponent);
+	window.ucnc_app.component('tabgroup', window.TabGroupComponent);
+	window.ucnc_app.component('tab', window.TabComponent);
+	window.ucnc_app.component('repeater', window.RepeaterGroupComponent);
+	window.ucnc_app.component('vtable', window.TableComponent);
+	window.ucnc_app.component('accordion-card', window.AccordionCardComponent);
+	window.ucnc_app.component('accordion', window.AccordionComponent);
 });
 
-const ControlGroupComponent = {
+window.ControlGroupComponent = {
 	props: {
 		label: { type: String, default: "Control group" },
 		show: { type: String, default: "true" },
@@ -38,7 +38,7 @@ const ControlGroupComponent = {
 					</fieldset>`
 };
 
-const TabGroupComponent = {
+window.TabGroupComponent = {
 	props: {
 		id: { type: String, required: true },
 	},
@@ -49,7 +49,7 @@ const TabGroupComponent = {
 			</div>`
 };
 
-const TabComponent = {
+window.TabComponent = {
 	props: {
 		id: { type: String, required: true },
 		label: { type: String, required: true },
@@ -80,7 +80,7 @@ const TabComponent = {
 	}
 };
 
-const AccordionComponent = {
+window.AccordionComponent = {
 	props: {
 		id: { type: String, required: true },
 		show: { type: String, default: "true" },
@@ -105,8 +105,36 @@ const AccordionComponent = {
 		}
 	},
 	mounted() {
-		const bsCollapse = new bootstrap.Collapse('#' + this.id, {
-			toggle: true
+		// const bsCollapse = new bootstrap.Collapse('#' + this.id, {
+		// 	toggle: true
+		// });
+		document.addEventListener('DOMContentLoaded', function () {
+			document.querySelectorAll('.accordion-item').forEach(function (item) {
+
+				// Listen for shown.bs.collapse event. Different from show.bs.collapse
+				// Needs to be shown.bs.collapse otherwise the item has no height.
+				item.addEventListener('shown.bs.collapse', function () {
+					// Get the height of the item content
+					var itemHeight = this.scrollHeight;
+
+					// if itemHeight is bigger than window, then just scroll to top
+					if (itemHeight >= window.innerHeight) {
+						window.scrollTo({
+							top: this.offsetTop,
+							behavior: 'smooth'
+						});
+						// if the item is lower than it would be when we scroll down, then scroll
+						// We use (window.innerHeight - itemHeight)/2 so that we can see that there are
+						// items below the current item.
+					} else if (this.offsetTop - (window.innerHeight - itemHeight) / 2 > window.scrollY) {
+						window.scrollTo({
+							top: this.offsetTop - (window.innerHeight - itemHeight) / 2,
+							behavior: 'smooth'
+						});
+					}
+
+				});
+			});
 		});
 	},
 	template: `<div class="accordion" :id="id">
@@ -114,7 +142,7 @@ const AccordionComponent = {
 		</div>`
 };
 
-const AccordionCardComponent = {
+window.AccordionCardComponent = {
 	props: {
 		id: { type: String, required: true },
 		accordionid: { type: String, required: true },
@@ -154,7 +182,7 @@ const AccordionCardComponent = {
   </div>`,
 };
 
-const RepeaterGroupComponent = {
+window.RepeaterGroupComponent = {
 	props: {
 		label: { type: String, default: "Repeater group" },
 		opts: { type: Array, required: true },
@@ -198,7 +226,7 @@ const RepeaterGroupComponent = {
 					</fieldset>`
 };
 
-const TableComponent = {
+window.TableComponent = {
 	props: {
 		opts: { type: Array, required: true },
 		keyname: { type: String, default: "id" },  // Renamed to clarify usage
@@ -248,7 +276,7 @@ const TableComponent = {
 	</table>`
 };
 
-const TableCellComponent = {
+window.TableCellComponent = {
 	props: {
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
