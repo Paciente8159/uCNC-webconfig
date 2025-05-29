@@ -18,14 +18,14 @@ window.app_vars = {
 			{ id: 'v1.7.x-bugfix', tag: 10779, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/v1.7.x-bugfix.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/v1.7.x.zip' },
 		],
 		BAUDRATES: [
-			{ id: 9600},
-			{ id: 19200},
-			{ id: 38400},
-			{ id: 57600},
-			{ id: 115200},
-			{ id: 230400},
-			{ id: 250000},
-			{ id: 576000}
+			{ id: 9600 },
+			{ id: 19200 },
+			{ id: 38400 },
+			{ id: 57600 },
+			{ id: 115200 },
+			{ id: 230400 },
+			{ id: 250000 },
+			{ id: 576000 }
 		],
 		MCUS: [
 			{ id: 'MCU_AVR', name: 'Atmel AVR', url: 'src/hal/mcus/avr/mcumap_avr.h' },
@@ -538,10 +538,10 @@ window.app_vars = {
 			{ mux: 'H', mcu: 'MCU_SAMD21' }
 		],
 		CONTROLS: [
-			{pin:'ESTOP'},
-			{pin:'SAFETY_DOOR'},
-			{pin:'FHOLD'},
-			{pin:'CS_RES'}
+			{ pin: 'ESTOP' },
+			{ pin: 'SAFETY_DOOR' },
+			{ pin: 'FHOLD' },
+			{ pin: 'CS_RES' }
 		],
 		LIMITS: [
 			{ pin: 'LIMIT_X', axis: '1,2,3,4,5,6' },
@@ -555,32 +555,32 @@ window.app_vars = {
 			{ pin: 'LIMIT_C', axis: '6' },
 		],
 		TOOLS: [
-			{tool: 1},
-			{tool: 2},
-			{tool: 3},
-			{tool: 4},
-			{tool: 5},
-			{tool: 6},
-			{tool: 7},
-			{tool: 8},
-			{tool: 9},
-			{tool: 10},
-			{tool: 11},
-			{tool: 12},
-			{tool: 13},
-			{tool: 14},
-			{tool: 15},
-			{tool: 16}
+			{ tool: 'TOOL1', toolcount: 1 },
+			{ tool: 'TOOL2', toolcount: 2 },
+			{ tool: 'TOOL3', toolcount: 3 },
+			{ tool: 'TOOL4', toolcount: 4 },
+			{ tool: 'TOOL5', toolcount: 5 },
+			{ tool: 'TOOL6', toolcount: 6 },
+			{ tool: 'TOOL7', toolcount: 7 },
+			{ tool: 'TOOL8', toolcount: 8 },
+			{ tool: 'TOOL8', toolcount: 9 },
+			{ tool: 'TOOL9', toolcount: 10 },
+			{ tool: 'TOOL10', toolcount: 11 },
+			{ tool: 'TOOL11', toolcount: 12 },
+			{ tool: 'TOOL12', toolcount: 13 },
+			{ tool: 'TOOL13', toolcount: 14 },
+			{ tool: 'TOOL14', toolcount: 15 },
+			{ tool: 'TOOL15', toolcount: 16 }
 		],
 		ENCODER: [
-			{enc: 0},
-			{enc: 1},
-			{enc: 2},
-			{enc: 3},
-			{enc: 4},
-			{enc: 5},
-			{enc: 6},
-			{enc: 7}
+			{ enc: 0 },
+			{ enc: 1 },
+			{ enc: 2 },
+			{ enc: 3 },
+			{ enc: 4 },
+			{ enc: 5 },
+			{ enc: 6 },
+			{ enc: 7 }
 		],
 		STEP_ENCODERS: [
 			'STEP0_ENCODER',
@@ -708,5 +708,37 @@ window.app_vars = {
 			16,
 			32
 		],
-	}
+	},
+	app_pins: []
 };
+
+function updateAppPins() {
+	debugger;
+	var pins = window.app_vars.app_options.UCNCPINS.map(x => x.pin);
+	pins.forEach((pin) => {
+		if (window.app_vars.app_state[pin + '_BIT'] || (window.app_vars.app_state[pin + '_IO_OFFSET'])) {
+			switch (window.app_vars.app_state) {
+				case 'MCU_ESP8266':
+				case 'MCU_ESP32':
+				case 'MCU_RP2040':
+				case 'MCU_RP2350':
+					window.app_vars.app_pins.push(pin);
+					break;
+				default:
+					if (window.app_vars.app_state[pin + '_BIT'] && window.app_vars.app_state[pin + '_PORT']) {
+						window.app_vars.app_pins.push(pin);
+					}
+					else if (window.app_vars.app_state[pin + '_IO_OFFSET']) {
+						window.app_vars.app_pins.push(pin);
+					}
+					else {
+						window.app_vars.app_pins = window.app_vars.app_pins.filter((i) => { i != pin; });
+					}
+					break;
+			}
+		}
+		else{
+			window.app_vars.app_pins = window.app_vars.app_pins.filter((i) => { i != pin; });
+		}
+	});
+}

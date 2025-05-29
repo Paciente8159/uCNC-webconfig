@@ -7,7 +7,7 @@ window.addEventListener("ucnc_load_components", (e) => {
 	window.ucnc_app.component('textfield', window.TextFieldComponent);
 	window.ucnc_app.component('bitfield', window.BitFieldComponent);
 	window.ucnc_app.component('message', window.MessageComponent);
-
+	window.ucnc_app.component('pin', window.PinComponent)
 });
 
 // Initialize Bootstrap popovers with markdown support
@@ -146,10 +146,11 @@ window.ComboBoxComponent = {
 		configfile: { type: String, default: "" },
 		label: { type: String, default: "Combobox" },
 		vartype: { type: String, default: "" },
-		opts: { type: Array, required: true },
-		keyname: { type: String, default: "id" },  // Renamed to clarify usage
+		opts: { type: Array, default: [{ id: 1, value: 'option1' }] },
+		updatecb: { type: String, default: "" },
+		keyname: { type: String, default: "id" },
 		valname: { type: String, default: "value" },
-		filter: { type: String, default: "item" },
+		filter: { type: String, default: "true" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
 		initial: { type: String, default: "" },
@@ -167,10 +168,13 @@ window.ComboBoxComponent = {
 			},
 			set(newValue) {
 				if (this.nullable && newValue.length == 0) {
-					if ((this.name in this.$root.app_state)) { Object.delete(this.$root.app_state, this.name); }
+					if ((this.name in this.$root.app_state)) { delete this.$root.app_state[this.name]; }
 					return;
 				}
 				this.$root.app_state[this.name] = newValue;
+				if (this.updatecb.length) {
+					new Function(this.updatecb)();
+				}
 			}
 		},
 		filteredOpts() {
@@ -293,10 +297,11 @@ window.RangeComponent = {
 window.AlertComponent = {
 	props: {
 		label: { type: String, default: "Alert" },
-		labelcolor: { type: String, default: "red" },
+		labelcolor: { type: String, default: "" },
 		alerttype: { type: String, default: "danger" },
 		show: { type: String, default: "true" },
-		if: { type: String, default: "true" }
+		if: { type: String, default: "true" },
+		noclose: {type:Boolean, default: false}
 	},
 	data() {
 		return {
@@ -327,7 +332,7 @@ window.AlertComponent = {
 			return `alert alert-${this.alerttype} left-align alert-dismissible fade show`;
 		},
 		titleColor() {
-			return `color:${this.labelcolor}`;
+			return (this.labelcolor.length) ? `color:${this.labelcolor}` : `color:${this.alerttype}`;
 		}
 	},
 	methods: {
@@ -344,9 +349,9 @@ window.AlertComponent = {
 		}
 	},
 	template: `<div :class="classVal" role="alert" v-if="ifCondition" v-show="showCondition">
-    <h2 :style="titleColor">{{label}}</h2>
+    <h2 :style="titleColor" v-if="label.length">{{label}}</h2>
     <p v-html="convertedContent"></p>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" v-if="!noclose"></button>
   </div>`
 };
 
@@ -411,8 +416,6 @@ window.MessageComponent = {
 		</div>
 		</div>`
 };
-
-
 
 window.TextFieldComponent = {
 	props: {
@@ -569,3 +572,68 @@ window.BitFieldComponent = {
 		</div>`,
 };
 
+window.PinComponent = {
+	props: {
+		name: { type: String, required: true },
+		configfile: { type: String, default: "" },
+		label: { type: String, default: "Combobox" },
+		vartype: { type: String, default: "" },
+		filter: { type: String, default: "true" },
+		show: { type: String, default: "true" },
+		if: { type: String, default: "true" },
+		initial: { type: String, default: "" },
+		tooltip: { type: String, default: "" },
+	},
+	computed: {
+		isPinUndefined() {
+			if(this.$root.app_state[this.name]==undefined){
+				return false;
+			}
+
+			if (this.$root.app_state[this.$root.app_state[this.name] + '_BIT'] != undefined) {
+				switch (window.app_vars.app_state) {
+					case 'MCU_ESP8266':
+					case 'MCU_ESP32':
+					case 'MCU_RP2040':
+					case 'MCU_RP2350':
+						return false;
+					default:
+						if (this.$root.app_state[this.$root.app_state[this.name] + '_PORT'] != undefined) {
+							return false;
+						}
+						break;
+				}
+			}
+
+			if (this.$root.app_state[this.$root.app_state[this.name] + '_IO_OFFSET'] != undefined) {
+				return false;
+			}
+
+			return true;
+		},
+		showCondition() {
+			try {
+				return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		},
+		ifCondition() {
+			try {
+				return new Function('app_state', `return ${this.if};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		}
+	},
+	template: `<div v-if="ifCondition" v-show="showCondition">
+	<combobox :name="name" :label="label"
+	:opts="this.$root.app_options.UCNCPINS" keyname="pin" valname="pin"
+	:filter="filter" nullable :initial="initial" :tooltip="tooltip"
+	:vartype="vartype" :configfile="configfile">
+	</combobox>
+	<alert alerttype="warning" labelcolor="warning" label="" v-if="isPinUndefined" noclose>**WARNING:** Pin {{this.$root.app_state[name]}} is not defined.</alert>
+	</div>`
+}

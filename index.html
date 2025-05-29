@@ -38,13 +38,13 @@
 		</div>
 		<main id="app_main" class="d-none">
 			<div class="toast-container p-3 bottom-0 end-0">
-			<message label="Important notice" labelcolor="darkred" alerttype="danger">Config files of the older web builder
-				will not work correctly</message>
-			<message label="Issues" labelcolor="black" alerttype="primary">If you encounter any issue please consider
-				[submiting an issue in the Github project
-				page](https://github.com/Paciente8159/uCNC-config-builder/issues/new), with an
-				attached zip with all the override files and the json config file.</message>
-				</div>
+				<message label="Important notice" labelcolor="darkred" alerttype="danger">Config files of the older web builder
+					will not work correctly</message>
+				<message label="Issues" labelcolor="black" alerttype="primary">If you encounter any issue please consider
+					[submiting an issue in the Github project
+					page](https://github.com/Paciente8159/uCNC-config-builder/issues/new), with an
+					attached zip with all the override files and the json config file.</message>
+			</div>
 			<tabgroup id="config-tabs">
 				<tab id="basic-config" label="Basic Configuration" tabid="config-tabs" active>
 					<div class="mb-3">
@@ -78,8 +78,6 @@
 
 							<combobox name="BAUDRATE" label="What is your COM port baudrate" :opts="app_options.BAUDRATES"
 								keyname="id" valname="id" configfile="boardmap"></combobox>
-
-							<toggle name="ENABLE_COOLANT" label="Enable coolant" configfile="hal"></toggle>
 
 						</accordion-card>
 
@@ -119,7 +117,7 @@
 								tooltip="Uses a 16-bit algorithm that is faster to compute. Good for machines/or processes that require lots of short length motions like deltas or laser engraving">
 							</toggle>
 
-							<toggle name="ENABLE_PIN_DEBUG_EXTRA_CMD" label="Enable extra pin state print commands" configfile="hal"
+							<toggle name="ENABLE_BIT_DEBUG_EXTRA_CMD" label="Enable extra pin state print commands" configfile="hal"
 								tooltip="Enables $P command to print all pins states, stepping positions, encoders positions and system runtime">
 							</toggle>
 
@@ -257,6 +255,10 @@
 								</template>
 							</repeater>
 						</accordion-card>
+						<accordion-card id="io-extender-config" accordionid="boardmap-config-accordion"
+							label="IO extenders">
+							
+						</accordion-card>
 						<accordion-card id="special-outputs-config" label="Special Outputs" accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('stepper')">
 								<template #head>
@@ -268,7 +270,7 @@
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
-										<combobox :name="rowitem.pin+'_PIN'" label="" :opts="app_options.PINS"
+										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
 											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
 											vartype="int" nullable tooltip="Defines the pin gpio number">
 										</combobox>
@@ -303,7 +305,7 @@
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
-										<combobox :name="rowitem.pin+'_PIN'" label="" :opts="app_options.PINS"
+										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
 											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
 											vartype="int" nullable tooltip="Defines the pin gpio number">
 										</combobox>
@@ -319,21 +321,21 @@
 											filter="item.mcu.includes(app_state.MCU)" keyname="channel" valname="channel"
 											configfile="boardmap" nullable
 											tooltip="Defines the PWM channel used by this pin (Architecture dependant)"
-											:if="rowitem.type.includes('pwm')">
+											v-if="rowitem.type.includes('pwm')">
 										</combobox>
 									</td>
 									<td>
 										<combobox :name="rowitem.pin+'_TIMER'" label="" :opts="app_options.TIMERS"
 											filter="item.mcu.includes(app_state.MCU)" keyname="timer" valname="timer" configfile="boardmap"
 											nullable tooltip="Defines the timer associated to this PWM (Architecture dependant)"
-											:if="rowitem.type.includes('pwm')">
+											v-if="rowitem.type.includes('pwm')">
 										</combobox>
 									</td>
 									<td v-if="this.$root.app_state.MCU=='MCU_SAMD21'">
 										<combobox :name="rowitem.pin+'_MUX'" label="" :opts="app_options.MUXS"
 											filter="item.mcu.includes(app_state.MCU)" keyname="mux" valname="mux" configfile="boardmap"
 											nullable tooltip="Defines the PWM pin mux (Architecture dependant)"
-											:if="rowitem.type.includes('pwm')">
+											v-if="rowitem.type.includes('pwm')">
 									</td>
 									</vcell>
 									<td>
@@ -356,7 +358,7 @@
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
-										<combobox :name="rowitem.pin+'_PIN'" label="" :opts="app_options.PINS"
+										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
 											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
 											vartype="int" nullable>
 										</combobox>
@@ -391,7 +393,7 @@
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
-										<combobox :name="rowitem.pin+'_PIN'" label="" :opts="app_options.PINS"
+										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
 											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
 											vartype="int" tooltip="Defines the pin gpio number" nullable>
 										</combobox>
@@ -440,7 +442,7 @@
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
-										<combobox :name="rowitem.pin+'_PIN'" label="" :opts="app_options.PINS"
+										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
 											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
 											vartype="int" tooltip="Defines the pin gpio number" nullable>
 										</combobox>
@@ -479,7 +481,7 @@
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
-										<combobox :name="rowitem.pin+'_PIN'" label="" :opts="app_options.PINS"
+										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
 											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
 											vartype="int" nullable tooltip="Defines the pin gpio number">
 										</combobox>
@@ -531,7 +533,7 @@
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
-										<combobox :name="rowitem.pin+'_PIN'" label="" :opts="app_options.PINS"
+										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
 											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
 											vartype="int" tooltip="Defines the pin gpio number" nullable>
 										</combobox>
@@ -551,13 +553,48 @@
 										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
 											valname="offset" configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC595 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly."
-											:if="rowitem.type.includes('generic_output')">
+											v-if="rowitem.type.includes('generic_output')">
 										</combobox>
 									</td>
 								</template>
 							</vtable>
 						</accordion-card>
 					</accordion>
+				</tab>
+				<tab id="tools-config" label="Tools" tabid="config-tabs">
+					<controlgroup label="Tools basic settings">
+
+						<range name="TOOL_COUNT" label="How many tools will your machine have?" min="0" max="15" step="1"
+							configfile="boardmap" initial="1"></range>
+
+						<toggle name="ENABLE_COOLANT" label="Enable coolant" configfile="hal"></toggle>
+
+						<alert if="!app_state.ENABLE_COOLANT" alerttype="primary" label="Notice">
+							Coolant is disabled!
+							Some options might be ommited.
+						</alert>
+
+						<toggle name="ENABLE_LASER_PPI" label="Enable Laser PPI tool mode" configfile="hal"
+						tooltip="This enables laser PPI (points per inch) tool mode. This adds some features to the motion planner to allow laser to also work in a pulse per inche specific motion pattern. This is an effective way to get consistent results with laser."></toggle>
+
+						<toggle name="ENABLE_PLASMA_THC" label="Enable Plasma THC tool mode" configfile="hal"
+						tooltip="This enables Plasma THC tool mode. This adds some features to the motion planner to allow THC specific motion patterns."></toggle>
+
+					</controlgroup>
+
+					<accordion id="tools-config-accordion" :opts="app_options.TOOLS" keyname="tool" valname="tool"
+						filter="item.toolcount&lt;=app_state.TOOL_COUNT">
+						<template #default="{item}">
+							<accordion-card :label="item.tool" :id="'tool-accordion'+item.toolcount"
+								accordionid="tools-config-accordion">
+								<combobox :name="item.tool" :label="'Choose a tool controller for '+item.tool"
+									:opts="app_options.TOOL_OPTIONS" keyname="id" valname="name" initial="spindle_pwm"></combobox>
+									<toolsloader :tooldriver="'app_state.'+item.tool"></toolsloader>
+									
+							</accordion-card>
+						</template>
+					</accordion>
+
 				</tab>
 				<tab id="hal-config" label="HAL" tabid="config-tabs">
 
@@ -654,32 +691,15 @@
 							</repeater>
 
 						</accordion-card>
-
-						<accordion-card id="hal-config-tools" accordionid="hal-config-accordion" label="Tools">
-
-							<alert label="" alerttype="warning" if="!app_state.ENABLE_COOLANT">
-								Coolant is disabled! Some options might be ommited.
-							</alert>
-
-							<repeater label="Available tools" :opts="app_options.TOOLS">
-								<template #default="{ item: i }">
-									<combobox :name="'TOOL'+i.tool" :label="'Select TOOL' + i.tool" :opts="app_options.TOOL_OPTIONS"
-										keyname="id" valname="name" configfile="hal" nullable tooltip="Defines the tool to be used">
-									</combobox>
-									<spindlepwm :if="'app_state.TOOL'+i.tool+'==\'spindle_pwm\''"></spindlepwm>
-								</template>
-							</repeater>
-						</accordion-card>
-					</accordion>
-
 				</tab>
 			</tabgroup>
+
 		</main>
 	</div>
 	<script src="options.js"></script>
 	<script src="containers.js"></script>
 	<script src="controls.js"></script>
-	<!-- <script src="tools.js"></script> -->
+	<script src="tools.js"></script>
 	<script>
 		// Vue.config.devtools = true;
 		const { createApp } = Vue;
@@ -687,7 +707,7 @@
 			data() {
 				return app_vars;
 			},
-			mounted(){
+			mounted() {
 				document.getElementById('app_loader').classList.add('d-none');
 				document.getElementById('app_main').classList.remove('d-none');
 			}
@@ -697,21 +717,6 @@
 			window.dispatchEvent(new Event("ucnc_load_components"));
 			window.ucnc_app.mount('#app');
 		});
-
-		async function ucnc_load_tools() {
-			for (let tool of window.app_vars.app_options.TOOL_OPTIONS) {
-				try {
-					const response = await fetch(`./tools/${tool.id}.js`);
-					if (!response.ok) throw new Error(`Failed to fetch ${tool.id}.js`);
-
-					const scriptContent = await response.text();
-					new Function(scriptContent)();
-				} catch (error) {
-					console.error(`Error loading ${tool.id}.js:`, error.message);
-				}
-			}
-			window.dispatchEvent(new Event("ucnc_tools_loaded"));
-		}
 
 		ucnc_load_tools();
 	</script>

@@ -1,36 +1,22 @@
 window.SpindlePWMComponent = {
-	components: { 'alert': window.AlertComponent },
 	props: {
-		if: { type: String, default: "true" }
+		tool: { type: String, default: "TOOL0" }
 	},
-	computed: {
-		showCondition() {
-			try {
-				return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
-			} catch (error) {
-				console.error("Invalid expression:", error);
-				return true;
-			}
-		},
-		ifCondition() {
-			try {
-				return new Function('app_state', `return ${this.if};`)(this.$root.app_state);
-			} catch (error) {
-				console.error("Invalid expression:", error);
-				return true;
-			}
-		},
+	computed:{
+		toolMatch(){
+				return (this.$root.app_state[this.tool] == 'spindle_pwm');
+		}
 	},
-	updated() {
-		debugger;
-	},
-	template: `<div v-if="ifCondition" v-show="showCondition">
-	<alert label="" alerttype="danger">
-								Coolant is disabled! Some options might be ommited.
-							</alert></div>`
+	template: `<div v-if="toolMatch">
+				<pin name="SPINDLE_PWM" label="Select the Spindle PWM pin" filter="item.type.includes('pwm')" configfile="hal"></pin>
+			<pin name="SPINDLE_PWM_DIR" label="Select the Spindle dir pin" filter="item.type.includes('generic_output')" configfile="hal"></pin>
+			<pin name="SPINDLE_PWM_COOLANT_FLOOD" label="Select the Spindle coolant flood pin" filter="item.type.includes('generic_output')" if="app_state.ENABLE_COOLANT" configfile="hal"></pin>
+			<pin name="SPINDLE_PWM_COOLANT_MIST" label="Select the Spindle coolant mist pin" filter="item.type.includes('generic_output')" if="app_state.ENABLE_COOLANT" configfile="hal"></pin>
+			</div>`
 };
 
 window.addEventListener("ucnc_load_components", (e) => {
-	window.ucnc_app.component('spindlepwm', window.SpindlePWMComponent);
+	window.ucnc_app.component('spindle_pwm', window.SpindlePWMComponent);
+	window.ToolsLoaderComponent.template += `<spindle_pwm :tool="tool"></spindle_pwm>`;
 });
 

@@ -83,10 +83,24 @@ window.TabComponent = {
 window.AccordionComponent = {
 	props: {
 		id: { type: String, required: true },
+		opts: { type: Array, default: [{ id: 1, value: 1 }] },
+		keyname: { type: String, default: "id" },
+		valname: { type: String, default: "value" },
+		filter: { type: String, default: "true" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" }
 	},
 	computed: {
+		filteredOpts() {
+			return this.opts.filter(item => {
+				try {
+					return new Function('item', 'app_state', `return ${this.filter};`)(item, this.$root.app_state);
+				} catch (error) {
+					console.error("Invalid expression:", error);
+					return true; // Default to returning all items if there's an error
+				}
+			});
+		},
 		showCondition() {
 			try {
 				return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
@@ -137,8 +151,8 @@ window.AccordionComponent = {
 			});
 		});
 	},
-	template: `<div class="accordion" :id="id">
-		<slot></slot>
+	template: `<div class="accordion" :id="id" v-if="ifCondition" v-show="showCondition">
+		<slot v-for="o in filteredOpts" :key="o[keyname]" :value="o[keyname]" :item="o"></slot>
 		</div>`
 };
 
@@ -185,10 +199,10 @@ window.AccordionCardComponent = {
 window.RepeaterGroupComponent = {
 	props: {
 		label: { type: String, default: "Repeater group" },
-		opts: { type: Array, required: true },
-		keyname: { type: String, default: "id" },  // Renamed to clarify usage
+		opts: { type: Array, default: [{ id: 1, value: 1 }] },
+		keyname: { type: String, default: "id" },
 		valname: { type: String, default: "value" },
-		filter: { type: String, default: "item" },
+		filter: { type: String, default: "true" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
 	},
