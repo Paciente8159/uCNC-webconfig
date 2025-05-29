@@ -23,10 +23,11 @@
 	<div id="app">
 		<header>
 			<!-- place navbar here -->
-			<div class="center-content">
+			<div class="d-flex flex-column justify-content-center align-items-center">
 				<img class="card-img-top logo-sm" src="https://raw.githubusercontent.com/Paciente8159/uCNC/master/docs/logo.png"
 					alt="µCNC logo">
-				<h1>µCNC configuration generator v2</h1>
+				<h1 class="fs-4">µCNC configuration generator v2</h1>
+				<div></div>
 			</div>
 
 		</header>
@@ -255,9 +256,8 @@
 								</template>
 							</repeater>
 						</accordion-card>
-						<accordion-card id="io-extender-config" accordionid="boardmap-config-accordion"
-							label="IO extenders">
-							
+						<accordion-card id="io-extender-config" accordionid="boardmap-config-accordion" label="IO extenders">
+
 						</accordion-card>
 						<accordion-card id="special-outputs-config" label="Special Outputs" accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('stepper')">
@@ -575,10 +575,12 @@
 						</alert>
 
 						<toggle name="ENABLE_LASER_PPI" label="Enable Laser PPI tool mode" configfile="hal"
-						tooltip="This enables laser PPI (points per inch) tool mode. This adds some features to the motion planner to allow laser to also work in a pulse per inche specific motion pattern. This is an effective way to get consistent results with laser."></toggle>
+							tooltip="This enables laser PPI (points per inch) tool mode. This adds some features to the motion planner to allow laser to also work in a pulse per inche specific motion pattern. This is an effective way to get consistent results with laser.">
+						</toggle>
 
 						<toggle name="ENABLE_PLASMA_THC" label="Enable Plasma THC tool mode" configfile="hal"
-						tooltip="This enables Plasma THC tool mode. This adds some features to the motion planner to allow THC specific motion patterns."></toggle>
+							tooltip="This enables Plasma THC tool mode. This adds some features to the motion planner to allow THC specific motion patterns.">
+						</toggle>
 
 					</controlgroup>
 
@@ -589,8 +591,8 @@
 								accordionid="tools-config-accordion">
 								<combobox :name="item.tool" :label="'Choose a tool controller for '+item.tool"
 									:opts="app_options.TOOL_OPTIONS" keyname="id" valname="name" initial="spindle_pwm"></combobox>
-									<toolsloader :tooldriver="'app_state.'+item.tool"></toolsloader>
-									
+								<toolsloader :tooldriver="'app_state.'+item.tool"></toolsloader>
+
 							</accordion-card>
 						</template>
 					</accordion>
@@ -691,6 +693,69 @@
 							</repeater>
 
 						</accordion-card>
+
+						<accordion-card id="hal-config-spi-i2c" accordionid="hal-config-accordion"
+							label="SPI and I2C Expansion interfaces">
+
+							<toggle name="SOFT_SPI_ENABLED" label="Enable shared software SPI port" configfile="hal"
+								tooltip="Enable a sharable software emulated SPI port.">
+							</toggle>
+
+							<pin name="SOFT_SPI_CLK" label="Soft SPI clock pin" filter="item.type.includes('generic_output')"
+								configfile="hal" if="app_state.SOFT_SPI_ENABLED"></pin>
+
+							<pin name="SOFT_SPI_SDO" label="Soft SPI Serial Data Out pin"
+								filter="item.type.includes('generic_output')" configfile="hal" if="app_state.SOFT_SPI_ENABLED"></pin>
+
+							<pin name="SOFT_SPI_SDI" label="Soft SPI Serial Data In pin" filter="item.type.includes('generic_input')"
+								configfile="hal" if="app_state.SOFT_SPI_ENABLED"></pin>
+
+						</accordion-card>
+
+						<accordion-card id="hal-config-encoders" accordionid="hal-config-accordion" label="Encoders">
+
+							<range name="ENCODERS" label="Encoder count" configfile="hal" min="0" max="8" step="1" vartype="int"
+								tooltip="Enable encoders. There are multiple types of encoders available (pulse, communications based encoders, etc...). You can also assing encoders to perform several tasks">
+							</range>
+
+							<repeater label="Encoders pinout" :opts="app_options.ENCODER_LIST" valname="id"
+								filter="item.enccount&lt;app_state.ENCODERS" if="app_state.ENCODERS">
+								<template #default="{item}">
+									<pin :name="item.id+'_PULSE'" :label="'Encoder '+item.enccount+' pulse pin'"
+										filter="item.type.includes('interruptable_generic_input')" configfile="hal"></pin>
+									<pin :name="item.id+'_DIR'" :label="'Encoder '+item.enccount+' direction pin'"
+										filter="item.type.includes('generic_input')" configfile="hal"></pin>
+								</template>
+							</repeater>
+
+							<toggle name="ASSIGN_ENCODERS" label="Assign step encoders" if="app_state.ENCODERS"
+								tooltip="Assign encoder to step motors.">
+							</toggle>
+
+							<repeater label="Encoders assignment" :opts="app_options.STEP_ENCODERS" valname="id"
+								if="app_state.ASSIGN_ENCODERS">
+								<template #default="{item}">
+									<combobox :name="item.id" :label="item.id +' assignment'" :opts="app_options.ENCODER_LIST"
+										valname="id" configfile="hal" nullable></combobox>
+								</template>
+							</repeater>
+
+							<toggle name="ENABLE_ENCODER_RPM" label="Assign RPM encoder" if="app_state.ENCODERS"
+								tooltip="Assign encoder to tool RPM counter.">
+							</toggle>
+							<controlgroup if="app_state.ENABLE_ENCODER_RPM" label="RPM encoder settings">
+
+								<combobox name="RPM_ENCODER" label="RPM_ENCODER assignment" :opts="app_options.ENCODER_LIST"
+									valname="id" configfile="hal"  nullable></combobox>
+
+								<range name="RPM_PPR" label="RPM encoder PPR (pulses per revolution)" configfile="hal" min="0"
+									max="10000" step="1" vartype="int"></range>
+
+								<pin name="RPM_INDEX_INPUT" label="Select the RPM index pin (360º input)"
+									filter="item.type.includes('generic_input')" configfile="hal"></pin>
+							</controlgroup>
+						</accordion-card>
+
 				</tab>
 			</tabgroup>
 

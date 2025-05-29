@@ -11,11 +11,6 @@ window.app_vars = {
 			{ id: 'v1.12.2', tag: 11202, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.12.2.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
 			{ id: 'v1.12.1', tag: 11201, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.12.1.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
 			{ id: 'v1.12.0', tag: 11200, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.12.0.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
-			{ id: 'v1.11.x-bugfix', tag: 11179, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/v1.11.x-bugfix.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
-			{ id: 'v1.10.x-bugfix', tag: 11079, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/v1.10.x-bugfix.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v11000.zip' },
-			{ id: 'v1.9.x-bugfix', tag: 10979, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/v1.9.x-bugfix.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v10880.zip' },
-			{ id: 'v1.8.x-bugfix', tag: 10879, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/v1.8.x-bugfix.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v10800.zip' },
-			{ id: 'v1.7.x-bugfix', tag: 10779, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/v1.7.x-bugfix.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/v1.7.x.zip' },
 		],
 		BAUDRATES: [
 			{ id: 9600 },
@@ -572,25 +567,25 @@ window.app_vars = {
 			{ tool: 'TOOL14', toolcount: 15 },
 			{ tool: 'TOOL15', toolcount: 16 }
 		],
-		ENCODER: [
-			{ enc: 0 },
-			{ enc: 1 },
-			{ enc: 2 },
-			{ enc: 3 },
-			{ enc: 4 },
-			{ enc: 5 },
-			{ enc: 6 },
-			{ enc: 7 }
+		ENCODER_LIST: [
+			{ id: 'ENC0', enccount:0 },
+			{ id: 'ENC1', enccount:1 },
+			{ id: 'ENC2', enccount:2 },
+			{ id: 'ENC3', enccount:3 },
+			{ id: 'ENC4', enccount:4 },
+			{ id: 'ENC5', enccount:5 },
+			{ id: 'ENC6', enccount:6 },
+			{ id: 'ENC7', enccount:7 }
 		],
 		STEP_ENCODERS: [
-			'STEP0_ENCODER',
-			'STEP1_ENCODER',
-			'STEP2_ENCODER',
-			'STEP3_ENCODER',
-			'STEP4_ENCODER',
-			'STEP5_ENCODER',
-			'STEP6_ENCODER',
-			'STEP7_ENCODER'
+			{id: 'STEP0_ENCODER'},
+			{id: 'STEP1_ENCODER'},
+			{id: 'STEP2_ENCODER'},
+			{id: 'STEP3_ENCODER'},
+			{id: 'STEP4_ENCODER'},
+			{id: 'STEP5_ENCODER'},
+			{id: 'STEP6_ENCODER'},
+			{id: 'STEP7_ENCODER'}
 		],
 		AXIS: [
 			{ key: 1 },

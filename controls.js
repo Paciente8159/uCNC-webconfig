@@ -10,6 +10,18 @@ window.addEventListener("ucnc_load_components", (e) => {
 	window.ucnc_app.component('pin', window.PinComponent)
 });
 
+function typeConverter(type = 'default', value) {
+	switch (type) {
+		case 'bool':
+			return Boolean(value);
+		case 'int':
+			return parseInt(value);
+		case 'float':
+			return parseFloat(value);
+	}
+	return value;
+}
+
 // Initialize Bootstrap popovers with markdown support
 function componentTooltip(comp) {
 	if (!comp.ifCondition || !comp.tooltip.length) {
@@ -41,10 +53,10 @@ window.ToggleComponent = {
 	computed: {
 		modelValue: {
 			get() {
-				return this.$root.app_state[this.name];
+				return typeConverter(this.vartype, this.$root.app_state[this.name]);
 			},
 			set(newValue) {
-				this.$root.app_state[this.name] = newValue;
+				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
 			}
 		},
 		showCondition() {
@@ -98,10 +110,10 @@ window.CheckComponent = {
 	computed: {
 		modelValue: {
 			get() {
-				return this.$root.app_state[this.name];
+				return typeConverter(this.vartype, this.$root.app_state[this.name]);
 			},
 			set(newValue) {
-				this.$root.app_state[this.name] = newValue;
+				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
 			}
 		},
 		showCondition() {
@@ -164,14 +176,14 @@ window.ComboBoxComponent = {
 				if (this.nullable && !this.$root.app_state[this.name]) {
 					return null;
 				}
-				return this.$root.app_state[this.name];
+				return typeConverter(this.vartype, this.$root.app_state[this.name]);
 			},
 			set(newValue) {
 				if (this.nullable && newValue.length == 0) {
 					if ((this.name in this.$root.app_state)) { delete this.$root.app_state[this.name]; }
 					return;
 				}
-				this.$root.app_state[this.name] = newValue;
+				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
 				if (this.updatecb.length) {
 					new Function(this.updatecb)();
 				}
@@ -250,10 +262,10 @@ window.RangeComponent = {
 	computed: {
 		modelValue: {
 			get() {
-				return this.$root.app_state[this.name];
+				return typeConverter(this.vartype, this.$root.app_state[this.name]);
 			},
 			set(newValue) {
-				this.$root.app_state[this.name] = newValue;
+				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
 			}
 		},
 		showCondition() {
@@ -301,7 +313,7 @@ window.AlertComponent = {
 		alerttype: { type: String, default: "danger" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
-		noclose: {type:Boolean, default: false}
+		noclose: { type: Boolean, default: false }
 	},
 	data() {
 		return {
@@ -505,10 +517,10 @@ window.BitFieldComponent = {
 	computed: {
 		modelValue: {
 			get() {
-				return this.$root.app_state[this.name];
+				return typeConverter('int', this.$root.app_state[this.name]);
 			},
 			set(newValue) {
-				this.$root.app_state[this.name] = newValue;
+				this.$root.app_state[this.name] = typeConverter('int', newValue);
 				updateBits();
 			}
 		},
@@ -586,7 +598,7 @@ window.PinComponent = {
 	},
 	computed: {
 		isPinUndefined() {
-			if(this.$root.app_state[this.name]==undefined){
+			if (this.$root.app_state[this.name] == undefined) {
 				return false;
 			}
 
