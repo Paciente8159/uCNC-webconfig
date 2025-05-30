@@ -173,16 +173,9 @@ window.ComboBoxComponent = {
 	computed: {
 		modelValue: {
 			get() {
-				if (this.nullable && !this.$root.app_state[this.name]) {
-					return null;
-				}
 				return typeConverter(this.vartype, this.$root.app_state[this.name]);
 			},
 			set(newValue) {
-				if (this.nullable && newValue.length == 0) {
-					if ((this.name in this.$root.app_state)) { delete this.$root.app_state[this.name]; }
-					return;
-				}
 				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
 				if (this.updatecb.length) {
 					new Function(this.updatecb)();
@@ -218,9 +211,6 @@ window.ComboBoxComponent = {
 	},
 	created() {
 		if (!(this.name in this.$root.app_state)) {
-			if (this.nullable && this.initial.length == 0) {
-				return;
-			}
 			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":"${this.initial}"}`));
 		}
 	},
@@ -234,7 +224,7 @@ window.ComboBoxComponent = {
 		data-bs-toggle="popover" :data-bs-title="tooltiptitle">
 		<label class="form-check-label" :for="name"  v-if="label.length">{{ label }}</label>
 		<select class="form-select form-select-md" :name="name" :id="name" v-model="modelValue"
-		:config-file="configfile" :var-type="vartype">
+		:config-file="configfile" :var-type="vartype" :class="nullable ? 'nullable':''">
 		<option v-if="nullable"></option>
 		<option v-for="o in filteredOpts" :key="o[keyname]" :value="o[keyname]">
 		{{ o[valname] }}
@@ -598,11 +588,12 @@ window.PinComponent = {
 	},
 	computed: {
 		isPinUndefined() {
-			if (this.$root.app_state[this.name] == undefined) {
+
+			if (this.$root.app_state[this.name] == undefined || !this.$root.app_state[this.name].length) {
 				return false;
 			}
 
-			if (this.$root.app_state[this.$root.app_state[this.name] + '_BIT'] != undefined) {
+			if (this.$root.app_state[this.$root.app_state[this.name] + '_BIT'] != undefined && this.$root.app_state[this.$root.app_state[this.name] + '_BIT'].length) {
 				switch (window.app_vars.app_state) {
 					case 'MCU_ESP8266':
 					case 'MCU_ESP32':
@@ -610,14 +601,14 @@ window.PinComponent = {
 					case 'MCU_RP2350':
 						return false;
 					default:
-						if (this.$root.app_state[this.$root.app_state[this.name] + '_PORT'] != undefined) {
+						if (this.$root.app_state[this.$root.app_state[this.name] + '_PORT'] != undefined && this.$root.app_state[this.$root.app_state[this.name] + '_PORT'].length) {
 							return false;
 						}
 						break;
 				}
 			}
 
-			if (this.$root.app_state[this.$root.app_state[this.name] + '_IO_OFFSET'] != undefined) {
+			if (this.$root.app_state[this.$root.app_state[this.name] + '_IO_OFFSET'] != undefined && this.$root.app_state[this.$root.app_state[this.name] + '_IO_OFFSET'].length) {
 				return false;
 			}
 

@@ -257,15 +257,20 @@
 							</repeater>
 						</accordion-card>
 						<accordion-card id="io-extender-config" accordionid="boardmap-config-accordion" label="IO extenders">
-
+							<range name="IC74HC595_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC595's:"
+							tooltip="Defines the total number of daisy chained 74HC595 in your board. Depending on you configuration this number can be ignored. For example if the board uses a custom callback to drive the data to the shift register."></range>
+						
+							<range name="IC74HC165_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC165's:"
+							tooltip="Defines the total number of daisy chained 74HC165 in your board. Depending on you configuration this number can be ignored. For example if the board uses a custom callback to drive the data to the shift register."></range>
 						</accordion-card>
+
 						<accordion-card id="special-outputs-config" label="Special Outputs" accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('stepper')">
 								<template #head>
 									<th scope="col">µCNC pin</th>
 									<th scope="col">Pin number</th>
 									<th scope="col">Pin port</th>
-									<th scope="col">IO OFFSET(74HC595)</th>
+									<th scope="col" v-if="this.$root.app_state.IC74HC595_COUNT">IO OFFSET(74HC595)</th>
 								</template>
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
@@ -281,7 +286,7 @@
 											nullable tooltip="Defines the pin port">
 										</combobox>
 									</td>
-									<td>
+									<td v-if="this.$root.app_state.IC74HC595_COUNT">
 										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
 											valname="offset" configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC595 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly.">
@@ -300,7 +305,7 @@
 									<th scope="col">CHANNEL</th>
 									<th scope="col">TIMER</th>
 									<th scope="col" v-if="this.$root.app_state.MCU=='MCU_SAMD21'">MUX</th>
-									<th scope="col">IO OFFSET(74HC595)</th>
+									<th scope="col" v-if="this.$root.app_state.IC74HC595_COUNT">IO OFFSET(74HC595)</th>
 								</template>
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
@@ -338,7 +343,7 @@
 											v-if="rowitem.type.includes('pwm')">
 									</td>
 									</vcell>
-									<td>
+									<td v-if="this.$root.app_state.IC74HC595_COUNT">
 										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
 											valname="offset" configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC595 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly.">
@@ -353,7 +358,7 @@
 									<th scope="col">µCNC pin</th>
 									<th scope="col">Pin number</th>
 									<th scope="col">Pin port</th>
-									<th scope="col">IO OFFSET(74HC595)</th>
+									<th scope="col" v-if="this.$root.app_state.IC74HC595_COUNT">IO OFFSET(74HC595)</th>
 								</template>
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
@@ -369,7 +374,7 @@
 											nullable tooltip="Defines the pin port">
 										</combobox>
 									</td>
-									<td>
+									<td v-if="this.$root.app_state.IC74HC595_COUNT">
 										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
 											valname="offset" configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC595 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly.">
@@ -388,7 +393,7 @@
 									<th scope="col">Pin port</th>
 									<th scope="col">Pullup</th>
 									<th scope="col">ISR</th>
-									<th scope="col">IO OFFSET(74HC165)</th>
+									<th scope="col" v-if="this.$root.app_state.IC74HC165_COUNT">IO OFFSET(74HC165)</th>
 								</template>
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
@@ -420,7 +425,7 @@
 											vartype="int" nullable>
 										</combobox>
 									</td>
-									<td>
+									<td v-if="this.$root.app_state.IC74HC165_COUNT">
 										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
 											valname="offset" configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC165 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly.">
@@ -476,7 +481,7 @@
 									<th scope="col">Pin port</th>
 									<th scope="col">Pullup</th>
 									<th scope="col">ISR</th>
-									<th scope="col">IO OFFSET(74HC165)</th>
+									<th scope="col" v-if="this.$root.app_state.IC74HC165_COUNT">IO OFFSET(74HC165)</th>
 								</template>
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
@@ -510,7 +515,7 @@
 											</combobox>
 										</div>
 									</td>
-									<td>
+									<td v-if="this.$root.app_state.IC74HC165_COUNT">
 										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
 											valname="offset" configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC165 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly.">
@@ -528,7 +533,7 @@
 									<th scope="col">Pin number</th>
 									<th scope="col">Pin port</th>
 									<th scope="col">Pullup</th>
-									<th scope="col">IO OFFSET(74HC595)</th>
+									<th scope="col" v-if="this.$root.app_state.IC74HC595_COUNT">IO OFFSET(74HC595)</th>
 								</template>
 								<template #row="{rowitem}">
 									<td><strong>{{rowitem.pin}}</strong></td>
@@ -549,7 +554,7 @@
 											valname="offset" configfile="boardmap" tooltip="Enables internal weak pull up on this pin">
 										</toggle>
 									</td>
-									<td>
+									<td v-if="this.$root.app_state.IC74HC595_COUNT">
 										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
 											valname="offset" configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC595 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly."
@@ -746,7 +751,7 @@
 							<controlgroup if="app_state.ENABLE_ENCODER_RPM" label="RPM encoder settings">
 
 								<combobox name="RPM_ENCODER" label="RPM_ENCODER assignment" :opts="app_options.ENCODER_LIST"
-									valname="id" configfile="hal"  nullable></combobox>
+									valname="id" configfile="hal" nullable></combobox>
 
 								<range name="RPM_PPR" label="RPM encoder PPR (pulses per revolution)" configfile="hal" min="0"
 									max="10000" step="1" vartype="int"></range>
@@ -757,6 +762,48 @@
 						</accordion-card>
 
 				</tab>
+				<tab id="module-config" label="Modules" tabid="config-tabs">
+					<accordion id="module-config-accordion">
+						<accordion-card id="module-config-basic" accordionid="module-config-accordion"
+							label="Modules basic settings">
+
+							<toggle name="ENABLE_MAIN_LOOP_MODULES" label="Enable main cnc application loop extension callbacks"
+								configfile="hal">
+							</toggle>
+
+							<toggle name="ENABLE_IO_MODULES" label="Enable IO extension callbacks"
+								configfile="hal">
+							</toggle>
+
+							<toggle name="ENABLE_PARSER_MODULES" label="Enable Gcode and Grbl commands
+							parser extension
+							callbacks"
+								configfile="hal">
+							</toggle>
+
+							<toggle name="ENABLE_MOTION_CONTROL_MODULES" label="Enable motion control
+							extension
+							callbacks"
+								configfile="hal">
+							</toggle>
+
+							<toggle name="DISABLE_SETTINGS_MODULES" label="Disable settings storage
+							extension
+							callbacks"
+								configfile="hal">
+							</toggle>
+
+							<toggle name="ENABLE_ITP_FEED_TASK" label="Run the interpolator in the RTC task"
+								configfile="hal"
+								tooltip="When running extra modules and functionalities this
+							increases the computation time required for a whole internal cycle to be computed. This can lead to step
+							interpolation starving and hickups in the motion. To prevent this you can enable this feature to isolate
+							the stepper interpolator from the main loop and be regulary called from the RTC task.">
+							</toggle>
+						</accordion-card>
+						<modulesloader filter=""></modulesloader>
+					</accordion>
+				</tab>
 			</tabgroup>
 
 		</main>
@@ -764,7 +811,7 @@
 	<script src="options.js"></script>
 	<script src="containers.js"></script>
 	<script src="controls.js"></script>
-	<script src="tools.js"></script>
+	<script src="component_loader.js"></script>
 	<script>
 		// Vue.config.devtools = true;
 		const { createApp } = Vue;
@@ -783,7 +830,7 @@
 			window.ucnc_app.mount('#app');
 		});
 
-		ucnc_load_tools();
+		ucnc_component_loader();
 	</script>
 </body>
 
