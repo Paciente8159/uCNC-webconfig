@@ -7,7 +7,8 @@ window.addEventListener("ucnc_load_components", (e) => {
 	window.ucnc_app.component('textfield', window.TextFieldComponent);
 	window.ucnc_app.component('bitfield', window.BitFieldComponent);
 	window.ucnc_app.component('message', window.MessageComponent);
-	window.ucnc_app.component('pin', window.PinComponent)
+	window.ucnc_app.component('pin', window.PinComponent);
+	window.ucnc_app.component('buttoncb', window.ButtonComponent);
 });
 
 function typeConverter(type = 'default', value) {
@@ -48,7 +49,9 @@ window.ToggleComponent = {
 		if: { type: String, default: "true" },
 		initial: { type: Boolean, default: false },
 		tooltiptitle: { type: String, default: "Info" },
-		tooltip: { type: String, default: "" }
+		tooltip: { type: String, default: "" },
+		// oncallback: { type: String, default: "" },
+		// offcallback: { type: String, default: "" },
 	},
 	computed: {
 		modelValue: {
@@ -57,6 +60,13 @@ window.ToggleComponent = {
 			},
 			set(newValue) {
 				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
+				// debugger;
+				// if (Boolean(newValue) && this.oncallback.length) {
+				// 	new Function(this.oncallback)();
+				// }
+				// else if (this.offcallback.length) {
+				// 	new Function(this.offcallback)();
+				// }
 			}
 		},
 		showCondition() {
@@ -114,6 +124,12 @@ window.CheckComponent = {
 			},
 			set(newValue) {
 				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
+				if (Boolean(newValue) && this.oncallback.length) {
+					new Function(this.oncallback)();
+				}
+				else if (this.offcallback.length) {
+					new Function(this.offcallback)();
+				}
 			}
 		},
 		showCondition() {
@@ -431,7 +447,7 @@ window.TextFieldComponent = {
 		initial: { type: String, default: "" },
 		tooltiptitle: { type: String, default: "Info" },
 		tooltip: { type: String, default: "" },
-		pattern: { type: String, default: "*" }
+		pattern: { type: String, default: ".*" }
 	},
 	computed: {
 		modelValue: {
@@ -483,7 +499,7 @@ window.TextFieldComponent = {
 	template: `<div :class="label.length ? 'mb-3':''"  v-if="ifCondition" v-show="showCondition"
 		data-bs-toggle="popover"
 		:data-bs-title="tooltiptitle">
-		<label for="" class="form-label" v-if="label.length">The board name printed with $I command? <span>{{modelValue}}</span></label>
+		<label for="" class="form-label" v-if="label.length">{{label}}</label>
 		<input type="text" class="form-control" :name="name" :id="name" v-model="modelValue"
 		:placeholder="placeholder" :config-file="configfile" :pattern="pattern" @input="validateInput">
 		</div>`
@@ -639,4 +655,49 @@ window.PinComponent = {
 	</combobox>
 	<alert alerttype="warning" labelcolor="warning" label="" v-if="isPinUndefined" noclose>**WARNING:** Pin {{this.$root.app_state[name]}} is not defined.</alert>
 	</div>`
+}
+
+window.ButtonComponent = {
+	props: {
+		label: { type: String, default: "Clik me!" },
+		labelcolor: { type: String, default: "warning" },
+		if: { type: String, default: "true" },
+		enable: { type: String, default: "" },
+		disable: { type: String, default: "" },
+	},
+	methods: {
+		setElements() {
+			this.enable.split(',').forEach((e) => {
+				this.$root.app_state[e] = true;
+			});
+			this.disable.split(',').forEach((e) => {
+				this.$root.app_state[e] = false;
+			});
+		}
+	},
+	computed: {
+		ifCondition() {
+			try {
+				let ifstate = new Function('app_state', `return ${this.if};`)(this.$root.app_state);
+				if (!ifstate) {
+					return false;
+				}
+				if(this.enable.split(',').some(val => this.$root.app_state[val]==false)){
+					return true;
+				}
+
+				if(this.disable.split(',').some(val => this.$root.app_state[val]==true)){
+					return true;
+				}
+
+
+				return false;
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		}
+	},
+	template: `<button type="button" :class="'btn btn-outline-'+labelcolor"
+			@click="setElements"  v-if="ifCondition"><slot></slot></button>`
 }

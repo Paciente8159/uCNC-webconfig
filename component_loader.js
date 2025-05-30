@@ -8,6 +8,9 @@ window.ToolsLoaderComponent = {
 };
 
 window.ModuleLoaderComponent = {
+	props: {
+		modfilter: { type: String, default: "" },
+	},
 	template: ``
 };
 
@@ -24,10 +27,6 @@ async function ucnc_component_loader() {
 		}
 	}
 
-	window.addEventListener("ucnc_load_components", (e) => {
-		window.ucnc_app.component('toolsloader', window.ToolsLoaderComponent);
-	});
-
 	for (let module of window.app_vars.app_options.MODULES_OPTIONS) {
 		try {
 			const response = await fetch(`./modules/${module.id}.js`);
@@ -41,8 +40,13 @@ async function ucnc_component_loader() {
 	}
 
 	window.addEventListener("ucnc_load_components", (e) => {
+		window.ucnc_app.component('toolsloader', window.ToolsLoaderComponent);
+	});
+
+
+	window.addEventListener("ucnc_load_components", (e) => {
 		window.ucnc_app.component('modulesloader', window.ModuleLoaderComponent);
 	});
 
-	window.dispatchEvent(new Event("ucnc_tools_loaded"));
+	window.dispatchEvent(new Event("ucnc_components_loaded"));
 }

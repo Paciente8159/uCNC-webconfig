@@ -190,8 +190,9 @@
 						<accordion-card id="board-basic-config" accordionid="boardmap-config-accordion"
 							label="Board Ports and Timers">
 							<textfield name="BOARD_NAME" label="The board name printed with $I command?" configfile="hal" tooltip="Name must be between quotation marks
-							(string). Ex. 'myboard'" pattern="^(['&quot;])(.*?)\1$" initial="''">
+							(string). Ex. 'myboard'" initial="">
 							</textfield>
+							<!-- pattern="^(['&quot;])(.*?)\1$" -->
 
 							<controlgroup label="AVR interrupt on change ports" if="app_state.MCU=='MCU_AVR'">
 
@@ -258,13 +259,38 @@
 						</accordion-card>
 						<accordion-card id="io-extender-config" accordionid="boardmap-config-accordion" label="IO extenders">
 							<range name="IC74HC595_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC595's:"
-							tooltip="Defines the total number of daisy chained 74HC595 in your board. Depending on you configuration this number can be ignored. For example if the board uses a custom callback to drive the data to the shift register."></range>
-						
+								tooltip="Defines the total number of daisy chained 74HC595 in your board. Depending on you configuration this number can be ignored. For example if the board uses a custom callback to drive the data to the shift register.">
+							</range>
+
 							<range name="IC74HC165_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC165's:"
-							tooltip="Defines the total number of daisy chained 74HC165 in your board. Depending on you configuration this number can be ignored. For example if the board uses a custom callback to drive the data to the shift register."></range>
+								tooltip="Defines the total number of daisy chained 74HC165 in your board. Depending on you configuration this number can be ignored. For example if the board uses a custom callback to drive the data to the shift register.">
+							</range>
+
+							<toggle name="SHIFT_REGISTER_CUSTOM_CALLBACK" label="Board uses a custom IO expander callback"
+								configfile="boardmap" if="!app_state.SHIFT_REGISTER_USE_HW_SPI"></toggle>
+
+							<toggle name="SHIFT_REGISTER_USE_HW_SPI" label="Board uses an hardware SPI to control the IO expander"
+								if="!app_state.SHIFT_REGISTER_CUSTOM_CALLBACK"></toggle>
+
+							<controlgroup label="IO shifter pins"
+								if="!app_state.SHIFT_REGISTER_CUSTOM_CALLBACK && (app_state.IC74HC595_COUNT || app_state.IC74HC165_COUNT)">
+								<pin name="SHIFT_REGISTER_CLK" label="Select the shift clock pin" initial="DOUT9"
+									if="!app_state.SHIFT_REGISTER_USE_HW_SPI && (app_state.IC74HC595_COUNT || app_state.IC74HC165_COUNT)"
+									filter="item.type.includes('generic_output')"></pin>
+								<pin name="SHIFT_REGISTER_SDO" label="Select the data out pin" initial="DOUT8"
+									if="!app_state.SHIFT_REGISTER_USE_HW_SPI && app_state.IC74HC595_COUNT"
+									filter="item.type.includes('generic_output')"></pin>
+								<pin name="IC74HC595_LATCH" label="Select the output latch pin" initial="DOUT10"
+									if="app_state.IC74HC595_COUNT" filter="item.type.includes('generic_output')"></pin>
+								<pin name="SHIFT_REGISTER_SDI" label="Select the data in pin" initial="DIN8"
+									if="!app_state.SHIFT_REGISTER_USE_HW_SPI && app_state.IC74HC165_COUNT"
+									filter="item.type.includes('generic_input')"></pin>
+								<pin name="IC74HC165_LOAD" label="Select the data in load pin" initial="DIN11"
+									if="app_state.IC74HC165_COUNT" filter="item.type.includes('generic_input')"></pin>
+							</controlgroup>
 						</accordion-card>
 
-						<accordion-card id="special-outputs-config" label="Special Outputs" accordionid="boardmap-config-accordion">
+						<accordion-card id="special-outputs-config" label="Stepper pins" accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('stepper')">
 								<template #head>
 									<th scope="col">µCNC pin</th>
@@ -295,7 +321,7 @@
 								</template>
 							</vtable>
 						</accordion-card>
-						<accordion-card id="pwms-servos-config" label="PWM & Servos" accordionid="boardmap-config-accordion">
+						<accordion-card id="pwms-servos-config" label="PWM & Servos pins" accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
 								filter="item.type.includes('pwm') || item.type.includes('servo')">
 								<template #head>
@@ -352,7 +378,8 @@
 								</template>
 							</vtable>
 						</accordion-card>
-						<accordion-card id="generic-outputs-config" label="Generic outputs" accordionid="boardmap-config-accordion">
+						<accordion-card id="generic-outputs-config" label="Generic output pins"
+							accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('dout')">
 								<template #head>
 									<th scope="col">µCNC pin</th>
@@ -383,7 +410,7 @@
 								</template>
 							</vtable>
 						</accordion-card>
-						<accordion-card id="special-inputs-config" label="Controls, Limits and Probe"
+						<accordion-card id="special-inputs-config" label="Controls, Limits and Probe pins"
 							accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
 								filter="item.type.includes('control') || item.type.includes('limit') || item.type.includes('probe')">
@@ -434,7 +461,7 @@
 								</template>
 							</vtable>
 						</accordion-card>
-						<accordion-card id="analogs-config" label="Analog inputs" accordionid="boardmap-config-accordion">
+						<accordion-card id="analogs-config" label="Analog input pins" accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
 								filter="item.type.includes('control') || item.type.includes('limit') || item.type.includes('probe')">
 								<template #head>
@@ -473,7 +500,8 @@
 								</template>
 							</vtable>
 						</accordion-card>
-						<accordion-card id="generic-inputs-config" label="Generic Inputs" accordionid="boardmap-config-accordion">
+						<accordion-card id="generic-inputs-config" label="Generic input pins"
+							accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('din')">
 								<template #head>
 									<th scope="col">µCNC pin</th>
@@ -524,7 +552,7 @@
 								</template>
 							</vtable>
 						</accordion-card>
-						<accordion-card id="communication-pins-config" label="Communications pinout"
+						<accordion-card id="communication-pins-config" label="Hardware communications pins"
 							accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
 								filter="item.type.includes('communications')">
@@ -763,45 +791,52 @@
 
 				</tab>
 				<tab id="module-config" label="Modules" tabid="config-tabs">
-					<accordion id="module-config-accordion">
-						<accordion-card id="module-config-basic" accordionid="module-config-accordion"
-							label="Modules basic settings">
+					<controlgroup label="Modules basic settings">
 
-							<toggle name="ENABLE_MAIN_LOOP_MODULES" label="Enable main cnc application loop extension callbacks"
-								configfile="hal">
-							</toggle>
+						<toggle name="ENABLE_MAIN_LOOP_MODULES" label="Enable main cnc application loop extension callbacks"
+							configfile="hal">
+						</toggle>
 
-							<toggle name="ENABLE_IO_MODULES" label="Enable IO extension callbacks"
-								configfile="hal">
-							</toggle>
+						<toggle name="ENABLE_IO_MODULES" label="Enable IO extension callbacks" configfile="hal">
+						</toggle>
 
-							<toggle name="ENABLE_PARSER_MODULES" label="Enable Gcode and Grbl commands
+						<toggle name="ENABLE_PARSER_MODULES" label="Enable Gcode and Grbl commands
 							parser extension
-							callbacks"
-								configfile="hal">
-							</toggle>
+							callbacks" configfile="hal">
+						</toggle>
 
-							<toggle name="ENABLE_MOTION_CONTROL_MODULES" label="Enable motion control
+						<toggle name="ENABLE_MOTION_CONTROL_MODULES" label="Enable motion control
 							extension
-							callbacks"
-								configfile="hal">
-							</toggle>
+							callbacks" configfile="hal">
+						</toggle>
 
-							<toggle name="DISABLE_SETTINGS_MODULES" label="Disable settings storage
+						<toggle name="DISABLE_SETTINGS_MODULES" label="Disable settings storage
 							extension
-							callbacks"
-								configfile="hal">
-							</toggle>
+							callbacks" configfile="hal">
+						</toggle>
 
-							<toggle name="ENABLE_ITP_FEED_TASK" label="Run the interpolator in the RTC task"
-								configfile="hal"
-								tooltip="When running extra modules and functionalities this
+						<toggle name="ENABLE_ITP_FEED_TASK" label="Run the interpolator in the RTC task" configfile="hal" tooltip="When running extra modules and functionalities this
 							increases the computation time required for a whole internal cycle to be computed. This can lead to step
 							interpolation starving and hickups in the motion. To prevent this you can enable this feature to isolate
 							the stepper interpolator from the main loop and be regulary called from the RTC task.">
-							</toggle>
+						</toggle>
+					</controlgroup>
+					<accordion id="module-config-accordion">
+						<accordion-card id="module-config-mods-parser" accordionid="module-config-accordion" label="Parser modules">
+							<modulesloader modfilter="parser"></modulesloader>
 						</accordion-card>
-						<modulesloader filter=""></modulesloader>
+						<accordion-card id="module-config-mods-display" accordionid="module-config-accordion" label="Display modules">
+							<modulesloader modfilter="display"></modulesloader>
+						</accordion-card>
+						<accordion-card id="module-config-mods-storage" accordionid="module-config-accordion" label="Storage modules">
+							<modulesloader modfilter="storage"></modulesloader>
+						</accordion-card>
+						<accordion-card id="module-config-mods-pendants" accordionid="module-config-accordion" label="Pendants modules">
+							<modulesloader modfilter="pendants"></modulesloader>
+						</accordion-card>
+						<accordion-card id="module-config-mods-other" accordionid="module-config-accordion" label="Other modules">
+							<modulesloader modfilter="other"></modulesloader>
+						</accordion-card>
 					</accordion>
 				</tab>
 			</tabgroup>
@@ -825,7 +860,7 @@
 			}
 		});
 
-		window.addEventListener("ucnc_tools_loaded", function () {
+		window.addEventListener("ucnc_components_loaded", function () {
 			window.dispatchEvent(new Event("ucnc_load_components"));
 			window.ucnc_app.mount('#app');
 		});
