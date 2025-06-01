@@ -1,4 +1,4 @@
-window.G33Component = {
+window.SingleAxisHomingComponent = {
 	template: `
 <toggle name="ENABLE_SINGLE_AXIS_HOME_MODULE" label="Enable Single Axis Homing module"
 tooltip="Enables the Single Axis Homing parser extension module.">
@@ -7,7 +7,7 @@ tooltip="Enables the Single Axis Homing parser extension module.">
 };
 
 window.addEventListener("ucnc_load_components", (e) => {
-	window.ucnc_app.component('single_axis_home', window.G33Component);
+	window.ucnc_app.component('single_axis_home', window.SingleAxisHomingComponent);
 	window.ModuleLoaderComponent.template += `<single_axis_home v-if="(modfilter=='' || modfilter=='parser')"></single_axis_home>`;
 });
 

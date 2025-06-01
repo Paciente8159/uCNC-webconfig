@@ -7,7 +7,7 @@ tooltip="Enables the M66 parser extension module.">
 };
 
 window.addEventListener("ucnc_load_components", (e) => {
-	window.ucnc_app.component('g33', window.M66Component);
+	window.ucnc_app.component('m66', window.M66Component);
 	window.ModuleLoaderComponent.template += `<m66 v-if="(modfilter=='' || modfilter=='parser')"></m66>`;
 });
 

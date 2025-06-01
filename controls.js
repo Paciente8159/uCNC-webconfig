@@ -9,6 +9,7 @@ window.addEventListener("ucnc_load_components", (e) => {
 	window.ucnc_app.component('message', window.MessageComponent);
 	window.ucnc_app.component('pin', window.PinComponent);
 	window.ucnc_app.component('buttoncb', window.ButtonComponent);
+	window.ucnc_app.component('textareafield', window.TextAreaFieldComponent);
 });
 
 function typeConverter(type = 'default', value) {
@@ -50,23 +51,17 @@ window.ToggleComponent = {
 		initial: { type: Boolean, default: false },
 		tooltiptitle: { type: String, default: "Info" },
 		tooltip: { type: String, default: "" },
+		nullable:{ type: Boolean, default: true },
 		// oncallback: { type: String, default: "" },
 		// offcallback: { type: String, default: "" },
 	},
 	computed: {
 		modelValue: {
 			get() {
-				return typeConverter(this.vartype, this.$root.app_state[this.name]);
+				return typeConverter(this.vartype, this.$root.app_state[this.name].value);
 			},
 			set(newValue) {
-				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
-				// debugger;
-				// if (Boolean(newValue) && this.oncallback.length) {
-				// 	new Function(this.oncallback)();
-				// }
-				// else if (this.offcallback.length) {
-				// 	new Function(this.offcallback)();
-				// }
+				this.$root.app_state[this.name].value = typeConverter(this.vartype, newValue);
 			}
 		},
 		showCondition() {
@@ -88,6 +83,7 @@ window.ToggleComponent = {
 	},
 	created() {
 		if (!(this.name in this.$root.app_state)) {
+			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":false, "file":"${this.configfile}"}}`));
 			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":${this.initial}}`));
 		}
 	},
@@ -115,7 +111,8 @@ window.CheckComponent = {
 		if: { type: String, default: "true" },
 		initial: { type: Boolean, default: false },
 		tooltiptitle: { type: String, default: "Info" },
-		tooltip: { type: String, default: "" }
+		tooltip: { type: String, default: "" },
+		nullable:{ type: Boolean, default: true },
 	},
 	computed: {
 		modelValue: {
@@ -151,6 +148,7 @@ window.CheckComponent = {
 	},
 	created() {
 		if (!(this.name in this.$root.app_state)) {
+			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":false, "file":"${this.configfile}"}}`));
 			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":${this.initial}}`));
 		}
 	},
@@ -192,6 +190,7 @@ window.ComboBoxComponent = {
 				return typeConverter(this.vartype, this.$root.app_state[this.name]);
 			},
 			set(newValue) {
+				this.$root.app_fields[this.name] = { type: this.vartype, nullable: this.nullable, file: this.configfile };
 				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
 				if (this.updatecb.length) {
 					new Function(this.updatecb)();
@@ -227,6 +226,7 @@ window.ComboBoxComponent = {
 	},
 	created() {
 		if (!(this.name in this.$root.app_state)) {
+			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":${this.nullable}, "file":"${this.configfile}"}}`));
 			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":"${this.initial}"}`));
 		}
 	},
@@ -271,6 +271,7 @@ window.RangeComponent = {
 				return typeConverter(this.vartype, this.$root.app_state[this.name]);
 			},
 			set(newValue) {
+				this.$root.app_fields[this.name] = { type: this.vartype, nullable: this.nullable, file: this.configfile };
 				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
 			}
 		},
@@ -293,6 +294,7 @@ window.RangeComponent = {
 	},
 	created() {
 		if (!(this.name in this.$root.app_state)) {
+			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":false, "file":"${this.configfile}"}}`));
 			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":${this.initial}}`));
 		}
 	},
@@ -420,7 +422,7 @@ window.MessageComponent = {
 			this.convertedContent = converter.makeHtml(rawText); // Convert Markdown to HTML
 
 			const toast = new bootstrap.Toast(this.$el, {
-				delay: 20000,
+				delay: 10000,
 			});
 			toast.show();
 		}
@@ -438,7 +440,6 @@ window.MessageComponent = {
 window.TextFieldComponent = {
 	props: {
 		name: { type: String, required: true },
-		configfile: { type: String, default: "" },
 		label: { type: String, default: "Input text" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
@@ -477,6 +478,7 @@ window.TextFieldComponent = {
 	},
 	created() {
 		if (!(this.name in this.$root.app_state)) {
+			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":false, "file":"${this.configfile}"}}`));
 			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":"${this.initial}"}`));
 		}
 	},
@@ -502,6 +504,76 @@ window.TextFieldComponent = {
 		<label for="" class="form-label" v-if="label.length">{{label}}</label>
 		<input type="text" class="form-control" :name="name" :id="name" v-model="modelValue"
 		:placeholder="placeholder" :config-file="configfile" :pattern="pattern" @input="validateInput">
+		</div>`
+};
+
+window.TextAreaFieldComponent = {
+	props: {
+		name: { type: String, required: true },
+		label: { type: String, default: "Input text" },
+		show: { type: String, default: "true" },
+		if: { type: String, default: "true" },
+		configfile: { type: String, default: "" },
+		placeholder: { type: String, default: "" },
+		initial: { type: String, default: "" },
+		tooltiptitle: { type: String, default: "Info" },
+		tooltip: { type: String, default: "" },
+		pattern: { type: String, default: ".*" }
+	},
+	computed: {
+		modelValue: {
+			get() {
+				return this.$root.app_state[this.name];
+			},
+			set(newValue) {
+				this.$root.app_state[this.name] = newValue;
+			}
+		},
+		showCondition() {
+			try {
+				return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		},
+		ifCondition() {
+			try {
+				return new Function('app_state', `return ${this.if};`)(this.$root.app_state);
+			} catch (error) {
+				console.error("Invalid expression:", error);
+				return true; // Default to returning all items if there's an error
+			}
+		}
+	},
+	created() {
+		if (!(this.name in this.$root.app_state)) {
+			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":false, "file":"${this.configfile}"}}`));
+			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":"${this.initial}"}`));
+		}
+	},
+	mounted() {
+		componentTooltip(this);
+		const input = this.$el;
+		const regex = new RegExp(this.pattern);
+		regex.test(input.value) ? input.classList.remove("is-invalid") : input.classList.add("is-invalid");
+	},
+	updated() {
+		componentTooltip(this);
+	},
+	methods: {
+		validateInput(event) {
+			const input = event.target;
+			const regex = new RegExp(this.pattern);
+			regex.test(input.value) ? input.classList.remove("is-invalid") : input.classList.add("is-invalid");
+		}
+	},
+	template: `<div :class="label.length ? 'mb-3':''"  v-if="ifCondition" v-show="showCondition"
+		data-bs-toggle="popover"
+		:data-bs-title="tooltiptitle">
+		<label for="" class="form-label" v-if="label.length">{{label}}</label>
+		<textarea class="form-control" :name="name" :id="name" v-model="modelValue"
+		:placeholder="placeholder" :config-file="configfile" :pattern="pattern" @input="validateInput"></textarea>
 		</div>`
 };
 
@@ -549,6 +621,7 @@ window.BitFieldComponent = {
 	},
 	created() {
 		if (!(this.name in this.$root.app_state)) {
+			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":false, "file":"${this.configfile}"}}`));
 			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":${this.initial}}`));
 		}
 	},
@@ -682,11 +755,11 @@ window.ButtonComponent = {
 				if (!ifstate) {
 					return false;
 				}
-				if(this.enable.split(',').some(val => this.$root.app_state[val]==false)){
+				if (this.enable.split(',').some(val => this.$root.app_state[val] == false)) {
 					return true;
 				}
 
-				if(this.disable.split(',').some(val => this.$root.app_state[val]==true)){
+				if (this.disable.split(',').some(val => this.$root.app_state[val] == true)) {
 					return true;
 				}
 

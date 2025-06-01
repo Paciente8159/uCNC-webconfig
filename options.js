@@ -5,6 +5,12 @@ window.app_vars = {
 		KINEMATIC: 'KINEMATIC_CARTESIAN',
 		BAUDRATE: 115200
 	},
+	app_fields:{
+		VERSION: {type:'int', nullable: false, file:''},
+		MCU: {type:'', nullable: false, file:'boardmap'},
+		KINEMATIC: {type:'', nullable: false, file:'hal'},
+		BAUDRATE:  {type:'int', nullable: false, file:'boardmap'},
+	},
 	app_options: {
 		VERSIONS: [
 			{ id: 'master', tag: 99999, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/master.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },

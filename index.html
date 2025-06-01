@@ -624,7 +624,7 @@
 								accordionid="tools-config-accordion">
 								<combobox :name="item.tool" :label="'Choose a tool controller for '+item.tool"
 									:opts="app_options.TOOL_OPTIONS" keyname="id" valname="name" initial="spindle_pwm"></combobox>
-								<toolsloader :tooldriver="'app_state.'+item.tool"></toolsloader>
+								<toolsloader :tool="'app_state.'+item.tool"></toolsloader>
 
 							</accordion-card>
 						</template>
@@ -825,17 +825,56 @@
 						<accordion-card id="module-config-mods-parser" accordionid="module-config-accordion" label="Parser modules">
 							<modulesloader modfilter="parser"></modulesloader>
 						</accordion-card>
-						<accordion-card id="module-config-mods-display" accordionid="module-config-accordion" label="Display modules">
+						<accordion-card id="module-config-mods-display" accordionid="module-config-accordion"
+							label="Display modules">
 							<modulesloader modfilter="display"></modulesloader>
 						</accordion-card>
-						<accordion-card id="module-config-mods-storage" accordionid="module-config-accordion" label="Storage modules">
+						<accordion-card id="module-config-mods-storage" accordionid="module-config-accordion"
+							label="Storage modules">
 							<modulesloader modfilter="storage"></modulesloader>
 						</accordion-card>
-						<accordion-card id="module-config-mods-pendants" accordionid="module-config-accordion" label="Pendants modules">
+						<accordion-card id="module-config-mods-pendants" accordionid="module-config-accordion"
+							label="Pendants modules">
 							<modulesloader modfilter="pendants"></modulesloader>
 						</accordion-card>
 						<accordion-card id="module-config-mods-other" accordionid="module-config-accordion" label="Other modules">
 							<modulesloader modfilter="other"></modulesloader>
+						</accordion-card>
+					</accordion>
+				</tab>
+				<tab id="custom-config" label="Custom configurations" tabid="config-tabs">
+					<accordion id="custom-config-accordion">
+						<accordion-card id="custom-boardmap-config" accordionid="custom-config-accordion"
+							label="Custom boardmap config">
+							<textareafield name="CUSTOM_BOARDMAP_CONFIGS" label="Custom boardmap configs"></textareafield>
+						</accordion-card>
+						<accordion-card id="custom-hal-config" accordionid="custom-config-accordion"
+							label="Custom HAL configs">
+							<textareafield name="CUSTOM_HAL_CONFIGS" label="Custom HAL configs" configfile="hal"></textareafield>
+						</accordion-card>
+						<accordion-card id="custom-pio-config" accordionid="custom-config-accordion"
+							label="Custom PIO configs">
+							<textfield name="CUSTOM_PIO_BOARD" label="Custom PIO board" configfile="boardmap" placeholder="PIO base board"></textfield>
+							<textareafield name="CUSTOM_PIO_BUILDFLAGS" label="Custom PIO additional build flags" configfile="pio" placeholder="-D myextraflag=1"></textareafield>
+							<textareafield name="CUSTOM_PIO_CONFIGS" label="Custom PIO additional options" configfile="pio" placeholder="board_build.offset = 0x2000"></textareafield>
+						</accordion-card>
+					</accordion>
+				</tab>
+				<tab id="config-files-config" label="Config files" tabid="config-tabs">
+					<accordion id="custom-config-accordion">
+						<accordion-card id="custom-boardmap-config" accordionid="custom-config-accordion"
+							label="Custom boardmap config">
+							<textareafield name="CUSTOM_BOARDMAP_CONFIGS" label="Custom boardmap configs"></textareafield>
+						</accordion-card>
+						<accordion-card id="custom-hal-config" accordionid="custom-config-accordion"
+							label="Custom HAL configs">
+							<textareafield name="CUSTOM_HAL_CONFIGS" label="Custom HAL configs" configfile="hal"></textareafield>
+						</accordion-card>
+						<accordion-card id="custom-pio-config" accordionid="custom-config-accordion"
+							label="Custom PIO configs">
+							<textfield name="CUSTOM_PIO_BOARD" label="Custom PIO board" configfile="boardmap" placeholder="PIO base board"></textfield>
+							<textareafield name="CUSTOM_PIO_BUILDFLAGS" label="Custom PIO additional build flags" configfile="pio" placeholder="-D myextraflag=1"></textareafield>
+							<textareafield name="CUSTOM_PIO_CONFIGS" label="Custom PIO additional options" configfile="pio" placeholder="board_build.offset = 0x2000"></textareafield>
 						</accordion-card>
 					</accordion>
 				</tab>
@@ -847,6 +886,7 @@
 	<script src="containers.js"></script>
 	<script src="controls.js"></script>
 	<script src="component_loader.js"></script>
+	<script src="configs.js"></script>
 	<script>
 		// Vue.config.devtools = true;
 		const { createApp } = Vue;
