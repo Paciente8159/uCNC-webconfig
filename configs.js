@@ -86,7 +86,7 @@ function generate_user_config(options, defguard, reset_file = "", close = true) 
 
 function generateBoardmapOverrides() {
 	// var exclude = [...document.querySelectorAll('[config-file="boardmap"]')].map(x => x.id);
-	var overrides = generate_user_config([...document.querySelectorAll('[config-file="boardmap"]')]/*.filter(y => !exclude.includes(y.id))*/.map(x => x.id), 'BOADMAP_OVERRIDES_H', "boardmap_reset", false);
+	var overrides = generate_user_config(Object.entries(window.app_vars.app_fields).filter(([k, v]) => v.file=='boardmap').map(([k]) => k), 'BOADMAP_OVERRIDES_H', "boardmap_reset", false);
 	overrides += "//Custom configurations\n" + document.getElementById('CUSTOM_BOARDMAP_CONFIGS').value + '\n\n#ifdef __cplusplus\n}\n#endif\n#endif\n';
 	return overrides;
 }
