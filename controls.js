@@ -13,6 +13,15 @@ window.addEventListener("ucnc_load_components", (e) => {
 });
 
 function typeConverter(type = 'default', value) {
+
+	if (value === undefined) {
+		return '';
+	}
+
+	if ((typeof value == "string" || typeof value == "object") && !value.length) {
+		return value;
+	}
+
 	switch (type) {
 		case 'bool':
 			return Boolean(value);
@@ -51,7 +60,7 @@ window.ToggleComponent = {
 		initial: { type: Boolean, default: false },
 		tooltiptitle: { type: String, default: "Info" },
 		tooltip: { type: String, default: "" },
-		nullable:{ type: Boolean, default: true },
+		nullable: { type: Boolean, default: true },
 		// oncallback: { type: String, default: "" },
 		// offcallback: { type: String, default: "" },
 	},
@@ -112,7 +121,7 @@ window.CheckComponent = {
 		initial: { type: Boolean, default: false },
 		tooltiptitle: { type: String, default: "Info" },
 		tooltip: { type: String, default: "" },
-		nullable:{ type: Boolean, default: true },
+		nullable: { type: Boolean, default: true },
 	},
 	computed: {
 		modelValue: {
@@ -173,7 +182,6 @@ window.ComboBoxComponent = {
 		label: { type: String, default: "Combobox" },
 		vartype: { type: String, default: "" },
 		opts: { type: Array, default: [{ id: 1, value: 'option1' }] },
-		updatecb: { type: String, default: "" },
 		keyname: { type: String, default: "id" },
 		valname: { type: String, default: "value" },
 		filter: { type: String, default: "true" },
@@ -182,7 +190,8 @@ window.ComboBoxComponent = {
 		initial: { type: String, default: "" },
 		tooltiptitle: { type: String, default: "Info" },
 		tooltip: { type: String, default: "" },
-		nullable: { type: Boolean, default: false }
+		nullable: { type: Boolean, default: false },
+		changecb: { type: String }
 	},
 	computed: {
 		modelValue: {
@@ -192,9 +201,6 @@ window.ComboBoxComponent = {
 			set(newValue) {
 				this.$root.app_fields[this.name] = { type: this.vartype, nullable: this.nullable, file: this.configfile };
 				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
-				if (this.updatecb.length) {
-					new Function(this.updatecb)();
-				}
 			}
 		},
 		filteredOpts() {
@@ -224,6 +230,14 @@ window.ComboBoxComponent = {
 			}
 		}
 	},
+	methods: {
+		async handleChange(event) {
+			if (this.changecb) {
+				const asyncFunc = new Function('app_scope', 'target', `return ${this.changecb}(app_scope, target);`);
+				await asyncFunc(this, event.target.value);
+			}
+		},
+	},
 	created() {
 		if (!(this.name in this.$root.app_state)) {
 			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":${this.nullable}, "file":"${this.configfile}"}}`));
@@ -232,6 +246,10 @@ window.ComboBoxComponent = {
 	},
 	mounted() {
 		componentTooltip(this);
+		if (this.changecb) {
+			const asyncFunc = new Function('app_scope', 'target', `return ${this.changecb}(app_scope, target);`);
+			asyncFunc(this, new Event('component_init'));
+		}
 	},
 	updated() {
 		componentTooltip(this);
@@ -240,7 +258,7 @@ window.ComboBoxComponent = {
 		data-bs-toggle="popover" :data-bs-title="tooltiptitle">
 		<label class="form-check-label" :for="name"  v-if="label.length">{{ label }}</label>
 		<select class="form-select form-select-md" :name="name" :id="name" v-model="modelValue"
-		:config-file="configfile" :var-type="vartype" :class="nullable ? 'nullable':''">
+		:config-file="configfile" :var-type="vartype" :class="nullable ? 'nullable':''" @change="handleChange">
 		<option v-if="nullable"></option>
 		<option v-for="o in filteredOpts" :key="o[keyname]" :value="o[keyname]">
 		{{ o[valname] }}

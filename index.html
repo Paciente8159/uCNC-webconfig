@@ -31,12 +31,25 @@
 			</div>
 
 		</header>
-		<div id="app_loader" class="d-flex justify-content-center">
-			<div class="spinner-border d-flex justify-content-center text-success" style="width: 3rem; height: 3rem;"
-				role="status">
-				<span class="visually-hidden">Loading...</span>
+		<div id="app_loader" class="d-flex flex-column justify-content-center align-items-center align-text-center">
+			<div class="card d-flex flex-column justify-content-center align-items-center text-center"
+				style="width: 18rem;">
+				<img class="card-img-top logo-sm" src="https://raw.githubusercontent.com/Paciente8159/uCNC/master/docs/logo.png"
+					alt="µCNC logo">
+				<div class="card-body">
+					<div class="d-flex justify-content-center">
+						<div class="spinner-border d-flex justify-content-center text-success" style="width: 3rem; height: 3rem;"
+							role="status">
+							<span class="visually-hidden">Loading...</span>
+						</div>
+					</div>
+					<h5 class="card-title d-flex flex-column justify-content-center align-items-center">Loading data</h5>
+					<p class="card-text d-flex flex-column justify-content-center align-text-center">Please wait while data from
+						the remote source code is loaded..</p>
+				</div>
 			</div>
 		</div>
+
 		<main id="app_main" class="d-none">
 			<div class="toast-container p-3 bottom-0 end-0">
 				<message label="Important notice" labelcolor="darkred" alerttype="danger">Config files of the older web builder
@@ -63,10 +76,10 @@
 						<accordion-card id="basic-config-basic" accordionid="basic-config-accordion" label="Basic settings">
 
 							<combobox name="VERSION" label="What version will you be using?" :opts="app_options.VERSIONS"
-								keyname="tag" valname="id"></combobox>
+								keyname="tag" valname="id" changecb="window.halChanged"></combobox>
 
 							<combobox name="MCU" label="What MCU family will you be using?" :opts="app_options.MCUS" keyname="id"
-								valname="name" configfile="boardmap"></combobox>
+								valname="name" configfile="boardmap" changecb="window.mcuChanged"></combobox>
 
 							<combobox name="KINEMATIC" label="What type of kinematic does your machine have?"
 								:opts="app_options.KINEMATICS" keyname="id" valname="name" configfile="boardmap"></combobox>
@@ -172,7 +185,8 @@
 					<controlgroup label="Basic board settings">
 
 						<combobox name="BOARD" label="What board will you be using?" :opts="app_options.BOARDS" keyname="id"
-							valname="name" filter="item.mcu.includes(app_state.MCU)" initial="src/hal/boards/avr/boardmap_uno.h">
+							valname="name" filter="item.mcu.includes(app_state.MCU)" initial="src/hal/boards/avr/boardmap_uno.h"
+							changecb="window.boardChanged">
 						</combobox>
 
 						<alert alerttype="info" labelcolor="var(--bs-alert-color)" label="Advanced configurations"
@@ -848,15 +862,16 @@
 							label="Custom boardmap config">
 							<textareafield name="CUSTOM_BOARDMAP_CONFIGS" label="Custom boardmap configs"></textareafield>
 						</accordion-card>
-						<accordion-card id="custom-hal-config" accordionid="custom-config-accordion"
-							label="Custom HAL configs">
+						<accordion-card id="custom-hal-config" accordionid="custom-config-accordion" label="Custom HAL configs">
 							<textareafield name="CUSTOM_HAL_CONFIGS" label="Custom HAL configs" configfile="hal"></textareafield>
 						</accordion-card>
-						<accordion-card id="custom-pio-config" accordionid="custom-config-accordion"
-							label="Custom PIO configs">
-							<textfield name="CUSTOM_PIO_BOARD" label="Custom PIO board" configfile="boardmap" placeholder="PIO base board"></textfield>
-							<textareafield name="CUSTOM_PIO_BUILDFLAGS" label="Custom PIO additional build flags" configfile="pio" placeholder="-D myextraflag=1"></textareafield>
-							<textareafield name="CUSTOM_PIO_CONFIGS" label="Custom PIO additional options" configfile="pio" placeholder="board_build.offset = 0x2000"></textareafield>
+						<accordion-card id="custom-pio-config" accordionid="custom-config-accordion" label="Custom PIO configs">
+							<textfield name="CUSTOM_PIO_BOARD" label="Custom PIO board" configfile="boardmap"
+								placeholder="PIO base board"></textfield>
+							<textareafield name="CUSTOM_PIO_BUILDFLAGS" label="Custom PIO additional build flags" configfile="pio"
+								placeholder="-D myextraflag=1"></textareafield>
+							<textareafield name="CUSTOM_PIO_CONFIGS" label="Custom PIO additional options" configfile="pio"
+								placeholder="board_build.offset = 0x2000"></textareafield>
 						</accordion-card>
 					</accordion>
 				</tab>
@@ -866,19 +881,22 @@
 							label="Custom boardmap config">
 							<textareafield name="CUSTOM_BOARDMAP_CONFIGS" label="Custom boardmap configs"></textareafield>
 						</accordion-card>
-						<accordion-card id="custom-hal-config" accordionid="custom-config-accordion"
-							label="Custom HAL configs">
+						<accordion-card id="custom-hal-config" accordionid="custom-config-accordion" label="Custom HAL configs">
 							<textareafield name="CUSTOM_HAL_CONFIGS" label="Custom HAL configs" configfile="hal"></textareafield>
 						</accordion-card>
-						<accordion-card id="custom-pio-config" accordionid="custom-config-accordion"
-							label="Custom PIO configs">
-							<textfield name="CUSTOM_PIO_BOARD" label="Custom PIO board" configfile="boardmap" placeholder="PIO base board"></textfield>
-							<textareafield name="CUSTOM_PIO_BUILDFLAGS" label="Custom PIO additional build flags" configfile="pio" placeholder="-D myextraflag=1"></textareafield>
-							<textareafield name="CUSTOM_PIO_CONFIGS" label="Custom PIO additional options" configfile="pio" placeholder="board_build.offset = 0x2000"></textareafield>
+						<accordion-card id="custom-pio-config" accordionid="custom-config-accordion" label="Custom PIO configs">
+							<textfield name="CUSTOM_PIO_BOARD" label="Custom PIO board" configfile="boardmap"
+								placeholder="PIO base board"></textfield>
+							<textareafield name="CUSTOM_PIO_BUILDFLAGS" label="Custom PIO additional build flags" configfile="pio"
+								placeholder="-D myextraflag=1"></textareafield>
+							<textareafield name="CUSTOM_PIO_CONFIGS" label="Custom PIO additional options" configfile="pio"
+								placeholder="board_build.offset = 0x2000"></textareafield>
 						</accordion-card>
 					</accordion>
 				</tab>
 			</tabgroup>
+
+			<!--Modal popup-->
 
 		</main>
 	</div>

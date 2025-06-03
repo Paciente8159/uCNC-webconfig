@@ -6,6 +6,7 @@ window.addEventListener("ucnc_load_components", (e) => {
 	window.ucnc_app.component('vtable', window.TableComponent);
 	window.ucnc_app.component('accordion-card', window.AccordionCardComponent);
 	window.ucnc_app.component('accordion', window.AccordionComponent);
+	window.ucnc_app.component('popup', window.PopupComponent);
 });
 
 window.ControlGroupComponent = {
