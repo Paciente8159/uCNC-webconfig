@@ -7,7 +7,7 @@ tooltip="Enables the BLTouch extension module.">
 <buttoncb if="app_state.ENABLE_BLTOUCH_MODULE" enable="ENABLE_IO_MODULES">Fix requirements!</buttoncb>
 
 <controlgroup if="app_state.ENABLE_BLTOUCH_MODULE" label="BLTouch options">
-<pin name="BLTOUCH_PROBE_SERVO" label="BLTouch servo pin" units="mm" initial="SERVO0" filter="item.type.includes('servo')"></pin>
+<pin configfile="hal" name="BLTOUCH_PROBE_SERVO" label="BLTouch servo pin" units="mm" initial="SERVO0" filter="item.type.includes('servo')"></pin>
 </controlgroup>` 
 };
 

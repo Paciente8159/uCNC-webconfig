@@ -12,14 +12,14 @@ tooltip="Enables support for RepRap Full Graphic Display an other similar monoch
 :opts="[
 {id:'st7920_128x64_spi', value:'ST7920 128x64 via SPI'},
 {id:'ssd1306_128x64_i2c', value:'SSD1306 128x64 via I2C'},
-{id:'virtual_sdl', value:'Virtual SDL'}]" initial="st7920_128x64_spi"></combobox>
+{id:'virtual_sdl', value:'Virtual SDL'}]" initial="st7920_128x64_spi" configfile="hal"></combobox>
 
 <combobox name="GRAPHIC_DISPLAY_INTERFACE" label="Select the graphic display interface"
 :opts="[
 {id:'GRAPHIC_DISPLAY_SW_SPI', value:'Software emulated SPI'},
 {id:'GRAPHIC_DISPLAY_HW_SPI', value:'Hardware SPI'},
 {id:'GRAPHIC_DISPLAY_SW_I2C', value:'Software emulated I2C'},
-{id:'GRAPHIC_DISPLAY_HW_I2C', value:'Hardware I2C'}]" initial="GRAPHIC_DISPLAY_SW_SPI"></combobox>
+{id:'GRAPHIC_DISPLAY_HW_I2C', value:'Hardware I2C'}]" initial="GRAPHIC_DISPLAY_SW_SPI" configfile="hal"></combobox>
 
 <controlgroup if="app_state.GRAPHIC_DISPLAY_INTERFACE=='GRAPHIC_DISPLAY_SW_SPI'" label="Software emulated SPI pinout">
 <pin name="GRAPHIC_DISPLAY_SPI_CLOCK" label="Select the SPI clock pin" initial="DOUT4"

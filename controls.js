@@ -61,16 +61,14 @@ window.ToggleComponent = {
 		tooltiptitle: { type: String, default: "Info" },
 		tooltip: { type: String, default: "" },
 		nullable: { type: Boolean, default: true },
-		// oncallback: { type: String, default: "" },
-		// offcallback: { type: String, default: "" },
 	},
 	computed: {
 		modelValue: {
 			get() {
-				return typeConverter(this.vartype, this.$root.app_state[this.name].value);
+				return typeConverter(this.vartype, this.$root.app_state[this.name]);
 			},
 			set(newValue) {
-				this.$root.app_state[this.name].value = typeConverter(this.vartype, newValue);
+				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
 			}
 		},
 		showCondition() {
@@ -130,12 +128,6 @@ window.CheckComponent = {
 			},
 			set(newValue) {
 				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
-				if (Boolean(newValue) && this.oncallback.length) {
-					new Function(this.oncallback)();
-				}
-				else if (this.offcallback.length) {
-					new Function(this.offcallback)();
-				}
 			}
 		},
 		showCondition() {
@@ -755,15 +747,20 @@ window.ButtonComponent = {
 		if: { type: String, default: "true" },
 		enable: { type: String, default: "" },
 		disable: { type: String, default: "" },
+		// customcb: { type: String, default: "" },
 	},
 	methods: {
-		setElements() {
+		async runCallback() {
 			this.enable.split(',').forEach((e) => {
 				this.$root.app_state[e] = true;
 			});
 			this.disable.split(',').forEach((e) => {
 				this.$root.app_state[e] = false;
 			});
+			// if (this.customcb) {
+			// 	const asyncFunc = new Function('app_scope', `return ${this.customcb}(app_scope);`);
+			// 	await asyncFunc(this);
+			// }
 		}
 	},
 	computed: {
@@ -790,5 +787,5 @@ window.ButtonComponent = {
 		}
 	},
 	template: `<button type="button" :class="'btn btn-outline-'+labelcolor"
-			@click="setElements"  v-if="ifCondition"><slot></slot></button>`
+			@click="runCallback"  v-if="ifCondition"><slot></slot></button>`
 }

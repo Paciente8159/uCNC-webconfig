@@ -2,7 +2,7 @@
 
 window.ToolsLoaderComponent = {
 	props: {
-		tool: { type: String, default: "TOOL1" },
+		tool: { type: String, default: "TOOL0" },
 	},
 	template: ``
 };

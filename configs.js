@@ -38,7 +38,11 @@ async function parsePreprocessor(file, settings = [], recursive = false) {
 	return settings;
 }
 
-function is_empty(value) {
+function is_empty(val) {
+	if (val === undefined) {
+		debugger;
+		return true;
+	}
 	if (!val) {
 		return true;
 	}
@@ -58,35 +62,39 @@ function generate_user_config(options, defguard, reset_file = "", close = true) 
 	}
 
 	for (var i = 0; i < options.length; i++) {
-		let val = window.app_vars.app_state[options[i]];
-		let field = window.app_vars.app_fields[options[i]];
-		if (val) {
-			if (reset_file === "") {
-				// gentext += "//undefine " + options[i] + "\n";
-				// gentext += "#ifdef " + options[i] + "\n#undef " + options[i] + "\n#endif\n";
-				gentext += "#undef " + options[i] + "\n";
-			}
-			else {
-				switch (field.type) {
-					case 'bool':
-						if (field.nullable && is_empty(val)) {
+		try {
+			let val = window.app_vars.app_state[options[i]];
+			let field = window.app_vars.app_fields[options[i]];
+			if (val != undefined) {
+				if (reset_file === "") {
+					// gentext += "//undefine " + options[i] + "\n";
+					// gentext += "#ifdef " + options[i] + "\n#undef " + options[i] + "\n#endif\n";
+					gentext += "#undef " + options[i] + "\n";
+				}
+				else {
+					switch (field.type) {
+						case 'bool':
+							if (field.nullable && is_empty(val)) {
+								break;
+							}
+							gentext += "#define " + options[i] + ((val) ? " true" : "false");
 							break;
-						}
-						gentext += "#define " + options[i] + ((val) ? " true" : "false");
-						break;
-					case 'string':
-						gentext += `#define ${options[i]} "${val}"\n`;
-						break;
-					default:
-						if (field.nullable && is_empty(val)) {
+						case 'string':
+							gentext += `#define ${options[i]} "${val}"\n`;
 							break;
-						}
-						gentext += `#define ${options[i]} ${val}\n`;
-						break;
+						default:
+							if (field.nullable && is_empty(val)) {
+								break;
+							}
+							gentext += `#define ${options[i]} ${val}\n`;
+							break;
+					}
 				}
 			}
 		}
-
+		catch (e) {
+			debugger;
+		}
 	}
 
 	if (close) {
@@ -99,7 +107,97 @@ function generate_user_config(options, defguard, reset_file = "", close = true) 
 function generateBoardmapOverrides() {
 	// var exclude = [...document.querySelectorAll('[config-file="boardmap"]')].map(x => x.id);
 	var overrides = generate_user_config(Object.entries(window.app_vars.app_fields).filter(([k, v]) => v.file == 'boardmap').map(([k]) => k), 'BOADMAP_OVERRIDES_H', "boardmap_reset", false);
-	overrides += "//Custom configurations\n" + document.getElementById('CUSTOM_BOARDMAP_CONFIGS').value + '\n\n#ifdef __cplusplus\n}\n#endif\n#endif\n';
+	overrides += "//Custom configurations\n" + window.app_vars.app_state.CUSTOM_BOARDMAP_CONFIGS + '\n\n#ifdef __cplusplus\n}\n#endif\n#endif\n';
+	return overrides;
+}
+
+function generateBoardmapReset() {
+	var overrides = generate_user_config(Object.entries(window.app_vars.app_fields).filter(([k, v]) => v.file == 'boardmap').map(([k]) => k), 'BOADMAP_RESET_H', '', false);
+	var customs = window.app_vars.app_state.CUSTOM_BOARDMAP_CONFIGS;
+	var defs = [...customs.matchAll(/#define[\s]+(?<def>[\w_]+)/gm)];
+	defs.forEach((e) => {
+		overrides += "#undef " + e[1] + "\n";
+	});
+	overrides += '\n#ifdef __cplusplus\n}\n#endif\n#endif\n';
+	return overrides;
+}
+
+function generateHalReset() {
+	var overrides = generate_user_config(Object.entries(window.app_vars.app_fields).filter(([k, v]) => v.file == 'hal').map(([k]) => k), 'CNC_HAL_RESET_H', '', false);
+	var customs = window.app_vars.app_state.CUSTOM_HAL_CONFIGS;
+	var defs = [...customs.matchAll(/#define[\s]+(?<def>[\w_]+)/gm)];
+	defs.forEach((e) => {
+		overrides += "#undef " + e[1] + "\n";
+	});
+	overrides += '\n#ifdef __cplusplus\n}\n#endif\n#endif\n';
+	return overrides;
+}
+
+function generateHalOverrides() {
+	var overrides = generate_user_config(Object.entries(window.app_vars.app_fields).filter(([k, v]) => v.file == 'hal').map(([k]) => k), 'CNC_HAL_OVERRIDES_H', "cnc_hal_reset", false);
+	var modules = [...document.querySelectorAll('[config-file=module]:checked')].map(x => x.id);
+
+	overrides += "//Custom configurations\n" + document.getElementById('CUSTOM_HAL_CONFIGS').value + "\n";
+
+	if (modules.length) {
+		overrides += "\n#define LOAD_MODULES_OVERRIDE() ({"
+		for (var i = 0; i < modules.length; i++) {
+			overrides += "LOAD_MODULE(" + modules[i] + ");";
+		}
+		overrides += "})\n"
+	}
+
+	overrides += '\n#ifdef __cplusplus\n}\n#endif\n#endif\n';
+	return overrides;
+}
+
+function generatePIOOverrides() {
+	var scope = angular.element(document.getElementById("uCNCapp")).scope();
+	var modules = [...document.querySelectorAll('[module-name-data]')];
+
+	var lib_deps = "lib_deps = \n";
+	var build_flags = "build_flags = \n";
+	var customflags = getScope(document.getElementById('CUSTOM_PIO_BUILDFLAGS'));
+	if (customflags && customflags.length) {
+		var flags = [...customflags.split(/\n/)];
+		for (var i = 0; i < flags.length; i++) {
+			build_flags += "\t" + flags;
+		}
+	}
+	if (modules && modules.length) {
+		var includes = ""
+		for (var i = 0; i < modules.length; i++) {
+			var sel = modules[i].querySelector('[config-file=module]:checked');
+			if (sel) {
+				var mod = scope.MODULES_OPTIONS.find((x) => { return x.id == sel.id });
+				if (mod.pre_requires && mod.pre_requires.length) {
+					includes += mod.pre_requires.replace(/,\s*$/, "") + ", ";
+				}
+				includes += sel.id + ", ";
+				if (mod.requires && mod.requires.length) {
+					includes += mod.requires.replace(/,\s*$/, "") + ", ";
+				}
+
+				if (mod.lib_deps && mod.lib_deps.length) { lib_deps += "\t" + mod.lib_deps + "\n"; }
+				if (mod.build_flags && mod.build_flags.length) { build_flags += "\t" + mod.build_flags + "\n"; }
+			}
+		}
+		lib_deps = "custom_ucnc_modules = " + includes.replace(/,\s*$/, "") + "\n" + lib_deps;
+		lib_deps = "custom_ucnc_modules_url = " + document.getElementById("ucnc-modules-download").href + "\n" + lib_deps;
+	}
+	else {
+		lib_deps = "custom_ucnc_modules_url =\ncustom_ucnc_modules =\n" + lib_deps;
+	}
+
+	var customboard = getScope(document.getElementById('CUSTOM_PIO_BOARD'));
+	if (customboard && customboard.length) {
+		customboard = "board = " + customboard + "\n";
+	}
+	customparams = getScope(document.getElementById('CUSTOM_PIO_CONFIGS'));
+	customparams = ((customboard) ? customboard : "board = \n") + ((customparams) ? customparams : "");
+	var overrides = pioinicontent.trimEnd().substring(0, pioinicontent.indexOf(";user config"));
+	overrides += ";µCNC web builder generated config\n";
+	overrides += build_flags.trimEnd() + "\n" + lib_deps.trimEnd() + "\n" + customparams.trimEnd() + "\n";
 	return overrides;
 }
 
@@ -176,3 +274,42 @@ window.halChanged = async function (scope, target) {
 	await scope.$nextTick();
 	endLoadAnimation();
 }
+
+window.addEventListener("ucnc_app_ready", (e) => {
+	document.getElementById('config_files').addEventListener('click', async function (ev) {
+		ev.preventDefault = true;
+		const zip = new JSZip();
+
+		// Create multiple files and add them to the ZIP file
+		zip.file('uCNC/boardmap_overrides.h', generateBoardmapOverrides());
+		zip.file('uCNC/boardmap_reset.h', generateBoardmapReset());
+		zip.file('uCNC/cnc_hal_overrides.h', generateHalOverrides());
+		zip.file('uCNC/cnc_hal_reset.h', generateHalReset());
+		zip.file('platformio.ini', generatePIOOverrides());
+
+		// config file
+		var key_values = {};
+		document.querySelectorAll('[config-file]').forEach((e, i, p) => {
+			key_values[e.id] = getScope(e);
+		});
+
+		zip.file('ucnc_build.json', JSON.stringify(key_values));
+
+		// Generate the zip file asynchronously
+		zip.generateAsync({ type: "blob" }).then(function (content) {
+			const a = document.createElement('a');
+			const url = URL.createObjectURL(content);
+
+			// Set the download attribute and href for the anchor
+			a.href = url;
+			a.download = 'uCNC config.zip';
+
+			// Programmatically click the anchor to trigger the download
+			a.click();
+
+			// Clean up
+			URL.revokeObjectURL(url);
+			document.removeChild(a);
+		});
+	});
+});

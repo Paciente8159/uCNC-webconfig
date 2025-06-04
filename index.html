@@ -15,26 +15,26 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"
 		integrity="sha512-LhccdVNGe2QMEfI3x4DVV3ckMRe36TfydKss6mJpdHjNFiV07dFpS2xzeZedptKZrwxfICJpez09iNioiSZ3hA=="
 		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<link rel="stylesheet" href="style.css">
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 
 <body>
 	<div id="app">
-		<header>
+		<header class="d-flex flex-column justify-content-center align-items-center align-text-center">
 			<!-- place navbar here -->
-			<div class="d-flex flex-column justify-content-center align-items-center">
-				<img class="card-img-top logo-sm" src="https://raw.githubusercontent.com/Paciente8159/uCNC/master/docs/logo.png"
+			<div class="d-flex flex-column justify-content-center align-items-center align-text-center">
+				<img class="card-img-top logo-sm d-flex flex-column justify-content-center align-items-center" src="logo.png"
 					alt="µCNC logo">
-				<h1 class="fs-4">µCNC configuration generator v2</h1>
+				<h1 class="fs-4 d-flex flex-column justify-content-center align-items-center">µCNC configuration generator v2</h1>
 				<div></div>
 			</div>
-
 		</header>
+
 		<div id="app_loader" class="d-flex flex-column justify-content-center align-items-center align-text-center">
-			<div class="card d-flex flex-column justify-content-center align-items-center text-center"
-				style="width: 18rem;">
-				<img class="card-img-top logo-sm" src="https://raw.githubusercontent.com/Paciente8159/uCNC/master/docs/logo.png"
+			<div class="card d-flex flex-column justify-content-center align-items-center text-center" style="width: 18rem;">
+				<img class="card-img-top logo-sm" src="logo.png"
 					alt="µCNC logo">
 				<div class="card-body">
 					<div class="d-flex justify-content-center">
@@ -634,11 +634,11 @@
 					<accordion id="tools-config-accordion" :opts="app_options.TOOLS" keyname="tool" valname="tool"
 						filter="item.toolcount&lt;=app_state.TOOL_COUNT">
 						<template #default="{item}">
-							<accordion-card :label="item.tool" :id="'tool-accordion'+item.toolcount"
-								accordionid="tools-config-accordion">
+							<accordion-card :label="item.tool + ' (' + app_state[item.tool] + ')' "
+								:id="'tool-accordion'+item.toolcount" accordionid="tools-config-accordion">
 								<combobox :name="item.tool" :label="'Choose a tool controller for '+item.tool"
 									:opts="app_options.TOOL_OPTIONS" keyname="id" valname="name" initial="spindle_pwm"></combobox>
-								<toolsloader :tool="'app_state.'+item.tool"></toolsloader>
+								<toolsloader :tool="item.tool"></toolsloader>
 
 							</accordion-card>
 						</template>
@@ -876,23 +876,52 @@
 					</accordion>
 				</tab>
 				<tab id="config-files-config" label="Config files" tabid="config-tabs">
-					<accordion id="custom-config-accordion">
-						<accordion-card id="custom-boardmap-config" accordionid="custom-config-accordion"
-							label="Custom boardmap config">
-							<textareafield name="CUSTOM_BOARDMAP_CONFIGS" label="Custom boardmap configs"></textareafield>
-						</accordion-card>
-						<accordion-card id="custom-hal-config" accordionid="custom-config-accordion" label="Custom HAL configs">
-							<textareafield name="CUSTOM_HAL_CONFIGS" label="Custom HAL configs" configfile="hal"></textareafield>
-						</accordion-card>
-						<accordion-card id="custom-pio-config" accordionid="custom-config-accordion" label="Custom PIO configs">
-							<textfield name="CUSTOM_PIO_BOARD" label="Custom PIO board" configfile="boardmap"
-								placeholder="PIO base board"></textfield>
-							<textareafield name="CUSTOM_PIO_BUILDFLAGS" label="Custom PIO additional build flags" configfile="pio"
-								placeholder="-D myextraflag=1"></textareafield>
-							<textareafield name="CUSTOM_PIO_CONFIGS" label="Custom PIO additional options" configfile="pio"
-								placeholder="board_build.offset = 0x2000"></textareafield>
-						</accordion-card>
-					</accordion>
+
+					<div class="card">
+					<div class="center-content card-header">
+						<img class="card-img-top logo"
+							src="logo.png" alt="µCNC logo">
+							<h4 class="card-title">Config µCNC</h4>
+						<p class="card-text"><i>To build your custom version of µCNC follow these steps:</i></p>
+					</div>
+					<div class="card-body">
+
+						<combobox name="TOOLCHAIN" :opts="[
+					{id:'pio', value:'VSCode / PlatformIO'},
+					{id:'other', value:'Arduino IDE or makefiles'}
+					]" label="How will you build your code?" initial="pio"></combobox>
+
+					<ul>
+						<li>
+							<p><strong>Step1:</strong> Download the source code</p>
+							<a class="btn btn-primary" target="_blank"
+								:href="app_options.VERSIONS.filter(y => y.tag === app_state.VERSION).map(x => x.src)[0]">
+								Download source code
+							</a>
+						</li>
+
+						<li v-if="app_state.TOOLCHAIN!='pio'">
+							<p><strong>Step1 (part 2):</strong> Download the addon modules code</p>
+							<p>After downloading the source code extract only the modules you are going to use to uCNC/src/modules/
+								project directory</p>
+							<a class="btn btn-primary" target="_blank"
+								:href="app_options.VERSIONS.filter(y => y.tag === app_state.VERSION).map(x => x.src)[0]">
+								Download modules source code
+							</a>
+						</li>
+
+						<li>
+							<p><strong>Step2:</strong> Download the configuration files</p>
+							<p>After downloading the configuration files extract them to the project root directory (this will replace some existing files)
+								project directory</p>
+							<button class="btn btn-primary"
+								id="config_files">
+								Download the configuration files
+							</button>
+						</li>
+					</ul>
+</div>
+</div>
 				</tab>
 			</tabgroup>
 
@@ -921,6 +950,7 @@
 		window.addEventListener("ucnc_components_loaded", function () {
 			window.dispatchEvent(new Event("ucnc_load_components"));
 			window.ucnc_app.mount('#app');
+			window.dispatchEvent(new Event("ucnc_app_ready"));
 		});
 
 		ucnc_component_loader();

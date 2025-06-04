@@ -1,6 +1,6 @@
 window.STM32SDIOComponent = {
 	template: `
-<toggle name="SD_CARD_CUSTOM_HW_DRIVER" label="Enable SDIO interface for SD card module"
+<toggle configfile="hal" name="SD_CARD_CUSTOM_HW_DRIVER" label="Enable SDIO interface for SD card module"
 tooltip="Enable STM32 SDIO interface for SD card module. This is to be allow using the SD card module vis SDIO instead of SPI"
 if="app_state.MCU.includes('STM32') && app_state.SD_CARD_MODULE">
 </toggle>

@@ -8,10 +8,10 @@ tooltip="Enables support for I2C LCD displays. Multiple LCD sizes/formats are su
 
 <controlgroup if="app_state.ENABLE_I2C_LCD_MODULE" label="I2C LCD options">
 
-<range name="LCD_ROWS" label="Set the LCD number of lines" min="1" max="8" vartype="int" initial="2"></range>
-<range name="LCD_COLUMNS" label="Set the LCD number of columns" min="1" max="32" vartype="int" initial="16"></range>
+<range configfile="hal" name="LCD_ROWS" label="Set the LCD number of lines" min="1" max="8" vartype="int" initial="2"></range>
+<range configfile="hal" name="LCD_COLUMNS" label="Set the LCD number of columns" min="1" max="32" vartype="int" initial="16"></range>
 
-<combobox name="GRAPHIC_DISPLAY_INTERFACE" label="Select the graphic display interface"
+<combobox configfile="hal" name="GRAPHIC_DISPLAY_INTERFACE" label="Select the graphic display interface"
 :opts="[
 {id:'GRAPHIC_DISPLAY_SW_SPI', value:'Software emulated SPI'},
 {id:'GRAPHIC_DISPLAY_HW_SPI', value:'Hardware SPI'},

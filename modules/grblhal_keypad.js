@@ -15,7 +15,7 @@ tooltip="Enables support for GrblHAL Keypad.">
 {id:'KEYPAD_PORT_HW_UART', value:'Hardware UART'},
 {id:'KEYPAD_PORT_SW_UART', value:'Software emulated UART'},
 {id:'KEYPAD_PORT_HW_UART2', value:'Hardware UART2'},
-]" initial="KEYPAD_PORT_HW_I2C"></combobox>
+]" initial="KEYPAD_PORT_HW_I2C" configfile="hal"></combobox>
 
 <controlgroup if="app_state.KEYPAD_PORT=='KEYPAD_PORT_SW_I2C'" label="Software emulated I2C pinout">
 <pin name="KEYPAD_SCL" label="Select the I2C clock pin" initial="DOUT30"
