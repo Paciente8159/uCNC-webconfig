@@ -1,10 +1,10 @@
 window.GrblHALKeypadComponent = {
 	template: `
-<toggle name="ENABLE_GRBLHAL_KEYPAD_MODULE" label="Enable GrblHAL Keypad module"
-tooltip="Enables support for GrblHAL Keypad.">
+<toggle name="grblhal_keypad" label="Enable GrblHAL Keypad module"
+tooltip="Enables support for GrblHAL Keypad." configfile="module">
 </toggle>
 
-<buttoncb if="app_state.ENABLE_GRBLHAL_KEYPAD_MODULE" enable="ENABLE_IO_MODULES,ENABLE_MAIN_LOOP_MODULES" disable="DISABLE_SETTINGS_MODULES">Fix requirements!</buttoncb>
+<buttoncb if="app_state.grblhal_keypad" enable="ENABLE_IO_MODULES,ENABLE_MAIN_LOOP_MODULES" disable="DISABLE_SETTINGS_MODULES">Fix requirements!</buttoncb>
 
 <controlgroup if="app_state.ENABLE_GRAPHIC_DISPLAY_MODULE" label="GrblHAL Keypad options">
 

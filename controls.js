@@ -10,6 +10,7 @@ window.addEventListener("ucnc_load_components", (e) => {
 	window.ucnc_app.component('pin', window.PinComponent);
 	window.ucnc_app.component('buttoncb', window.ButtonComponent);
 	window.ucnc_app.component('textareafield', window.TextAreaFieldComponent);
+	window.ucnc_app.component('inputctrl', window.InputComponent);
 });
 
 function typeConverter(type = 'default', value) {
@@ -90,7 +91,7 @@ window.ToggleComponent = {
 	},
 	created() {
 		if (!(this.name in this.$root.app_state)) {
-			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":false, "file":"${this.configfile}"}}`));
+			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":${this.nullable}, "file":"${this.configfile}"}}`));
 			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":${this.initial}}`));
 		}
 	},
@@ -149,7 +150,7 @@ window.CheckComponent = {
 	},
 	created() {
 		if (!(this.name in this.$root.app_state)) {
-			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":false, "file":"${this.configfile}"}}`));
+			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":${this.nullable}, "file":"${this.configfile}"}}`));
 			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":${this.initial}}`));
 		}
 	},
@@ -432,7 +433,7 @@ window.MessageComponent = {
 			this.convertedContent = converter.makeHtml(rawText); // Convert Markdown to HTML
 
 			const toast = new bootstrap.Toast(this.$el, {
-				delay: 10000,
+				delay: 5000,
 			});
 			toast.show();
 		}
@@ -446,6 +447,84 @@ window.MessageComponent = {
 		</div>
 		</div>`
 };
+
+// window.MessageComponent = {
+// 	props: {
+// 		name: { type: String, required: true },
+// 		label: { type: String, default: "Alert" },
+// 		labelcolor: { type: String, default: "red" },
+// 		alerttype: { type: String, default: "danger" },
+// 		if: { type: String, default: "true" },
+// 		hiden: { type: Boolean, default: false }
+// 	},
+// 	data() {
+// 		return {
+// 			convertedContent: '',
+// 			toastInstance: null,
+// 		};
+// 	},
+// 	created() {
+// 		if (!window.messageComponents) {
+// 			window.messageComponents = {};
+// 		}
+// 		window.messageComponents[this.name] = this; // Register the component globally
+// 	},
+// 	mounted() {
+// 		this.convertSlotContent();
+// 		this.initializeToast();
+// 		if (!Boolean(this.hiden)) {
+// 			this.showToast();
+// 		}
+// 		// else{
+// 		// 	if (this.toastInstance) {
+// 		// 		this.toastInstance.hide();
+// 		// 	}
+// 		// }
+// 		this.hiden = false;
+// 	},
+// 	computed: {
+// 		ifCondition() {
+// 			try {
+// 				return new Function('app_state', `return ${this.if};`)(this.$root.app_state);
+// 			} catch (error) {
+// 				console.error("Invalid expression:", error);
+// 				return true;
+// 			}
+// 		},
+// 	},
+// 	methods: {
+// 		initializeToast() {
+// 			this.toastInstance = new bootstrap.Toast(this.$el, {
+// 				delay: 5000
+// 			});
+// 		},
+// 		showToast(timeout = 5000) {
+// 			if (this.toastInstance) {
+// 				this.toastInstance._config.delay = timeout;
+// 				this.toastInstance.show();
+// 			}
+// 		},
+// 		convertSlotContent() {
+// 			let slotNode = this.$slots.default?.()[0];
+// 			let rawText = slotNode?.children?.trim() || '';
+
+// 			let converter = new showdown.Converter({
+// 				openLinksInNewWindow: true,
+// 				simpleLineBreaks: true
+// 			});
+// 			converter.setOption('simpleLineBreaks', true);
+// 			this.convertedContent = converter.makeHtml(rawText);
+// 		},
+// 	},
+// 	template: `<div :id="name" class="toast" role="alert" aria-live="assertive" aria-atomic="true" v-if="ifCondition">
+//         <div :class="'toast-header text-bg-' + alerttype">
+//             <strong class="me-auto">{{label}}</strong>
+//             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+//         </div>
+//         <div class="toast-body" v-html="convertedContent"></div>
+//     </div>`
+// };
+
 
 window.TextFieldComponent = {
 	props: {
@@ -788,4 +867,30 @@ window.ButtonComponent = {
 	},
 	template: `<button type="button" :class="'btn btn-outline-'+labelcolor"
 			@click="runCallback"  v-if="ifCondition"><slot></slot></button>`
+}
+
+window.InputComponent = {
+	props: {
+		type: { type: String, required: true },
+		label: { type: String },
+		accept: { type: String },
+		changecb: { type: String },
+		clickcb: { type: String },
+		customclass: { type: String }
+	},
+	methods: {
+		async handleChange(event) {
+			if (this.changecb) {
+				const asyncFunc = new Function('app_scope', 'event', `return ${this.changecb}(app_scope, event);`);
+				await asyncFunc(this, event);
+			}
+		},
+		async handleClick(event) {
+			if (this.clickcb) {
+				const asyncFunc = new Function('app_scope', 'event', `return ${this.clickcb}(app_scope, event);`);
+				await asyncFunc(this, event);
+			}
+		},
+	},
+	template: `<input :value="label" :class="customclass" :type="type" :accept="accept" @change="handleChange" @click="handleClick">`
 }

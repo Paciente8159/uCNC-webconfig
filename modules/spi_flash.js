@@ -1,13 +1,13 @@
 window.FlashSPIComponent = {
 	template: `
-				<toggle name="ENABLE_SPI_FLASH_MODULE" label="Enable SPI NorFlash module"
-tooltip="Enables SPI NorFlash support to allow using a nor flash to store settings.">
+				<toggle name="spi_flash" label="Enable SPI NorFlash module"
+tooltip="Enables SPI NorFlash support to allow using a nor flash to store settings." configfile="module">
 </toggle>
 
-<buttoncb if="app_state.ENABLE_SPI_FLASH_MODULE"
+<buttoncb if="app_state.spi_flash"
         enable="ENABLE_MAIN_LOOP_MODULES" disable="DISABLE_SETTINGS_MODULES">Enable required extension options</buttoncb>
 
-<controlgroup label="Flash SPI Settings" if="app_state.ENABLE_SPI_FLASH_MODULE">
+<controlgroup label="Flash SPI Settings" if="app_state.spi_flash">
     
     <combobox name="FLASH_SPI_INTERFACE" label="Select Flash SPI interface"
         :opts="[
@@ -33,6 +33,6 @@ tooltip="Enables SPI NorFlash support to allow using a nor flash to store settin
 };
 
 window.addEventListener("ucnc_load_components", () => {
-	window.ucnc_app.component('flash_spi', window.FlashSPIComponent);
-	window.ModuleLoaderComponent.template += `<flash_spi v-if="(modfilter=='' || modfilter=='storage')"></flash_spi>`;
+	window.ucnc_app.component('spi_flash', window.FlashSPIComponent);
+	window.ModuleLoaderComponent.template += `<spi_flash v-if="(modfilter=='' || modfilter=='storage')"></spi_flash>`;
 });

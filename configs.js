@@ -1,3 +1,14 @@
+var pioinicontent = "";
+function getPIOContent() {
+	var response = fetch("https://raw.githubusercontent.com/Paciente8159/uCNC/refs/heads/master/platformio.ini").then((response) => {
+		if (response.ok) {
+			return response.text();
+		}
+	}).then(text => pioinicontent = text);
+}
+
+getPIOContent();
+
 window.resetPins = function (scope) {
 	const pins = scope.$root.app_options.UCNCPINS;
 	const pindefs = ['_BIT', '_PORT', '_CHANNEL', '_MUX', '_TIMER', '_IO_OFFSET']
@@ -40,7 +51,6 @@ async function parsePreprocessor(file, settings = [], recursive = false) {
 
 function is_empty(val) {
 	if (val === undefined) {
-		debugger;
 		return true;
 	}
 	if (!val) {
@@ -104,16 +114,16 @@ function generate_user_config(options, defguard, reset_file = "", close = true) 
 	return gentext;
 }
 
-function generateBoardmapOverrides() {
+function generateBoardmapOverrides(rootscope = window.app_vars) {
 	// var exclude = [...document.querySelectorAll('[config-file="boardmap"]')].map(x => x.id);
-	var overrides = generate_user_config(Object.entries(window.app_vars.app_fields).filter(([k, v]) => v.file == 'boardmap').map(([k]) => k), 'BOADMAP_OVERRIDES_H', "boardmap_reset", false);
-	overrides += "//Custom configurations\n" + window.app_vars.app_state.CUSTOM_BOARDMAP_CONFIGS + '\n\n#ifdef __cplusplus\n}\n#endif\n#endif\n';
+	var overrides = generate_user_config(Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('boardmap')).map(([k]) => k), 'BOADMAP_OVERRIDES_H', "boardmap_reset", false);
+	overrides += "//Custom configurations\n" + rootscope.app_state.CUSTOM_BOARDMAP_CONFIGS + '\n\n#ifdef __cplusplus\n}\n#endif\n#endif\n';
 	return overrides;
 }
 
-function generateBoardmapReset() {
-	var overrides = generate_user_config(Object.entries(window.app_vars.app_fields).filter(([k, v]) => v.file == 'boardmap').map(([k]) => k), 'BOADMAP_RESET_H', '', false);
-	var customs = window.app_vars.app_state.CUSTOM_BOARDMAP_CONFIGS;
+function generateBoardmapReset(rootscope = window.app_vars) {
+	var overrides = generate_user_config(Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('boardmap')).map(([k]) => k), 'BOADMAP_RESET_H', '', false);
+	var customs = rootscope.app_state.CUSTOM_BOARDMAP_CONFIGS;
 	var defs = [...customs.matchAll(/#define[\s]+(?<def>[\w_]+)/gm)];
 	defs.forEach((e) => {
 		overrides += "#undef " + e[1] + "\n";
@@ -122,9 +132,9 @@ function generateBoardmapReset() {
 	return overrides;
 }
 
-function generateHalReset() {
-	var overrides = generate_user_config(Object.entries(window.app_vars.app_fields).filter(([k, v]) => v.file == 'hal').map(([k]) => k), 'CNC_HAL_RESET_H', '', false);
-	var customs = window.app_vars.app_state.CUSTOM_HAL_CONFIGS;
+function generateHalReset(rootscope = window.app_vars) {
+	var overrides = generate_user_config(Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('hal')).map(([k]) => k), 'CNC_HAL_RESET_H', '', false);
+	var customs = rootscope.app_state.CUSTOM_HAL_CONFIGS;
 	var defs = [...customs.matchAll(/#define[\s]+(?<def>[\w_]+)/gm)];
 	defs.forEach((e) => {
 		overrides += "#undef " + e[1] + "\n";
@@ -133,16 +143,18 @@ function generateHalReset() {
 	return overrides;
 }
 
-function generateHalOverrides() {
-	var overrides = generate_user_config(Object.entries(window.app_vars.app_fields).filter(([k, v]) => v.file == 'hal').map(([k]) => k), 'CNC_HAL_OVERRIDES_H', "cnc_hal_reset", false);
-	var modules = [...document.querySelectorAll('[config-file=module]:checked')].map(x => x.id);
+function generateHalOverrides(rootscope = window.app_vars) {
+	var overrides = generate_user_config(Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('hal')).map(([k]) => k), 'CNC_HAL_OVERRIDES_H', "cnc_hal_reset", false);
 
-	overrides += "//Custom configurations\n" + document.getElementById('CUSTOM_HAL_CONFIGS').value + "\n";
+	var modules = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('module')).map(([k]) => k);
+	var active_modules = Object.entries(rootscope.app_state).filter(([k, v]) => modules.includes(k) && v).map(([k]) => k);
 
-	if (modules.length) {
+	overrides += "//Custom configurations\n" + rootscope.app_state.CUSTOM_HAL_CONFIGS + "\n";
+
+	if (active_modules.length) {
 		overrides += "\n#define LOAD_MODULES_OVERRIDE() ({"
-		for (var i = 0; i < modules.length; i++) {
-			overrides += "LOAD_MODULE(" + modules[i] + ");";
+		for (var i = 0; i < active_modules.length; i++) {
+			overrides += "LOAD_MODULE(" + active_modules[i] + ");";
 		}
 		overrides += "})\n"
 	}
@@ -151,49 +163,46 @@ function generateHalOverrides() {
 	return overrides;
 }
 
-function generatePIOOverrides() {
-	var scope = angular.element(document.getElementById("uCNCapp")).scope();
-	var modules = [...document.querySelectorAll('[module-name-data]')];
+function generatePIOOverrides(rootscope = window.app_vars) {
+	var modules = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('module')).map(([k]) => k);
+	var active_modules = Object.entries(rootscope.app_state).filter(([k, v]) => modules.includes(k) && v).map(([k]) => k);
 
 	var lib_deps = "lib_deps = \n";
 	var build_flags = "build_flags = \n";
-	var customflags = getScope(document.getElementById('CUSTOM_PIO_BUILDFLAGS'));
+	var customflags = rootscope.app_state.CUSTOM_PIO_BUILDFLAGS;
 	if (customflags && customflags.length) {
 		var flags = [...customflags.split(/\n/)];
 		for (var i = 0; i < flags.length; i++) {
 			build_flags += "\t" + flags;
 		}
 	}
-	if (modules && modules.length) {
+	if (active_modules && active_modules.length) {
 		var includes = ""
-		for (var i = 0; i < modules.length; i++) {
-			var sel = modules[i].querySelector('[config-file=module]:checked');
-			if (sel) {
-				var mod = scope.MODULES_OPTIONS.find((x) => { return x.id == sel.id });
-				if (mod.pre_requires && mod.pre_requires.length) {
-					includes += mod.pre_requires.replace(/,\s*$/, "") + ", ";
-				}
-				includes += sel.id + ", ";
-				if (mod.requires && mod.requires.length) {
-					includes += mod.requires.replace(/,\s*$/, "") + ", ";
-				}
-
-				if (mod.lib_deps && mod.lib_deps.length) { lib_deps += "\t" + mod.lib_deps + "\n"; }
-				if (mod.build_flags && mod.build_flags.length) { build_flags += "\t" + mod.build_flags + "\n"; }
+		for (var i = 0; i < active_modules.length; i++) {
+			var mod = rootscope.app_options.MODULES_OPTIONS.find((x) => { return x.id == active_modules[i] });
+			if (mod.pre_requires && mod.pre_requires.length) {
+				includes += mod.pre_requires.replace(/,\s*$/, "") + ", ";
 			}
+			includes += active_modules[i] + ", ";
+			if (mod.requires && mod.requires.length) {
+				includes += mod.requires.replace(/,\s*$/, "") + ", ";
+			}
+
+			if (mod.lib_deps && mod.lib_deps.length) { lib_deps += "\t" + mod.lib_deps + "\n"; }
+			if (mod.build_flags && mod.build_flags.length) { build_flags += "\t" + mod.build_flags + "\n"; }
 		}
 		lib_deps = "custom_ucnc_modules = " + includes.replace(/,\s*$/, "") + "\n" + lib_deps;
-		lib_deps = "custom_ucnc_modules_url = " + document.getElementById("ucnc-modules-download").href + "\n" + lib_deps;
+		lib_deps = "custom_ucnc_modules_url = " + rootscope.app_options.VERSIONS.filter(obj => { return obj.tag === rootscope.app_state.VERSION; })[0].mods + "\n" + lib_deps;
 	}
 	else {
 		lib_deps = "custom_ucnc_modules_url =\ncustom_ucnc_modules =\n" + lib_deps;
 	}
 
-	var customboard = getScope(document.getElementById('CUSTOM_PIO_BOARD'));
+	var customboard = rootscope.app_state.CUSTOM_PIO_BOARD;
 	if (customboard && customboard.length) {
 		customboard = "board = " + customboard + "\n";
 	}
-	customparams = getScope(document.getElementById('CUSTOM_PIO_CONFIGS'));
+	customparams = rootscope.app_state.CUSTOM_PIO_CONFIGS;
 	customparams = ((customboard) ? customboard : "board = \n") + ((customparams) ? customparams : "");
 	var overrides = pioinicontent.trimEnd().substring(0, pioinicontent.indexOf(";user config"));
 	overrides += ";µCNC web builder generated config\n";
@@ -275,41 +284,100 @@ window.halChanged = async function (scope, target) {
 	endLoadAnimation();
 }
 
-window.addEventListener("ucnc_app_ready", (e) => {
-	document.getElementById('config_files').addEventListener('click', async function (ev) {
-		ev.preventDefault = true;
-		const zip = new JSZip();
+window.loadConfigFile = async function (scope, event) {
+	var file = event.target.files[0];
+	if (!file) return;
 
-		// Create multiple files and add them to the ZIP file
-		zip.file('uCNC/boardmap_overrides.h', generateBoardmapOverrides());
-		zip.file('uCNC/boardmap_reset.h', generateBoardmapReset());
-		zip.file('uCNC/cnc_hal_overrides.h', generateHalOverrides());
-		zip.file('uCNC/cnc_hal_reset.h', generateHalReset());
-		zip.file('platformio.ini', generatePIOOverrides());
+	const reader = new FileReader();
+	startLoadAnimation();
 
-		// config file
-		var key_values = {};
-		document.querySelectorAll('[config-file]').forEach((e, i, p) => {
-			key_values[e.id] = getScope(e);
-		});
+	reader.onload = function (e) {
+		scope.$root.app_state = JSON.parse(e.target.result);
+		scope.$nextTick();
+		endLoadAnimation();
+	};
 
-		zip.file('ucnc_build.json', JSON.stringify(key_values));
+	reader.readAsText(file);
+}
 
-		// Generate the zip file asynchronously
-		zip.generateAsync({ type: "blob" }).then(function (content) {
-			const a = document.createElement('a');
-			const url = URL.createObjectURL(content);
+window.loadGenerateConfig = async function (scope, event) {
+	event.preventDefault = true;
+	const zip = new JSZip();
 
-			// Set the download attribute and href for the anchor
-			a.href = url;
-			a.download = 'uCNC config.zip';
+	// Create multiple files and add them to the ZIP file
+	zip.file('uCNC/boardmap_overrides.h', generateBoardmapOverrides(scope.$root));
+	zip.file('uCNC/boardmap_reset.h', generateBoardmapReset(scope.$root));
+	zip.file('uCNC/cnc_hal_overrides.h', generateHalOverrides(scope.$root));
+	zip.file('uCNC/cnc_hal_reset.h', generateHalReset(scope.$root));
+	zip.file('platformio.ini', generatePIOOverrides(scope.$root));
 
-			// Programmatically click the anchor to trigger the download
-			a.click();
 
-			// Clean up
-			URL.revokeObjectURL(url);
-			document.removeChild(a);
-		});
+	zip.file('ucnc_build.json', JSON.stringify(scope.$root.app_state));
+
+	// Generate the zip file asynchronously
+	zip.generateAsync({ type: "blob" }).then(function (content) {
+		const a = document.createElement('a');
+		const url = URL.createObjectURL(content);
+
+		// Set the download attribute and href for the anchor
+		a.href = url;
+		a.download = 'uCNC config.zip';
+
+		// Programmatically click the anchor to trigger the download
+		a.click();
+
+		// Clean up
+		URL.revokeObjectURL(url);
+		document.removeChild(a);
 	});
-});
+}
+
+window.copyBoardmapReset = async function (scope, event) {
+	navigator.clipboard.writeText(generateBoardmapReset(scope.$root))
+        .then(() => {
+            alert('Code copied to clipboard!');
+        })
+        .catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+}
+
+window.copyBoardmapOverride = async function (scope, event) {
+	navigator.clipboard.writeText(generateBoardmapOverrides(scope.$root))
+        .then(() => {
+            alert('Code copied to clipboard!');
+        })
+        .catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+}
+
+window.copyHalReset = async function (scope, event) {
+	navigator.clipboard.writeText(generateHalReset(scope.$root))
+        .then(() => {
+            alert('Code copied to clipboard!');
+        })
+        .catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+}
+
+window.copyHalOverride = async function (scope, event) {
+	navigator.clipboard.writeText(generateHalOverrides(scope.$root))
+        .then(() => {
+            alert('Code copied to clipboard!');
+        })
+        .catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+}
+
+window.copyPioOverride = async function (scope, event) {
+	navigator.clipboard.writeText(generatePIOOverrides(scope.$root))
+        .then(() => {
+            alert('Code copied to clipboard!');
+        })
+        .catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+}

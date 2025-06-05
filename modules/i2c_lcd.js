@@ -1,12 +1,12 @@
 window.I2CLCDComponent = {
 	template: `
-<toggle name="ENABLE_I2C_LCD_MODULE" label="Enable I2C LCD module"
-tooltip="Enables support for I2C LCD displays. Multiple LCD sizes/formats are supported.">
+<toggle name="i2c_lcd" label="Enable I2C LCD module"
+tooltip="Enables support for I2C LCD displays. Multiple LCD sizes/formats are supported." configfile="module">
 </toggle>
 
-<buttoncb if="app_state.ENABLE_I2C_LCD_MODULE" enable="ENABLE_MAIN_LOOP_MODULES,ENABLE_ITP_FEED_TASK">Fix requirements!</buttoncb>
+<buttoncb if="app_state.i2c_lcd" enable="ENABLE_MAIN_LOOP_MODULES,ENABLE_ITP_FEED_TASK">Fix requirements!</buttoncb>
 
-<controlgroup if="app_state.ENABLE_I2C_LCD_MODULE" label="I2C LCD options">
+<controlgroup if="app_state.i2c_lcd" label="I2C LCD options">
 
 <range configfile="hal" name="LCD_ROWS" label="Set the LCD number of lines" min="1" max="8" vartype="int" initial="2"></range>
 <range configfile="hal" name="LCD_COLUMNS" label="Set the LCD number of columns" min="1" max="32" vartype="int" initial="16"></range>

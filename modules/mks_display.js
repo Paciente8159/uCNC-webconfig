@@ -1,12 +1,12 @@
 window.MKSDisplayComponent = {
     template: `
-<toggle name="ENABLE_MKS_DISPLAY_MODULE" label="Enable MKS Display module"
-tooltip="Enables MKS TFT color displays.">
+<toggle name="mks_display" label="Enable MKS Display module"
+tooltip="Enables MKS TFT color displays." configfile="module">
 </toggle>
 
-<buttoncb enable="ENABLE_MAIN_LOOP_MODULES,ENABLE_ITP_FEED_TASK" if="app_state.ENABLE_MKS_DISPLAY_MODULE">Enable required extension options</buttoncb>
+<buttoncb enable="ENABLE_MAIN_LOOP_MODULES,ENABLE_ITP_FEED_TASK" if="app_state.mks_display">Enable required extension options</buttoncb>
 
-<controlgroup label="TFT Display options" if="app_state.ENABLE_MKS_DISPLAY_MODULE">
+<controlgroup label="TFT Display options" if="app_state.mks_display">
     <combobox configfile="hal" name="TFT_DISPLAY_SPI_INTERFACE" label="Select SPI interface"
         :opts="[
         {id:'HW_SPI', value:'Hardware SPI'},

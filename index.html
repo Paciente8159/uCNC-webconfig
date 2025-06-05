@@ -15,7 +15,9 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"
 		integrity="sha512-LhccdVNGe2QMEfI3x4DVV3ckMRe36TfydKss6mJpdHjNFiV07dFpS2xzeZedptKZrwxfICJpez09iNioiSZ3hA=="
 		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
+		integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<link rel="stylesheet" href="style.css">
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
@@ -27,15 +29,15 @@
 			<div class="d-flex flex-column justify-content-center align-items-center align-text-center">
 				<img class="card-img-top logo-sm d-flex flex-column justify-content-center align-items-center" src="logo.png"
 					alt="µCNC logo">
-				<h1 class="fs-4 d-flex flex-column justify-content-center align-items-center">µCNC configuration generator v2</h1>
+				<h1 class="fs-4 d-flex flex-column justify-content-center align-items-center">µCNC configuration generator v2
+				</h1>
 				<div></div>
 			</div>
 		</header>
 
 		<div id="app_loader" class="d-flex flex-column justify-content-center align-items-center align-text-center">
 			<div class="card d-flex flex-column justify-content-center align-items-center text-center" style="width: 18rem;">
-				<img class="card-img-top logo-sm" src="logo.png"
-					alt="µCNC logo">
+				<img class="card-img-top logo-sm" src="logo.png" alt="µCNC logo">
 				<div class="card-body">
 					<div class="d-flex justify-content-center">
 						<div class="spinner-border d-flex justify-content-center text-success" style="width: 3rem; height: 3rem;"
@@ -52,9 +54,11 @@
 
 		<main id="app_main" class="d-none">
 			<div class="toast-container p-3 bottom-0 end-0">
-				<message label="Important notice" labelcolor="darkred" alerttype="danger">Config files of the older web builder
+				<message name="startup-info1" label="Important notice" labelcolor="darkred" alerttype="danger">Config files of
+					the older web builder
 					will not work correctly</message>
-				<message label="Issues" labelcolor="black" alerttype="primary">If you encounter any issue please consider
+				<message name="startup-info2" label="Issues" labelcolor="black" alerttype="primary">If you encounter any issue
+					please consider
 					[submiting an issue in the Github project
 					page](https://github.com/Paciente8159/uCNC-config-builder/issues/new), with an
 					attached zip with all the override files and the json config file.</message>
@@ -69,7 +73,9 @@
 					<controlgroup label="Previous configuration settings">
 						<div class="mb-3 load-config">
 							<p>If you have a previous stored build configuration file (json) you can load it.</p>
-							<input class="form-control form-control" id="load_settings" type="file" accept=".json,.txt">
+							<!-- <input class="form-control form-control" id="load_settings" type="file" accept=".json,.txt"> -->
+							<inputctrl class="form-control form-control" type="file" accept=".json,.txt"
+								changecb="window.loadConfigFile"></inputctrl>
 						</div>
 					</controlgroup>
 					<accordion id="basic-config-accordion">
@@ -863,11 +869,11 @@
 							<textareafield name="CUSTOM_BOARDMAP_CONFIGS" label="Custom boardmap configs"></textareafield>
 						</accordion-card>
 						<accordion-card id="custom-hal-config" accordionid="custom-config-accordion" label="Custom HAL configs">
-							<textareafield name="CUSTOM_HAL_CONFIGS" label="Custom HAL configs" configfile="hal"></textareafield>
+							<textareafield name="CUSTOM_HAL_CONFIGS" label="Custom HAL configs"></textareafield>
 						</accordion-card>
 						<accordion-card id="custom-pio-config" accordionid="custom-config-accordion" label="Custom PIO configs">
-							<textfield name="CUSTOM_PIO_BOARD" label="Custom PIO board" configfile="boardmap"
-								placeholder="PIO base board"></textfield>
+							<textfield name="CUSTOM_PIO_BOARD" label="Custom PIO board" placeholder="PIO base board" configfile="pio">
+							</textfield>
 							<textareafield name="CUSTOM_PIO_BUILDFLAGS" label="Custom PIO additional build flags" configfile="pio"
 								placeholder="-D myextraflag=1"></textareafield>
 							<textareafield name="CUSTOM_PIO_CONFIGS" label="Custom PIO additional options" configfile="pio"
@@ -878,50 +884,70 @@
 				<tab id="config-files-config" label="Config files" tabid="config-tabs">
 
 					<div class="card">
-					<div class="center-content card-header">
-						<img class="card-img-top logo"
-							src="logo.png" alt="µCNC logo">
+						<div class="center-content card-header">
+							<img class="card-img-top logo" src="logo.png" alt="µCNC logo">
 							<h4 class="card-title">Config µCNC</h4>
-						<p class="card-text"><i>To build your custom version of µCNC follow these steps:</i></p>
-					</div>
-					<div class="card-body">
+							<p class="card-text"><i>To build your custom version of µCNC follow these steps:</i></p>
+						</div>
+						<div class="card-body">
 
-						<combobox name="TOOLCHAIN" :opts="[
+							<combobox name="TOOLCHAIN" :opts="[
 					{id:'pio', value:'VSCode / PlatformIO'},
 					{id:'other', value:'Arduino IDE or makefiles'}
 					]" label="How will you build your code?" initial="pio"></combobox>
 
-					<ul>
-						<li>
-							<p><strong>Step1:</strong> Download the source code</p>
-							<a class="btn btn-primary" target="_blank"
-								:href="app_options.VERSIONS.filter(y => y.tag === app_state.VERSION).map(x => x.src)[0]">
-								Download source code
-							</a>
-						</li>
+							<ul>
+								<li>
+									<p><strong>Step1:</strong> Download the source code</p>
+									<a class="btn btn-primary" target="_blank"
+										:href="app_options.VERSIONS.filter(y => y.tag === app_state.VERSION).map(x => x.src)[0]">
+										Download source code
+									</a>
+								</li>
 
-						<li v-if="app_state.TOOLCHAIN!='pio'">
-							<p><strong>Step1 (part 2):</strong> Download the addon modules code</p>
-							<p>After downloading the source code extract only the modules you are going to use to uCNC/src/modules/
-								project directory</p>
-							<a class="btn btn-primary" target="_blank"
-								:href="app_options.VERSIONS.filter(y => y.tag === app_state.VERSION).map(x => x.src)[0]">
-								Download modules source code
-							</a>
-						</li>
+								<li v-if="app_state.TOOLCHAIN!='pio'">
+									<p><strong>Step1 (part 2):</strong> Download the addon modules code</p>
+									<p>After downloading the source code extract only the modules you are going to use to
+										uCNC/src/modules/
+										project directory</p>
+									<a class="btn btn-primary" target="_blank"
+										:href="app_options.VERSIONS.filter(y => y.tag === app_state.VERSION).map(x => x.src)[0]">
+										Download modules source code
+									</a>
+								</li>
 
-						<li>
-							<p><strong>Step2:</strong> Download the configuration files</p>
-							<p>After downloading the configuration files extract them to the project root directory (this will replace some existing files)
-								project directory</p>
-							<button class="btn btn-primary"
+								<li>
+									<p><strong>Step2:</strong> Download the configuration files</p>
+									<p>After downloading the configuration files extract them to the project root directory (this will
+										replace some existing files)
+										project directory</p>
+									<inputctrl type="button" label="Download the configuration files" customclass="btn btn-primary"
+										clickcb="window.loadGenerateConfig"></inputctrl>
+									<!-- <button class="btn btn-primary"
 								id="config_files">
 								Download the configuration files
-							</button>
-						</li>
-					</ul>
-</div>
-</div>
+							</button> -->
+								</li>
+								<p><strong>Other actions</strong></p>
+								<p>You can click these buttons to copy the content of the generated files to the clipboard replace the
+									content of your files.</p>
+								<div class="d-flex flex-wrap">
+									<inputctrl type="button" label="boardmap_reset.h" customclass="btn btn-light"
+										clickcb="window.copyBoardmapReset"></inputctrl>
+									<inputctrl type="button" label="boardmap_overrides.h" customclass="btn btn-light"
+										clickcb="window.copyBoardmapOverride"></inputctrl>
+									<inputctrl type="button" label="cnc_hal_reset.h" customclass="btn btn-light"
+										clickcb="window.copyHalReset"></inputctrl>
+									<inputctrl type="button" label="cnc_hal_overrides.h" customclass="btn btn-light"
+										clickcb="window.copyHalOverride"></inputctrl>
+									<inputctrl type="button" label="platformio.ini" customclass="btn btn-light"
+										clickcb="window.copyPioOverride"></inputctrl>
+								</div>
+								<!-- <message hiden="true" name="copied-to-clipboard" label="Copied to clipboard" labelcolor="darkgreen" alerttype="sucess">The code was copied to clipboard</message> -->
+								</li>
+							</ul>
+						</div>
+					</div>
 				</tab>
 			</tabgroup>
 

@@ -1,9 +1,9 @@
 window.M17M18Component = {
 	template: `
-<toggle name="ENABLE_M17M18_MODULE" label="Enable M17/M18 module"
-tooltip="Enables the M17/M18 parser extension module.">
+<toggle name="m17_m18" label="Enable M17/M18 module"
+tooltip="Enables the M17/M18 parser extension module." configfile="module">
 </toggle>
-<buttoncb if="app_state.ENABLE_M17M18_MODULE" enable="ENABLE_PARSER_MODULES">Fix requirements!</buttoncb>` 
+<buttoncb if="app_state.m17_m18" enable="ENABLE_PARSER_MODULES">Fix requirements!</buttoncb>` 
 };
 
 window.addEventListener("ucnc_load_components", (e) => {

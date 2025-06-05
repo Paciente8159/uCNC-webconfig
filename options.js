@@ -632,10 +632,8 @@ window.app_vars = {
 			{ id: 'graphic_display', name: 'Support for RepRap Full Graphic Display', lib_deps: 'olikraus/U8g2' },
 			/*{ id: 'sd_card', name: 'Support for SD/MMC card via hardware/software SPI (DEPRECATED)' },*/
 			{ id: 'stm32_sdio', name: 'Enables SDIO support for SD Card module. Requires SD Card module', requires: 'sd_card_v2' },
-			{ id: 'sd_card_pf', name: 'Support for SD/MMC card via hardware/software SPI and optional FS (requires up to v1.8.x to work)', condition: 'VERSION<010880' },
 			{ id: 'sd_card_v2', name: 'Support for SD/MMC card via hardware/software SPI (v2 requires at least v1.9.0 to work)', condition: 'VERSION>010879' },
 			{ id: 'bltouch', name: 'Support for BLTouch probe' },
-			{ id: 'web_pendant', name: 'Adds a web pendant for WiFi capable devices. (requires at least v1.8.1 to work and up to 1.8.x)', condition: 'VERSION>010800 && VERSION<010880' },
 			{ id: 'web_pendant', name: 'Adds an improved web pendant for WiFi capable devices. (requires at least v1.9.0 to work)', condition: 'VERSION>010879' },
 			{ id: 'tmc_driver', name: 'Support for TMC drivers. (requires at least v1.8.7 to work)', condition: 'VERSION>010806' },
 			{ id: 'tone_speaker', name: 'Plays sounds and tunes using a PWM output.' },
@@ -718,7 +716,6 @@ window.app_vars = {
 };
 
 function updateAppPins() {
-	debugger;
 	var pins = window.app_vars.app_options.UCNCPINS.map(x => x.pin);
 	pins.forEach((pin) => {
 		if (window.app_vars.app_state[pin + '_BIT'] || (window.app_vars.app_state[pin + '_IO_OFFSET'])) {

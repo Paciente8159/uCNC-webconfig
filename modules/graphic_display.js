@@ -1,12 +1,12 @@
 window.GraphicDisplayComponent = {
 	template: `
-<toggle name="ENABLE_GRAPHIC_DISPLAY_MODULE" label="Enable Graphic Display module"
-tooltip="Enables support for RepRap Full Graphic Display an other similar monochromatic displays.">
+<toggle name="graphic_display" label="Enable Graphic Display module"
+tooltip="Enables support for RepRap Full Graphic Display an other similar monochromatic displays." configfile="module">
 </toggle>
 
-<buttoncb if="app_state.ENABLE_GRAPHIC_DISPLAY_MODULE" enable="ENABLE_MAIN_LOOP_MODULES,ENABLE_ITP_FEED_TASK">Fix requirements!</buttoncb>
+<buttoncb if="app_state.graphic_display" enable="ENABLE_MAIN_LOOP_MODULES,ENABLE_ITP_FEED_TASK">Fix requirements!</buttoncb>
 
-<controlgroup if="app_state.ENABLE_GRAPHIC_DISPLAY_MODULE" label="Graphic Display options">
+<controlgroup if="app_state.graphic_display" label="Graphic Display options">
 
 <combobox name="GRAPHIC_DISPLAY_DRIVER" label="Select the graphic display driver type"
 :opts="[

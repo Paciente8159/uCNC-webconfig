@@ -1,9 +1,9 @@
 window.M66Component = {
 	template: `
-<toggle name="ENABLE_M66_MODULE" label="Enable M66 module"
-tooltip="Enables the M66 parser extension module.">
+<toggle name="m66" label="Enable M66 module"
+tooltip="Enables the M66 parser extension module." configfile="module">
 </toggle>
-<buttoncb if="app_state.ENABLE_M66_MODULE" enable="ENABLE_PARSER_MODULES">Fix requirements!</buttoncb>` 
+<buttoncb if="app_state.m66" enable="ENABLE_PARSER_MODULES">Fix requirements!</buttoncb>` 
 };
 
 window.addEventListener("ucnc_load_components", (e) => {

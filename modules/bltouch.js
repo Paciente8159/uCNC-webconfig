@@ -1,12 +1,12 @@
 window.BLTouchComponent = {
 	template: `
-<toggle name="ENABLE_BLTOUCH_MODULE" label="Enable BLTouch module"
-tooltip="Enables the BLTouch extension module.">
+<toggle name="bltouch" label="Enable BLTouch module"
+tooltip="Enables the BLTouch extension module." configfile="module">
 </toggle>
 
-<buttoncb if="app_state.ENABLE_BLTOUCH_MODULE" enable="ENABLE_IO_MODULES">Fix requirements!</buttoncb>
+<buttoncb if="app_state.bltouch" enable="ENABLE_IO_MODULES">Fix requirements!</buttoncb>
 
-<controlgroup if="app_state.ENABLE_BLTOUCH_MODULE" label="BLTouch options">
+<controlgroup if="app_state.bltouch" label="BLTouch options">
 <pin configfile="hal" name="BLTOUCH_PROBE_SERVO" label="BLTouch servo pin" units="mm" initial="SERVO0" filter="item.type.includes('servo')"></pin>
 </controlgroup>` 
 };

@@ -1,15 +1,15 @@
 window.SDCardV2Component = {
     template: `
 
-		<toggle name="ENABLE_SD_CARD_V2_MODULE" label="Enable SD Card v2 module"
-tooltip="Enables SD Card support. SD card is required to be able to run subrotines. It's also possible to store settings in the SD card.">
+		<toggle name="sd_card_v2" label="Enable SD Card v2 module"
+tooltip="Enables SD Card support. SD card is required to be able to run subrotines. It's also possible to store settings in the SD card." configfile="module">
 </toggle>
 
-<buttoncb if="app_state.ENABLE_SD_CARD_V2_MODULE"
-        enable="ENABLE_PARSER_MODULES,ENABLE_MAIN_LOOP_MODULES,DISABLE_SETTINGS_MODULES" disable="DISABLE_SETTINGS_MODULES">
+<buttoncb if="app_state.sd_card_v2"
+        enable="ENABLE_PARSER_MODULES,ENABLE_MAIN_LOOP_MODULES" disable="DISABLE_SETTINGS_MODULES">
 				Fix requirements!</buttoncb>
 
-<controlgroup label="SD Card Settings" if="app_state.ENABLE_SD_CARD_V2_MODULE">
+<controlgroup label="SD Card Settings" if="app_state.sd_card_v2">
     
     <combobox configfile="hal" name="SD_CARD_INTERFACE" label="Select SD Card interface"
         :opts="[

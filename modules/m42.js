@@ -1,9 +1,9 @@
 window.M42Component = {
 	template: `
-<toggle name="ENABLE_M42_MODULE" label="Enable M42 module"
-tooltip="Enables the M42 parser extension module.">
+<toggle name="m42" label="Enable M42 module"
+tooltip="Enables the M42 parser extension module." configfile="module">
 </toggle>
-<buttoncb if="app_state.ENABLE_M42_MODULE" enable="ENABLE_PARSER_MODULES">Fix requirements!</buttoncb>` 
+<buttoncb if="app_state.m42" enable="ENABLE_PARSER_MODULES">Fix requirements!</buttoncb>` 
 };
 
 window.addEventListener("ucnc_load_components", (e) => {

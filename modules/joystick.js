@@ -1,12 +1,12 @@
 window.JoystickComponent = {
     template: `
-		<toggle name="ENABLE_JOYSTICK_MODULE" label="Enable Joystick module"
-tooltip="Enables support analog joystick controls for jogging the machine.">
+		<toggle name="joystick" label="Enable Joystick module"
+tooltip="Enables support analog joystick controls for jogging the machine." configfile="module">
 </toggle>
 
-<buttoncb if="app_state.ENABLE_JOYSTICK_MODULE" enable="ENABLE_MAIN_LOOP_MODULES">Fix requirements!</buttoncb>
+<buttoncb if="app_state.joystick" enable="ENABLE_MAIN_LOOP_MODULES">Fix requirements!</buttoncb>
 
-<controlgroup label="Joystick Settings" if="app_state.ENABLE_JOYSTICK_MODULE">
+<controlgroup label="Joystick Settings" if="app_state.joystick">
 
 				<range configfile="hal" name="JOYSTICK_AXIS_COUNT" label="How many axes does your joystick control?" vartype="int" initial="3"
 					min="0" max="6"></range>

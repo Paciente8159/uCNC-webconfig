@@ -1,13 +1,13 @@
 window.I2CEEPROMComponent = {
     template: `
-		<toggle name="ENABLE_I2C_EEPROM_MODULE" label="Enable I2C EEPROM module"
-tooltip="Enables support for I2C EEPROM to store settings.">
+		<toggle name="i2c_eeprom" label="Enable I2C EEPROM module"
+tooltip="Enables support for I2C EEPROM to store settings." configfile="module">
 </toggle>
 
- <buttoncb if="app_state.ENABLE_I2C_EEPROM_MODULE" 
+ <buttoncb if="app_state.i2c_eeprom" 
         disable="DISABLE_SETTINGS_MODULES">Enable required extension options</buttoncb>
 
-<controlgroup label="I2C EEPROM Settings" if="app_state.ENABLE_I2C_EEPROM_MODULE">
+<controlgroup label="I2C EEPROM Settings" if="app_state.i2c_eeprom">
   
     <combobox configfile="hal" name="I2C_EEPROM_INTERFACE" label="Select I2C EEPROM interface"
         :opts="[
