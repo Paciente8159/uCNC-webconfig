@@ -62,10 +62,11 @@
 					[submiting an issue in the Github project
 					page](https://github.com/Paciente8159/uCNC-config-builder/issues/new), with an
 					attached zip with all the override files and the json config file.</message>
-					<message name="startup-info3" label="Builder still in preview mode" labelcolor="darkyellow" alerttype="warning">This builder is still in preview mode only. Do not use config files from this tool</message>
+				<message name="startup-info3" label="Builder still in preview mode" labelcolor="darkyellow" alerttype="warning">
+					This builder is still in preview mode only. Do not use config files from this tool</message>
 			</div>
 			<tabgroup id="config-tabs">
-				<tab id="basic-config" label="Basic Configuration" tabid="config-tabs" active>
+				<tab id="basic-config" label="Basic config" tabid="config-tabs" active>
 					<div class="mb-3">
 						<p>Hi there,</p>
 						<p>Welcome to µCNC basic configuration generator.</p>
@@ -83,16 +84,30 @@
 						<accordion-card id="basic-config-basic" accordionid="basic-config-accordion" label="Basic settings">
 
 							<combobox name="VERSION" label="What version will you be using?" :opts="app_options.VERSIONS"
-								keyname="tag" valname="id" changecb="window.halChanged"></combobox>
+								keyname="tag" valname="id" changecb="window.halChanged" tooltip="Select the µCNC source code version"></combobox>
 
 							<combobox name="MCU" label="What MCU family will you be using?" :opts="app_options.MCUS" keyname="id"
-								valname="name" configfile="boardmap" changecb="window.mcuChanged"></combobox>
+								valname="name" configfile="boardmap" changecb="window.mcuChanged" tooltip="Select your target MCU"></combobox>
+
+							<combobox name="BOARD" label="What board will you be using?" :opts="app_options.BOARDS" keyname="id"
+								valname="name" filter="item.mcu.includes(app_state.MCU)" initial="src/hal/boards/avr/boardmap_uno.h"
+								changecb="window.boardChanged" configfile="boardmap">
+							</combobox>
+
+							<alert alerttype="info" labelcolor="var(--bs-alert-color)" label="Advanced configurations"
+								show="app_state.BOARD=='boardmap_overrides.h'">
+								Custom boards might require aditional settings that may not be available in this tool.
+								**Check the Custom configurations tab**
+								Also might require either a different base board selection on the ini file
+								(PlatformIO) or a board type (Arduino IDE). Please refer to the architecture
+								documentation or submit a question on Github about custom boards.
+							</alert>
 
 							<combobox name="KINEMATIC" label="What type of kinematic does your machine have?"
 								:opts="app_options.KINEMATICS" keyname="id" valname="name" configfile="boardmap"></combobox>
 
 							<toggle name="MP_SCARA" label="Is MP Scara. In MP SCARA both shoulder and elbow
-							motors are fixed to the base." if="app_state.KINEMATIC=='KINEMATIC_SCARA'"></toggle>
+							motors are fixed to the base." if="app_state.KINEMATIC=='KINEMATIC_SCARA'" configfile="boardmap"></toggle>
 
 							<range name="AXIS_COUNT" label="How many axis does your machine have?" min="1" max="6" step="1"
 								configfile="boardmap" initial="3"></range>
@@ -125,13 +140,13 @@
 
 							<check name="ENABLE_LINACT_COLD_START" label="Linear actuator cold start"
 								tooltip="This forces a stop on every direction change" configfile="hal"
-								show="app_state.ENABLE_LINACT_PLANNER"></check>
+								show="app_state.ENABLE_LINACT_PLANNER"	configfile="hal"></check>
 
 							<toggle name="ENABLE_BACKLASH_COMPENSATION" label="Enable backlash compensation" configfile="hal">
 							</toggle>
 
 							<combobox name="ENABLE_S_CURVE_ACCELERATION" label="Enable S-Curve
-							acceleration" :opts="app_options.ACCELERATIONS" keyname="id" valname="name" configfile="boardmap" initial="0">
+							acceleration" :opts="app_options.ACCELERATIONS" keyname="id" valname="name" configfile="hal" initial="0">
 							</combobox>
 
 							<toggle name="BRESENHAM_16BIT" label="Use 16-bit Bresenham step generation" configfile="hal"
@@ -151,7 +166,7 @@
 							</toggle>
 
 							<range name="STATUS_AUTOMATIC_REPORT_INTERVAL" label="Automatic
-							status report frequency: " min="0" max="1000" step="50" units="ms" configfile="boardmap" initial="0"
+							status report frequency: " min="0" max="1000" step="50" units="ms" configfile="hal" initial="0"
 								tooltip="Enables automatic status report with a set frequency. This can improve the update rate on your GUI. Values bellow 100ms will have no effect (off)">
 							</range>
 
@@ -188,24 +203,7 @@
 						</accordion-card>
 					</accordion>
 				</tab>
-				<tab id="boardmap-config" label="Board" tabid="config-tabs">
-					<controlgroup label="Basic board settings">
-
-						<combobox name="BOARD" label="What board will you be using?" :opts="app_options.BOARDS" keyname="id"
-							valname="name" filter="item.mcu.includes(app_state.MCU)" initial="src/hal/boards/avr/boardmap_uno.h"
-							changecb="window.boardChanged">
-						</combobox>
-
-						<alert alerttype="info" labelcolor="var(--bs-alert-color)" label="Advanced configurations"
-							show="app_state.BOARD=='boardmap_overrides.h'">
-							Custom boards might require aditional settings that may not be available in this tool.
-							**Check the Custom configurations tab**
-							Also might require either a different base board selection on the ini file
-							(PlatformIO) or a board type (Arduino IDE). Please refer to the architecture
-							documentation or submit a question on Github about custom boards.
-						</alert>
-
-					</controlgroup>
+				<tab id="boardmap-config" label="Board config" tabid="config-tabs">
 
 					<accordion id="boardmap-config-accordion">
 						<accordion-card id="board-basic-config" accordionid="boardmap-config-accordion"
@@ -279,15 +277,15 @@
 							</repeater>
 						</accordion-card>
 						<accordion-card id="io-extender-config" accordionid="boardmap-config-accordion" label="IO extenders">
-							<range name="IC74HC595_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC595's:"
+							<range name="IC74HC595_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC595's:" 	configfile="boardmap"
 								tooltip="Defines the total number of daisy chained 74HC595 in your board. Depending on you configuration this number can be ignored. For example if the board uses a custom callback to drive the data to the shift register.">
 							</range>
 
-							<range name="IC74HC165_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC165's:"
+							<range name="IC74HC165_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC165's:"	configfile="boardmap"
 								tooltip="Defines the total number of daisy chained 74HC165 in your board. Depending on you configuration this number can be ignored. For example if the board uses a custom callback to drive the data to the shift register.">
 							</range>
 
-							<toggle name="SHIFT_REGISTER_CUSTOM_CALLBACK" label="Board uses a custom IO expander callback"
+							<toggle name="SHIFT_REGISTER_CUSTOM_CALLBACK" alias="IC74HC595_CUSTOM_SHIFT_IO" label="Board uses a custom IO expander callback"
 								configfile="boardmap" if="!app_state.SHIFT_REGISTER_USE_HW_SPI"></toggle>
 
 							<toggle name="SHIFT_REGISTER_USE_HW_SPI" label="Board uses an hardware SPI to control the IO expander"
@@ -863,7 +861,7 @@
 						</accordion-card>
 					</accordion>
 				</tab>
-				<tab id="custom-config" label="Custom configurations" tabid="config-tabs">
+				<tab id="custom-config" label="Custom config" tabid="config-tabs">
 					<accordion id="custom-config-accordion">
 						<accordion-card id="custom-boardmap-config" accordionid="custom-config-accordion"
 							label="Custom boardmap config">

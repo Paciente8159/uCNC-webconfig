@@ -20,6 +20,9 @@ function typeConverter(type = 'default', value) {
 	}
 
 	if ((typeof value == "string" || typeof value == "object") && !value.length) {
+		if(type=='bool'){
+			return true;
+		}
 		return value;
 	}
 
@@ -62,14 +65,22 @@ window.ToggleComponent = {
 		tooltiptitle: { type: String, default: "Info" },
 		tooltip: { type: String, default: "" },
 		nullable: { type: Boolean, default: true },
+		alias: { type: String }
 	},
 	computed: {
 		modelValue: {
 			get() {
-				return typeConverter(this.vartype, this.$root.app_state[this.name]);
+				let aliasstate = false;
+				if (this.alias && this.alias.length) {
+					aliasstate = typeConverter(this.vartype, this.$root.app_state[this.alias]);
+				}
+				return typeConverter(this.vartype, this.$root.app_state[this.name]) | aliasstate;
 			},
 			set(newValue) {
 				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
+				if (this.alias && this.alias.length) {
+					this.$root.app_state[this.alias] = typeConverter(this.vartype, newValue);
+				}
 			}
 		},
 		showCondition() {
@@ -92,7 +103,13 @@ window.ToggleComponent = {
 	created() {
 		if (!(this.name in this.$root.app_state)) {
 			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":${this.nullable}, "file":"${this.configfile}"}}`));
+			if (this.alias && this.alias.length) {
+				Object.assign(this.$root.app_fields, JSON.parse(`{"${this.alias}":{"type":"${this.vartype}", "nullable":${this.nullable}, "file":"${this.configfile}"}}`));
+			}
 			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":${this.initial}}`));
+			if (this.alias && this.alias.length) {
+				Object.assign(this.$root.app_state, JSON.parse(`{"${this.alias}":${this.initial}}`));
+			}
 		}
 	},
 	mounted() {
@@ -104,7 +121,7 @@ window.ToggleComponent = {
 	template: `<div class="form-check form-switch" v-if="ifCondition" v-show="showCondition"
 		data-bs-toggle="popover" :data-bs-title="tooltiptitle">
 		<input class="form-check-input" type="checkbox"
-		v-model="modelValue" :id="name" :name="name" :config-file="configfile" :var-type="vartype">
+		v-model="modelValue" :id="name" :name="name" :alias="alias" :config-file="configfile" :var-type="vartype">
 		<label class="form-check-label" :for="name" v-if="label.length">{{ label }}</label>
 		</div>`
 };
@@ -121,14 +138,22 @@ window.CheckComponent = {
 		tooltiptitle: { type: String, default: "Info" },
 		tooltip: { type: String, default: "" },
 		nullable: { type: Boolean, default: true },
+		alias: { type: String }
 	},
 	computed: {
 		modelValue: {
 			get() {
-				return typeConverter(this.vartype, this.$root.app_state[this.name]);
+				let aliasstate = false;
+				if (this.alias && this.alias.length) {
+					aliasstate = typeConverter(this.vartype, this.$root.app_state[this.alias]);
+				}
+				return typeConverter(this.vartype, this.$root.app_state[this.name]) | aliasstate;
 			},
 			set(newValue) {
 				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
+				if (this.alias && this.alias.length) {
+					this.$root.app_state[this.alias] = typeConverter(this.vartype, newValue);
+				}
 			}
 		},
 		showCondition() {
@@ -151,7 +176,13 @@ window.CheckComponent = {
 	created() {
 		if (!(this.name in this.$root.app_state)) {
 			Object.assign(this.$root.app_fields, JSON.parse(`{"${this.name}":{"type":"${this.vartype}", "nullable":${this.nullable}, "file":"${this.configfile}"}}`));
+			if (this.alias && this.alias.length) {
+				Object.assign(this.$root.app_fields, JSON.parse(`{"${this.alias}":{"type":"${this.vartype}", "nullable":${this.nullable}, "file":"${this.configfile}"}}`));
+			}
 			Object.assign(this.$root.app_state, JSON.parse(`{"${this.name}":${this.initial}}`));
+			if (this.alias && this.alias.length) {
+				Object.assign(this.$root.app_state, JSON.parse(`{"${this.alias}":${this.initial}}`));
+			}
 		}
 	},
 	mounted() {
@@ -163,7 +194,7 @@ window.CheckComponent = {
 	template: `<div class="form-check form-check-inline" v-if="ifCondition" v-show="showCondition"
 		data-bs-toggle="popover" :data-bs-title="tooltiptitle">
 		<input class="form-check-input" type="checkbox"
-		v-model="modelValue" :id="name" :name="name" :config-file="configfile" :var-type="vartype">
+		v-model="modelValue" :id="name" :name="name" :alias="alias" :config-file="configfile" :var-type="vartype">
 		<label class="form-check-label" :for="name" v-if="label.length">{{ label }}</label>
 		</div>`
 };
