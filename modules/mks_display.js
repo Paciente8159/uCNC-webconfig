@@ -4,7 +4,7 @@ window.MKSDisplayComponent = {
 tooltip="Enables MKS TFT color displays." configfile="module">
 </toggle>
 
-<buttoncb enable="ENABLE_MAIN_LOOP_MODULES,ENABLE_ITP_FEED_TASK" if="app_state.mks_display">Enable required extension options</buttoncb>
+<buttoncb enable="ENABLE_MAIN_LOOP_MODULES,ENABLE_ITP_FEED_TASK" if="app_state.mks_display">Fix requirements!</buttoncb>
 
 <controlgroup label="TFT Display options" if="app_state.mks_display">
     <combobox configfile="hal" name="TFT_DISPLAY_SPI_INTERFACE" label="Select SPI interface"

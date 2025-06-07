@@ -671,12 +671,12 @@ window.app_vars = {
 			{ id: 'TMC_SPI_HW', name: 'Hardware SPI' },
 		],
 		LINACTS: [
-			{ value: 1, name: 'LINACT0_IO_MASK', label: 'Linear actuator 0 (AXIS X) STEP IO outputs', axisnum: 0 },
-			{ value: 2, name: 'LINACT1_IO_MASK', label: 'Linear actuator 1 (AXIS Y) STEP IO outputs', axisnum: 1 },
-			{ value: 4, name: 'LINACT2_IO_MASK', label: 'Linear actuator 2 (AXIS Z) STEP IO outputs', axisnum: 2 },
-			{ value: 8, name: 'LINACT3_IO_MASK', label: 'Linear actuator 3 (AXIS A) STEP IO outputs', axisnum: 3 },
-			{ value: 16, name: 'LINACT4_IO_MASK', label: 'Linear actuator 4 (AXIS B) STEP IO outputs', axisnum: 4 },
-			{ value: 32, name: 'LINACT5_IO_MASK', label: 'Linear actuator 5 (AXIS C) step IO outputs', axisnum: 5 }
+			{ value: '1', name: 'LINACT0_IO_MASK', label: 'Linear actuator 0 (AXIS X) STEP IO outputs', axisnum: 0 },
+			{ value: '2', name: 'LINACT1_IO_MASK', label: 'Linear actuator 1 (AXIS Y) STEP IO outputs', axisnum: 1 },
+			{ value: '4', name: 'LINACT2_IO_MASK', label: 'Linear actuator 2 (AXIS Z) STEP IO outputs', axisnum: 2 },
+			{ value: '8', name: 'LINACT3_IO_MASK', label: 'Linear actuator 3 (AXIS A) STEP IO outputs', axisnum: 3 },
+			{ value: '16', name: 'LINACT4_IO_MASK', label: 'Linear actuator 4 (AXIS B) STEP IO outputs', axisnum: 4 },
+			{ value: '32', name: 'LINACT5_IO_MASK', label: 'Linear actuator 5 (AXIS C) step IO outputs', axisnum: 5 }
 		],
 		LINACTS_LIMITS: [
 			{ value: '1', name: 'LIMIT_X_IO_MASK', label: 'Limit X will stop which STEP IO output?', axisnum: 0, pin: 'LIMIT_X' },

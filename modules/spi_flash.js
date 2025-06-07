@@ -5,7 +5,7 @@ tooltip="Enables SPI NorFlash support to allow using a nor flash to store settin
 </toggle>
 
 <buttoncb if="app_state.spi_flash"
-        enable="ENABLE_MAIN_LOOP_MODULES" disable="DISABLE_SETTINGS_MODULES">Enable required extension options</buttoncb>
+        enable="ENABLE_MAIN_LOOP_MODULES" disable="DISABLE_SETTINGS_MODULES">Fix requirements!</buttoncb>
 
 <controlgroup label="Flash SPI Settings" if="app_state.spi_flash">
     

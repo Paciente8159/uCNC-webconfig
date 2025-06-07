@@ -961,10 +961,12 @@
 	<script src="configs.js"></script>
 	<script>
 		// Vue.config.devtools = true;
-		const { createApp } = Vue;
+		const { createApp, reactive } = Vue;
+		window.app_vars.app_state = reactive(window.app_vars.app_state);
+
 		window.ucnc_app = createApp({
 			data() {
-				return app_vars;
+				return window.app_vars;
 			},
 			mounted() {
 				document.getElementById('app_loader').classList.add('d-none');

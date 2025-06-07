@@ -5,7 +5,7 @@ tooltip="Enables support for I2C EEPROM to store settings." configfile="module">
 </toggle>
 
  <buttoncb if="app_state.i2c_eeprom" 
-        disable="DISABLE_SETTINGS_MODULES">Enable required extension options</buttoncb>
+        disable="DISABLE_SETTINGS_MODULES">Fix requirements!</buttoncb>
 
 <controlgroup label="I2C EEPROM Settings" if="app_state.i2c_eeprom">
   

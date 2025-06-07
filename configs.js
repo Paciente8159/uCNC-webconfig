@@ -115,11 +115,19 @@ window.resetPins = function (scope) {
 // 	let processed = processBlock(activeContent);
 // 	return { blockLines: processed.resultLines, newIndex: i };
 // }
+function isValidSyntax(code) {
+	try {
+		new Function(code); // Attempt to create a new function
+		return true; // No syntax errors
+	} catch (error) {
+		return false; // Syntax error occurred
+	}
+}
+
 async function processConditionalBlock(lines, startIndex = 0, settings = []) {
 	let branches = [];
 	let ifLine = lines[startIndex];
 	let currentCondition = "";
-	let baseeval = settings.map(([k,v]) => {`let ${k} = ${v};\n`}).join('');
 
 	// Convert the starting directive (#if, #ifdef, #ifndef) into a JS evaluable condition.
 	if (/^#if\s+/.test(ifLine)) {
@@ -128,23 +136,23 @@ async function processConditionalBlock(lines, startIndex = 0, settings = []) {
 	} else if (/^#ifdef\s+/.test(ifLine)) {
 		let match = ifLine.match(/^#ifdef\s+(\w+)/);
 		// If defined means that the variable must exist in scope.
-		currentCondition = "defined("+match[1].trim()+")";
+		currentCondition = "defined(" + match[1].trim() + ")";
 	} else if (/^#ifndef\s+/.test(ifLine)) {
 		let match = ifLine.match(/^#ifndef\s+(\w+)/);
-		currentCondition = "!defined("+match[1].trim()+")";
+		currentCondition = "!defined(" + match[1].trim() + ")";
 	}
 
-	while(/defined[\s]+([a-zA-Z_][\w_]*)/.test(currentCondition)){
+	while (/defined[\s]+([a-zA-Z_][\w_]*)/.test(currentCondition)) {
 		let match = currentCondition.match(/defined[\s]+([a-zA-Z_][\w_]*)/);
-		let varName = match[1].trim().replace(/^[\(]+/gm, '').replace(/[\)]+$/gm, '');
+		let varName = match[1].trim();
 		currentCondition = currentCondition.replace(match[0], `(typeof ${varName} !== 'undefined')`);
 	}
 
-	while(/defined[\s]*\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\)/.test(currentCondition)){
-		let match = currentCondition.match(/defined[\s]*(\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\))/);
-		let varName = match[1].trim().replace(/^[\(]+/gm, '').replace(/[\)]+$/gm, '');
+	while (/defined[\s]+\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\)/.test(currentCondition)) {
+		let match = currentCondition.match(/defined[\s]+(\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\))/);
+		let varName = match[1].trim();
 		currentCondition = currentCondition.replace(match[0], `(typeof ${varName} !== 'undefined')`);
-	} 
+	}
 
 	let branchContent = [];
 	let i = startIndex + 1;
@@ -210,13 +218,16 @@ async function processConditionalBlock(lines, startIndex = 0, settings = []) {
 		} else {
 			let declarations = "";
 			for (let key in settings) {
-				declarations += `var ${key} = ${settings[key]}; `;
+				let decl = `var ${key} = ${settings[key]}; `;
+				if (isValidSyntax(decl)) {
+					declarations += `var ${key} = ${settings[key]}; `;
+				}
 			}
 			let evalStr = declarations + `return (${branch.condition});`;
 			try {
 				let func = new Function(evalStr);
 				if (func()) {
-					settings=await processBlock(activeContent, settings);
+					settings = await processBlock(activeContent, settings);
 					break;
 				}
 			} catch (e) {
@@ -271,9 +282,7 @@ async function processBlock(lines, settings = [], recursive = false) {
 	return settings;
 }
 
-async function processLine(line, settings = [], recursive = false, lines, index){
-
-	if(line.includes('IC74HC595_COUNT')){debugger;console.log(index); console.log(lines[index]);}
+async function processLine(line, settings = [], recursive = false, lines, index) {
 	// If recursive, process include files.
 	if (recursive) {
 		const includeregex = /^[\s]*#include[^'"]*(?<inc>[\-\w\d\.]+|"[^"]+")?/gm;
@@ -283,23 +292,29 @@ async function processLine(line, settings = [], recursive = false, lines, index)
 			let includedFile = includefiles[i][1].replace(/['"]+/g, '');
 			let basefile = file.substring(0, file.lastIndexOf('/') + 1) + includedFile;
 			// Recursively merge settings from the included file.
-			settings = await parsePreprocessorAdvanced(basefile, settings, recursive);
+			settings = await parsePreprocessorAdvanced(basefile, settings.slice(), recursive);
 		}
 	}
 
 	// Finally, process the #define and #undef directives.
 	// We also remove any inline comments that appear after the directive.
-	const defineRegex = /^#(define|undef)\s+([\w\d]+)([^\n]*)$/gm;
+	const defineRegex = /^#(define|undef)\s+([\a-zA-Z_][\w\d_]*(\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\))?)(\s+([^\n]*))?$/gm;
 	let matches = [...line.matchAll(defineRegex)];
 	for (let match of matches) {
-		let directive = match[1];
-		let def = match[2];
-		// Remove inline single line (//) and multiline (/* */) comments from the value.
-		let val = match[3].replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//gm, '').trim().replace(/^[\(]+/gm, '').replace(/[\)]+$/gm, '');
-		if (directive === "define") {
-			settings[def] = (val=="") ? true : val;
-		} else { // for undef
-			delete settings[def];
+		try {
+			let directive = match[1];
+			let def = match[2];
+			// Remove inline single line (//) and multiline (/* */) comments from the value.
+			// let val = match[3].replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//gm, '').trim();
+			let val = (match[4] == undefined) ? true : match[4].trim();
+			if (directive === "define") {
+				settings[def] = val;
+			} else { // for undef
+				delete settings[def];
+			}
+		} catch (e) {
+			debugger;
+			console.log('failed to define ' + line + '. Error: ' + e);
 		}
 	}
 
@@ -324,7 +339,7 @@ async function parsePreprocessorAdvanced(file, settings = [], recursive = false)
 	// clean trailing spaces
 	let lines = allText.split("\n").map(l => l.trim()).filter(l => l.length > 0);
 
-	return processBlock(lines, settings,recursive);
+	return processBlock(lines, settings, recursive);
 }
 
 
@@ -338,7 +353,7 @@ async function parsePreprocessor(file, settings = [], recursive = false) {
 			const includefiles = [...allText.matchAll(includeregex)];
 			for (var i = 0; i < includefiles.length; i++) {
 				var basefile = file.substring(0, file.lastIndexOf('/') + 1) + includefiles[i][1].replace(/['"]+/g, '');
-				settings = await parsePreprocessor(basefile, settings, recursive);
+				settings = await parsePreprocessor(basefile, settings.slice(), recursive);
 			}
 		}
 		const defineregex = (!recursive) ? /^[\s]*#(define)[\s]+(?<def>[\w\d]+)(?<val>[^\n]*)$/gm : /^[\s]*#(define|undef)[\s]+(?<def>[\w\d]+)(?<val>[^\n]*)$/gm;
@@ -536,22 +551,35 @@ window.boardChanged = async function (scope, target) {
 
 	const mcuurl = coreurl + "/uCNC/" + scope.$root.app_options.MCUS.filter(i => i.id == scope.$root.app_state.MCU)[0].url;
 	const boardurl = coreurl + "/uCNC/" + scope.$root.app_state.BOARD;
-	debugger;
-	let boardsetting = await parsePreprocessorAdvanced(boardurl, [], true);
-	let settings = await parsePreprocessorAdvanced(mcuurl, boardsetting, false);
-	Object.keys(scope.$root.app_state).forEach(element => {
-		if (settings[element]) {
-			let v_type = (scope.$root.app_fields[element]) ? scope.$root.app_fields[element].vartype : 'default';
-			scope.$root.app_state[element] = typeConverter(v_type, settings[element]);
+
+
+	let board_settings = await parsePreprocessorAdvanced(boardurl, [], true);
+	let mcu_settings = await parsePreprocessorAdvanced(mcuurl, board_settings.slice(), false);
+
+	/**
+	 * Old version
+	 */
+
+	// let mcu_settings = await parsePreprocessor(mcuurl, [], false);
+	// let board_settings = await parsePreprocessor(boardurl, [], true);
+
+	let elems = Object.keys(board_settings);
+	for(let i = 0; i<elems.length; i++){
+			scope.$root.app_state[elems[i]] = board_settings[elems[i]];
+			await scope.$nextTick();
+	}
+
+	Object.keys(board_settings).forEach(element => {
+		if (!document.getElementById(element)) {
+			scope.$root.app_state['CUSTOM_BOARDMAP_CONFIGS'] = scope.$root.app_state['CUSTOM_BOARDMAP_CONFIGS'] + `#define ${element} ${board_settings[element]}\n`;
 		}
 	});
 
-	let simplesettings = await parsePreprocessor(boardurl, [], true);
-	Object.keys(simplesettings).forEach(element => {
-		if (simplesettings[element] && scope.$root.app_state[element] == undefined) {
-			scope.$root.app_state['CUSTOM_BOARDMAP_CONFIGS'] = scope.$root.app_state['CUSTOM_BOARDMAP_CONFIGS'] + `#define ${element} ${simplesettings[element]}\n`;
-		}
-	});
+	elems = Object.keys(mcu_settings);
+	for(let i = 0; i<elems.length; i++){
+			scope.$root.app_state[elems[i]] = mcu_settings[elems[i]];
+			await scope.$nextTick();
+	}
 
 	await scope.$nextTick();
 	endLoadAnimation();
@@ -572,7 +600,7 @@ window.halChanged = async function (scope, target) {
 	const coreurl = "https://raw.githubusercontent.com/Paciente8159/uCNC/" + version_name;
 	const hal = coreurl + "/uCNC/cnc_hal_config.h";
 
-	settings = await parsePreprocessorAdvanced(hal, settings);
+	settings = await parsePreprocessorAdvanced(hal, []);
 	Object.keys(scope.$root.app_state).forEach(element => {
 		if (settings[element]) {
 			scope.$root.app_state[element] = settings[element];
