@@ -1,10 +1,10 @@
 window.ToneSpeakerComponent = {
 	template: `
 <toggle name="tone_speaker" label="Enable Tone Speaker module"
-tooltip="Enables the Tone Speaker extension module." configfile="hal,module">
+tooltip="Enables the Tone Speaker extension module." configfile="module">
 </toggle>
 <buttoncb if="app_state.tone_speaker" enable="ENABLE_MAIN_LOOP_MODULES">Fix requirements!</buttoncb>
-<check if="app_state.tone_speaker" name="ENABLE_TONE_SPEAKER" label="Enable tone peaker" initial="true"></check>
+<check if="app_state.tone_speaker" name="ENABLE_TONE_SPEAKER" label="Enable tone peaker" initial="true" configfile="hal"></check>
 <controlgroup if="app_state.ENABLE_TONE_SPEAKER" label="Tone Speaker options">
 <pin configfile="hal" name="SPEAKER_PWM" label="Speaker pwm pin"  initial="PWM1" filter="item.type.includes('pwm')"></pin>
 <toggle name="ENABLE_BOOT_JINGLE" label="Enable tone jingle" configfile="hal"></toggle>

@@ -91,7 +91,7 @@
 
 							<combobox name="BOARD" label="What board will you be using?" :opts="app_options.BOARDS" keyname="id"
 								valname="name" filter="item.mcu.includes(app_state.MCU)" initial="src/hal/boards/avr/boardmap_uno.h"
-								changecb="window.boardChanged" configfile="boardmap">
+								changecb="window.boardChanged" configfile="boardmap" vartype="string">
 							</combobox>
 
 							<alert alerttype="info" labelcolor="var(--bs-alert-color)" label="Advanced configurations"
@@ -125,7 +125,7 @@
 							<toggle name="ENABLE_BLUETOOTH" label="Enable Bluetooth" configfile="boardmap"
 								tooltip="Available for boards with Bluetooth (ex: ESP32, RP2040W, etc..)"></toggle>
 
-							<toggle name="ENABLE_STEPPERS_DISABLE_TIMEOUT" label="Enable stepper idle timeout" configfile="boardmap"
+							<toggle name="ENABLE_STEPPERS_DISABLE_TIMEOUT" label="Enable stepper idle timeout" configfile="hal"
 								tooltip="Enables setting $1 to turn off steppers after some idle time"></toggle>
 
 							<toggle name="ENABLE_SKEW_COMPENSATION" label="Enable X-Y-Z axis skew
@@ -208,8 +208,8 @@
 					<accordion id="boardmap-config-accordion">
 						<accordion-card id="board-basic-config" accordionid="boardmap-config-accordion"
 							label="Board Ports and Timers">
-							<textfield name="BOARD_NAME" label="The board name printed with $I command?" configfile="hal" tooltip="Name must be between quotation marks
-							(string). Ex. 'myboard'" initial="">
+							<textfield name="BOARD_NAME" label="The board name printed with $I command?" configfile="boardmap" tooltip="Name must be between quotation marks
+							(string). Ex. 'myboard'" initial="" vartype="string" pattern="^'(?:[^'\\]|\\.)*'$|&quot;(?:[^&quot;\\]|\\.)*&quot;$">
 							</textfield>
 							<!-- pattern="^(['&quot;])(.*?)\1$" -->
 
@@ -295,17 +295,17 @@
 								if="!app_state.SHIFT_REGISTER_CUSTOM_CALLBACK && (app_state.IC74HC595_COUNT || app_state.IC74HC165_COUNT)">
 								<pin name="SHIFT_REGISTER_CLK" label="Select the shift clock pin" initial="DOUT9"
 									if="!app_state.SHIFT_REGISTER_USE_HW_SPI && (app_state.IC74HC595_COUNT || app_state.IC74HC165_COUNT)"
-									filter="item.type.includes('generic_output')"></pin>
+									filter="item.type.includes('generic_output')" configfile="boardmap"></pin>
 								<pin name="SHIFT_REGISTER_SDO" label="Select the data out pin" initial="DOUT8"
 									if="!app_state.SHIFT_REGISTER_USE_HW_SPI && app_state.IC74HC595_COUNT"
-									filter="item.type.includes('generic_output')"></pin>
+									filter="item.type.includes('generic_output')" configfile="boardmap"></pin>
 								<pin name="IC74HC595_LATCH" label="Select the output latch pin" initial="DOUT10"
 									if="app_state.IC74HC595_COUNT" filter="item.type.includes('generic_output')"></pin>
 								<pin name="SHIFT_REGISTER_SDI" label="Select the data in pin" initial="DIN8"
 									if="!app_state.SHIFT_REGISTER_USE_HW_SPI && app_state.IC74HC165_COUNT"
-									filter="item.type.includes('generic_input')"></pin>
+									filter="item.type.includes('generic_input')" configfile="boardmap"></pin>
 								<pin name="IC74HC165_LOAD" label="Select the data in load pin" initial="DIN11"
-									if="app_state.IC74HC165_COUNT" filter="item.type.includes('generic_input')"></pin>
+									if="app_state.IC74HC165_COUNT" filter="item.type.includes('generic_input')" configfile="boardmap"></pin>
 							</controlgroup>
 						</accordion-card>
 
@@ -642,7 +642,7 @@
 							<accordion-card :label="item.tool + ' (' + app_state[item.tool] + ')' "
 								:id="'tool-accordion'+item.toolcount" accordionid="tools-config-accordion">
 								<combobox :name="item.tool" :label="'Choose a tool controller for '+item.tool"
-									:opts="app_options.TOOL_OPTIONS" keyname="id" valname="name" initial="spindle_pwm"></combobox>
+									:opts="app_options.TOOL_OPTIONS" keyname="id" valname="name" initial="spindle_pwm" configfile="hal"></combobox>
 								<toolsloader :tool="item.tool"></toolsloader>
 
 							</accordion-card>
@@ -702,7 +702,7 @@
 							<toggle name="DISABLE_PROBE" label="Disable probe pin" configfile="hal">
 							</toggle>
 
-							<check name="PROBE_PULLUP_ENABLE'" label="Enable PROBE internal weak pullup" configfile="hal">
+							<check name="PROBE_PULLUP_ENABLE" label="Enable PROBE internal weak pullup" configfile="hal">
 							</check>
 
 						</accordion-card>
@@ -726,7 +726,7 @@
 							<repeater label="Linear actuators masks" :opts="app_options.LINACTS"
 								filter="item.axisnum&lt;app_state.AXIS_COUNT" if="app_state.ENABLE_MULTI_STEPPER_AXIS">
 								<template #default="{ item: i }">
-									<bitfield bitprefix="STEP" :name="i.name" :label="i.label" :initial="i.value"></bitfield>
+									<bitfield bitprefix="STEP" :name="i.name" :label="i.label" :initial="i.value" configfile="hal"></bitfield>
 								</template>
 							</repeater>
 
@@ -738,7 +738,7 @@
 							<repeater label="Linear actuators masks" :opts="app_options.LINACTS_LIMITS"
 								if="app_state.ENABLE_AXIS_AUTOLEVEL">
 								<template #default="{ item: i }">
-									<bitfield bitprefix="STEP" :name="i.name" :label="i.label" :initial="i.value"
+									<bitfield bitprefix="STEP" :name="i.name" :label="i.label" :initial="i.value" configfile="hal"
 										tooltip="Assign a limit switch to the motor that it will stop when triggered. Limits names are not rigid. You can have a Z bed with 3 motors and you can assign limits Z Z2 and A for example to level the bed.">
 									</bitfield>
 								</template>
@@ -793,7 +793,7 @@
 							</repeater>
 
 							<toggle name="ENABLE_ENCODER_RPM" label="Assign RPM encoder" if="app_state.ENCODERS"
-								tooltip="Assign encoder to tool RPM counter.">
+								tooltip="Assign encoder to tool RPM counter." configfile="hal">
 							</toggle>
 							<controlgroup if="app_state.ENABLE_ENCODER_RPM" label="RPM encoder settings">
 

@@ -58,7 +58,7 @@ window.ToggleComponent = {
 		name: { type: String, required: true },
 		configfile: { type: String, default: "" },
 		label: { type: String, default: "Enables/Disables control" },
-		vartype: { type: String, default: "bool" },
+		vartype: { type: String, default: "" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
 		initial: { type: String, default: "false" },
@@ -73,16 +73,16 @@ window.ToggleComponent = {
 				let aliasstate = false;
 				// if(this.alias=='IC74HC595_CUSTOM_SHIFT_IO'){debugger;}
 				if (this.alias && this.alias.length) {
-					aliasstate = typeConverter(this.vartype, this.$root.app_state[this.alias]);
+					aliasstate = typeConverter('bool', this.$root.app_state[this.alias]);
 				}
-				return typeConverter(this.vartype, this.$root.app_state[this.name] | aliasstate);
+				return typeConverter('bool', this.$root.app_state[this.name] | aliasstate);
 			},
 			set(newValue) {
 				// if(this.alias=='IC74HC595_CUSTOM_SHIFT_IO'){debugger;}
 				if (this.alias && this.alias.length) {
-					this.$root.app_state[this.alias] = typeConverter(this.vartype, newValue);
+					this.$root.app_state[this.alias] = typeConverter('bool', newValue);
 				}
-				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
+				this.$root.app_state[this.name] = typeConverter('bool', newValue);
 			}
 		},
 		showCondition() {
@@ -133,7 +133,7 @@ window.CheckComponent = {
 		name: { type: String, required: true },
 		configfile: { type: String, default: "" },
 		label: { type: String, default: "Enables/Disables control" },
-		vartype: { type: String, default: "bool" },
+		vartype: { type: String, default: "" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
 		initial: { type: String, default: "false" },
@@ -148,15 +148,15 @@ window.CheckComponent = {
 				let aliasstate = false;
 				
 				if (this.alias && this.alias.length) {
-					aliasstate = typeConverter(this.vartype, this.$root.app_state[this.alias]);
+					aliasstate = typeConverter('bool', this.$root.app_state[this.alias]);
 				}
-				return typeConverter(this.vartype, this.$root.app_state[this.name] | aliasstate);
+				return typeConverter('bool', this.$root.app_state[this.name] | aliasstate);
 			},
 			set(newValue) {
 				if (this.alias && this.alias.length) {
-					this.$root.app_state[this.alias] = typeConverter(this.vartype, newValue);
+					this.$root.app_state[this.alias] = typeConverter('bool', newValue);
 				}
-				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
+				this.$root.app_state[this.name] = typeConverter('bool', newValue);
 			}
 		},
 		showCondition() {
@@ -316,7 +316,6 @@ window.RangeComponent = {
 				return typeConverter(this.vartype, this.$root.app_state[this.name]);
 			},
 			set(newValue) {
-				this.$root.app_fields[this.name] = { type: this.vartype, nullable: this.nullable, file: this.configfile };
 				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
 			}
 		},
@@ -576,10 +575,10 @@ window.TextFieldComponent = {
 	computed: {
 		modelValue: {
 			get() {
-				return this.$root.app_state[this.name];
+				return typeConverter(this.vartype, this.$root.app_state[this.name]);
 			},
 			set(newValue) {
-				this.$root.app_state[this.name] = newValue;
+				this.$root.app_state[this.name] = typeConverter(this.vartype, newValue);
 			}
 		},
 		showCondition() {
@@ -789,7 +788,7 @@ window.BitFieldComponent = {
 window.PinComponent = {
 	props: {
 		name: { type: String, required: true },
-		configfile: { type: String, default: "" },
+		configfile: { type: String, default: "hal" },
 		label: { type: String, default: "Combobox" },
 		vartype: { type: String, default: "" },
 		filter: { type: String, default: "true" },

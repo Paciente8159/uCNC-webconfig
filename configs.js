@@ -374,14 +374,14 @@ function is_empty(val) {
 		return true;
 	}
 
-	if (val != "") {
+	if (val == "") {
 		return true;
 	}
 
 	return false;
 }
 
-function generate_user_config(options, defguard, reset_file = "", close = true) {
+function generate_user_config(rootscope = window.app_vars, options, defguard, reset_file = "", close = true) {
 	options = options.filter(y => y.length > 0);
 	var gentext = '#ifndef ' + defguard + '\n#define ' + defguard + '\n#ifdef __cplusplus\nextern "C"\n{\n#endif\n\n';
 	if (reset_file !== "") {
@@ -390,8 +390,8 @@ function generate_user_config(options, defguard, reset_file = "", close = true) 
 
 	for (var i = 0; i < options.length; i++) {
 		try {
-			let val = window.app_vars.app_state[options[i]];
-			let field = window.app_vars.app_fields[options[i]];
+			let val = rootscope.app_state[options[i]];
+			let field = rootscope.app_fields[options[i]];
 			if (val != undefined) {
 				if (reset_file === "") {
 					// gentext += "//undefine " + options[i] + "\n";
@@ -399,12 +399,13 @@ function generate_user_config(options, defguard, reset_file = "", close = true) 
 					gentext += "#undef " + options[i] + "\n";
 				}
 				else {
+					if (field === undefined) { debugger; }
 					switch (field.type) {
 						case 'bool':
 							if (field.nullable && is_empty(val)) {
 								break;
 							}
-							gentext += "#define " + options[i] + ((val) ? " true" : "false");
+							gentext += "#define " + options[i] + ((val) ? " true" : " false") + "\n";
 							break;
 						case 'string':
 							gentext += `#define ${options[i]} "${val}"\n`;
@@ -413,7 +414,11 @@ function generate_user_config(options, defguard, reset_file = "", close = true) 
 							if (field.nullable && is_empty(val)) {
 								break;
 							}
-							gentext += `#define ${options[i]} ${val}\n`;
+							if (val !== true) {
+								gentext += `#define ${options[i]} ${val}\n`;
+							} else {
+								gentext += `#define ${options[i]}\n`;
+							}
 							break;
 					}
 				}
@@ -433,13 +438,13 @@ function generate_user_config(options, defguard, reset_file = "", close = true) 
 
 function generateBoardmapOverrides(rootscope = window.app_vars) {
 	// var exclude = [...document.querySelectorAll('[config-file="boardmap"]')].map(x => x.id);
-	var overrides = generate_user_config(Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('boardmap')).map(([k]) => k), 'BOADMAP_OVERRIDES_H', "boardmap_reset", false);
+	var overrides = generate_user_config(rootscope, Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('boardmap')).map(([k]) => k), 'BOADMAP_OVERRIDES_H', "boardmap_reset", false);
 	overrides += "//Custom configurations\n" + rootscope.app_state.CUSTOM_BOARDMAP_CONFIGS + '\n\n#ifdef __cplusplus\n}\n#endif\n#endif\n';
 	return overrides;
 }
 
 function generateBoardmapReset(rootscope = window.app_vars) {
-	var overrides = generate_user_config(Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('boardmap')).map(([k]) => k), 'BOADMAP_RESET_H', '', false);
+	var overrides = generate_user_config(rootscope, Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('boardmap')).map(([k]) => k), 'BOADMAP_RESET_H', '', false);
 	var customs = rootscope.app_state.CUSTOM_BOARDMAP_CONFIGS;
 	var defs = [...customs.matchAll(/#define[\s]+(?<def>[\w_]+)/gm)];
 	defs.forEach((e) => {
@@ -450,7 +455,7 @@ function generateBoardmapReset(rootscope = window.app_vars) {
 }
 
 function generateHalReset(rootscope = window.app_vars) {
-	var overrides = generate_user_config(Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('hal')).map(([k]) => k), 'CNC_HAL_RESET_H', '', false);
+	var overrides = generate_user_config(rootscope, Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('hal')).map(([k]) => k), 'CNC_HAL_RESET_H', '', false);
 	var customs = rootscope.app_state.CUSTOM_HAL_CONFIGS;
 	var defs = [...customs.matchAll(/#define[\s]+(?<def>[\w_]+)/gm)];
 	defs.forEach((e) => {
@@ -461,7 +466,7 @@ function generateHalReset(rootscope = window.app_vars) {
 }
 
 function generateHalOverrides(rootscope = window.app_vars) {
-	var overrides = generate_user_config(Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('hal')).map(([k]) => k), 'CNC_HAL_OVERRIDES_H', "cnc_hal_reset", false);
+	var overrides = generate_user_config(rootscope, Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('hal')).map(([k]) => k), 'CNC_HAL_OVERRIDES_H', "cnc_hal_reset", false);
 
 	var modules = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('module')).map(([k]) => k);
 	var active_modules = Object.entries(rootscope.app_state).filter(([k, v]) => modules.includes(k) && v).map(([k]) => k);
@@ -564,9 +569,9 @@ window.boardChanged = async function (scope, target) {
 	// let board_settings = await parsePreprocessor(boardurl, [], true);
 
 	let elems = Object.keys(board_settings);
-	for(let i = 0; i<elems.length; i++){
-			scope.$root.app_state[elems[i]] = board_settings[elems[i]];
-			await scope.$nextTick();
+	for (let i = 0; i < elems.length; i++) {
+		scope.$root.app_state[elems[i]] = board_settings[elems[i]];
+		await scope.$nextTick();
 	}
 
 	Object.keys(board_settings).forEach(element => {
@@ -576,9 +581,9 @@ window.boardChanged = async function (scope, target) {
 	});
 
 	elems = Object.keys(mcu_settings);
-	for(let i = 0; i<elems.length; i++){
-			scope.$root.app_state[elems[i]] = mcu_settings[elems[i]];
-			await scope.$nextTick();
+	for (let i = 0; i < elems.length; i++) {
+		scope.$root.app_state[elems[i]] = mcu_settings[elems[i]];
+		await scope.$nextTick();
 	}
 
 	await scope.$nextTick();
@@ -659,7 +664,8 @@ window.loadGenerateConfig = async function (scope, event) {
 }
 
 window.copyBoardmapReset = async function (scope, event) {
-	navigator.clipboard.writeText(generateBoardmapReset(scope.$root))
+	let configs = generateBoardmapReset(scope.$root);
+	navigator.clipboard.writeText(configs)
 		.then(() => {
 			alert('Code copied to clipboard!');
 		})
@@ -669,7 +675,8 @@ window.copyBoardmapReset = async function (scope, event) {
 }
 
 window.copyBoardmapOverride = async function (scope, event) {
-	navigator.clipboard.writeText(generateBoardmapOverrides(scope.$root))
+	let configs = generateBoardmapOverrides(scope.$root);
+	navigator.clipboard.writeText(configs)
 		.then(() => {
 			alert('Code copied to clipboard!');
 		})
@@ -679,7 +686,8 @@ window.copyBoardmapOverride = async function (scope, event) {
 }
 
 window.copyHalReset = async function (scope, event) {
-	navigator.clipboard.writeText(generateHalReset(scope.$root))
+	let configs = generateHalReset(scope.$root);
+	navigator.clipboard.writeText(configs)
 		.then(() => {
 			alert('Code copied to clipboard!');
 		})
@@ -689,7 +697,8 @@ window.copyHalReset = async function (scope, event) {
 }
 
 window.copyHalOverride = async function (scope, event) {
-	navigator.clipboard.writeText(generateHalOverrides(scope.$root))
+	let configs = generateHalOverrides(scope.$root);
+	navigator.clipboard.writeText(configs)
 		.then(() => {
 			alert('Code copied to clipboard!');
 		})
@@ -699,7 +708,8 @@ window.copyHalOverride = async function (scope, event) {
 }
 
 window.copyPioOverride = async function (scope, event) {
-	navigator.clipboard.writeText(generatePIOOverrides(scope.$root))
+	let configs = generatePIOOverrides(scope.$root);
+	navigator.clipboard.writeText(configs)
 		.then(() => {
 			alert('Code copied to clipboard!');
 		})

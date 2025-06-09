@@ -34,7 +34,7 @@ tooltip="Enables MKS TFT color displays." configfile="module">
 
     <pin configfile="hal" name="TFT_DISPLAY_RST" label="Select reset pin" initial="DOUT35"
         filter="item.type.includes('generic_output')"></pin>
-    <toggle name="TFT_DISPLAY_RST_INVERT" label="Invert reset pin"></toggle>
+    <toggle name="TFT_DISPLAY_RST_INVERT" label="Invert reset pin" configfile="hal"></toggle>
 
     <pin configfile="hal" name="TFT_DISPLAY_TOUCH_CS" label="Select touch chip select pin" initial="DOUT36"
         filter="item.type.includes('generic_output')"></pin>
