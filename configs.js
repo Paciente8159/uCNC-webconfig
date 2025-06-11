@@ -366,15 +366,16 @@ async function parsePreprocessor(file, settings = [], recursive = false) {
 	return settings;
 }
 
-function is_empty(val) {
+function is_empty(val, field) {
 	if (val === undefined) {
 		return true;
 	}
-	if (!val) {
+
+	if (val === "") {
 		return true;
 	}
 
-	if (val == "") {
+	if (val === false && field.nullable) {
 		return true;
 	}
 
@@ -402,7 +403,7 @@ function generate_user_config(rootscope = window.app_vars, options, defguard, re
 					if (field === undefined) { debugger; }
 					switch (field.type) {
 						case 'bool':
-							if (field.nullable && is_empty(val)) {
+							if (is_empty(val, field)) {
 								break;
 							}
 							gentext += "#define " + options[i] + ((val) ? " true" : " false") + "\n";
@@ -411,7 +412,7 @@ function generate_user_config(rootscope = window.app_vars, options, defguard, re
 							gentext += `#define ${options[i]} "${val}"\n`;
 							break;
 						default:
-							if (field.nullable && is_empty(val)) {
+							if (is_empty(val, field)) {
 								break;
 							}
 							if (val !== true) {
@@ -438,13 +439,17 @@ function generate_user_config(rootscope = window.app_vars, options, defguard, re
 
 function generateBoardmapOverrides(rootscope = window.app_vars) {
 	// var exclude = [...document.querySelectorAll('[config-file="boardmap"]')].map(x => x.id);
-	var overrides = generate_user_config(rootscope, Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('boardmap')).map(([k]) => k), 'BOADMAP_OVERRIDES_H', "boardmap_reset", false);
+	let fields = [...document.querySelectorAll('[config-file="boardmap"]')].map(x => x.id);
+	// let fields = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('boardmap')).map(([k]) => k);
+	var overrides = generate_user_config(rootscope, fields, 'BOADMAP_OVERRIDES_H', "boardmap_reset", false);
 	overrides += "//Custom configurations\n" + rootscope.app_state.CUSTOM_BOARDMAP_CONFIGS + '\n\n#ifdef __cplusplus\n}\n#endif\n#endif\n';
 	return overrides;
 }
 
 function generateBoardmapReset(rootscope = window.app_vars) {
-	var overrides = generate_user_config(rootscope, Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('boardmap')).map(([k]) => k), 'BOADMAP_RESET_H', '', false);
+	let fields = [...document.querySelectorAll('[config-file="boardmap"]')].map(x => x.id);
+	// let fields = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('boardmap')).map(([k]) => k);
+	var overrides = generate_user_config(rootscope, fields, 'BOADMAP_RESET_H', '', false);
 	var customs = rootscope.app_state.CUSTOM_BOARDMAP_CONFIGS;
 	var defs = [...customs.matchAll(/#define[\s]+(?<def>[\w_]+)/gm)];
 	defs.forEach((e) => {
@@ -455,7 +460,9 @@ function generateBoardmapReset(rootscope = window.app_vars) {
 }
 
 function generateHalReset(rootscope = window.app_vars) {
-	var overrides = generate_user_config(rootscope, Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('hal')).map(([k]) => k), 'CNC_HAL_RESET_H', '', false);
+	let fields = [...document.querySelectorAll('[config-file="hal"]')].map(x => x.id);
+	// let fields = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('hal')).map(([k]) => k);
+	var overrides = generate_user_config(rootscope, fields, 'CNC_HAL_RESET_H', '', false);
 	var customs = rootscope.app_state.CUSTOM_HAL_CONFIGS;
 	var defs = [...customs.matchAll(/#define[\s]+(?<def>[\w_]+)/gm)];
 	defs.forEach((e) => {
@@ -466,9 +473,12 @@ function generateHalReset(rootscope = window.app_vars) {
 }
 
 function generateHalOverrides(rootscope = window.app_vars) {
-	var overrides = generate_user_config(rootscope, Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('hal')).map(([k]) => k), 'CNC_HAL_OVERRIDES_H', "cnc_hal_reset", false);
+	let fields = [...document.querySelectorAll('[config-file="hal"]')].map(x => x.id);
+	// let fields = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('hal')).map(([k]) => k);
+	var overrides = generate_user_config(rootscope, fields, 'CNC_HAL_OVERRIDES_H', "cnc_hal_reset", false);
 
-	var modules = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('module')).map(([k]) => k);
+	let modules = [...document.querySelectorAll('[config-file="module"]')].map(x => x.id);
+	// let modules = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('module')).map(([k]) => k);
 	var active_modules = Object.entries(rootscope.app_state).filter(([k, v]) => modules.includes(k) && v).map(([k]) => k);
 
 	overrides += "//Custom configurations\n" + rootscope.app_state.CUSTOM_HAL_CONFIGS + "\n";
@@ -486,7 +496,8 @@ function generateHalOverrides(rootscope = window.app_vars) {
 }
 
 function generatePIOOverrides(rootscope = window.app_vars) {
-	var modules = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('module')).map(([k]) => k);
+	let modules = [...document.querySelectorAll('[config-file="module"]')].map(x => x.id);
+	// var modules = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('module')).map(([k]) => k);
 	var active_modules = Object.entries(rootscope.app_state).filter(([k, v]) => modules.includes(k) && v).map(([k]) => k);
 
 	var lib_deps = "lib_deps = \n";

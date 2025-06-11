@@ -6,7 +6,7 @@ if="app_state.MCU.includes('STM32') && app_state.sd_card_v2">
 </toggle>
 
 <buttoncb if="app_state.stm32_sdio" enable="ENABLE_PARSER_MODULES,ENABLE_MAIN_LOOP_MODULES" disable="DISABLE_SETTINGS_MODULES">Fix requirements!</buttoncb>
-<check if="app_state.stm32_sdio" name="SD_CARD_CUSTOM_HW_DRIVER" label="Use the SDIO interface" initial="true" configfile="hal"></check>
+<check if="app_state.MCU.includes('STM32') && app_state.sd_card_v2 && app_state.stm32_sdio" name="SD_CARD_CUSTOM_HW_DRIVER" label="Use the SDIO interface" initial="true" configfile="hal"></check>
 ` 
 };
 
