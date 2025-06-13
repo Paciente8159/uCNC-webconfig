@@ -646,22 +646,22 @@ window.app_vars = {
 			// { id: 'lvgl_support', name: 'LVGL system menu emulating Win95 for the tft_display module.', condition: 'VERSION>019090', lib_deps: 'lvgl/lvgl@^9.1.0', build_flags: '-DLV_CONF_PATH="${platformio.include_dir}/src/modules/lvgl_support/lv_conf.h"' },
 		],
 		STEPPERS: [
-			0,
-			1,
-			2,
-			3,
-			4,
-			5,
-			6,
-			7
+			{id:'0'},
+			{id:'1'},
+			{id:'2'},
+			{id:'3'},
+			{id:'4'},
+			{id:'5'},
+			{id:'6'},
+			{id:'7'}
 		],
 		TMCS: [
-			2202,
-			2208,
-			2209,
-			2225,
-			2226,
-			2130
+			{id:'2202', name:'2202'},
+			{id:'2208', name:'2208'},
+			{id:'2209', name:'2209'},
+			{id:'2225', name:'2225'},
+			{id:'2226', name:'2226'},
+			{id:'2130', name:'2130'}
 		],
 		TMCS_COM: [
 			{ id: 'TMC_UART', name: 'Software UART' },

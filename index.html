@@ -84,10 +84,12 @@
 						<accordion-card id="basic-config-basic" accordionid="basic-config-accordion" label="Basic settings">
 
 							<combobox name="VERSION" label="What version will you be using?" :opts="app_options.VERSIONS"
-								keyname="tag" valname="id" changecb="window.halChanged" tooltip="Select the µCNC source code version"></combobox>
+								keyname="tag" valname="id" changecb="window.halChanged" tooltip="Select the µCNC source code version">
+							</combobox>
 
 							<combobox name="MCU" label="What MCU family will you be using?" :opts="app_options.MCUS" keyname="id"
-								valname="name" configfile="boardmap" changecb="window.mcuChanged" tooltip="Select your target MCU"></combobox>
+								valname="name" configfile="boardmap" changecb="window.mcuChanged" tooltip="Select your target MCU">
+							</combobox>
 
 							<combobox name="BOARD" label="What board will you be using?" :opts="app_options.BOARDS" keyname="id"
 								valname="name" filter="item.mcu.includes(app_state.MCU)" initial="src/hal/boards/avr/boardmap_uno.h"
@@ -110,7 +112,7 @@
 							motors are fixed to the base." if="app_state.KINEMATIC=='KINEMATIC_SCARA'" configfile="boardmap"></toggle>
 
 							<range name="AXIS_COUNT" label="How many axis does your machine have?" min="1" max="6" step="1"
-								configfile="boardmap" initial="3"></range>
+								configfile="boardmap" initial="3" vartype="int"></range>
 
 							<combobox name="BAUDRATE" label="What is your COM port baudrate" :opts="app_options.BAUDRATES"
 								keyname="id" valname="id" configfile="boardmap"></combobox>
@@ -140,7 +142,7 @@
 
 							<check name="ENABLE_LINACT_COLD_START" label="Linear actuator cold start"
 								tooltip="This forces a stop on every direction change" configfile="hal"
-								show="app_state.ENABLE_LINACT_PLANNER"	configfile="hal"></check>
+								show="app_state.ENABLE_LINACT_PLANNER" configfile="hal"></check>
 
 							<toggle name="ENABLE_BACKLASH_COMPENSATION" label="Enable backlash compensation" configfile="hal">
 							</toggle>
@@ -208,8 +210,10 @@
 					<accordion id="boardmap-config-accordion">
 						<accordion-card id="board-basic-config" accordionid="boardmap-config-accordion"
 							label="Board Ports and Timers">
-							<textfield name="BOARD_NAME" label="The board name printed with $I command?" configfile="boardmap" tooltip="Name must be between quotation marks
-							(string). Ex. 'myboard'" initial="" vartype="string" pattern="^'(?:[^'\\]|\\.)*'$|&quot;(?:[^&quot;\\]|\\.)*&quot;$">
+							<textfield name="BOARD_NAME" label="The board name printed with $I command?" configfile="boardmap"
+								tooltip="Name must be between quotation marks
+							(string). Ex. 'myboard'" initial="" vartype="string"
+								pattern="^'(?:[^'\\]|\\.)*'$|&quot;(?:[^&quot;\\]|\\.)*&quot;$">
 							</textfield>
 							<!-- pattern="^(['&quot;])(.*?)\1$" -->
 
@@ -277,16 +281,19 @@
 							</repeater>
 						</accordion-card>
 						<accordion-card id="io-extender-config" accordionid="boardmap-config-accordion" label="IO extenders">
-							<range name="IC74HC595_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC595's:" 	configfile="boardmap"
+							<range name="IC74HC595_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC595's:"
+								configfile="boardmap"
 								tooltip="Defines the total number of daisy chained 74HC595 in your board. Depending on you configuration this number can be ignored. For example if the board uses a custom callback to drive the data to the shift register.">
 							</range>
 
-							<range name="IC74HC165_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC165's:"	configfile="boardmap"
+							<range name="IC74HC165_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC165's:"
+								configfile="boardmap"
 								tooltip="Defines the total number of daisy chained 74HC165 in your board. Depending on you configuration this number can be ignored. For example if the board uses a custom callback to drive the data to the shift register.">
 							</range>
 
-							<toggle name="SHIFT_REGISTER_CUSTOM_CALLBACK" alias="IC74HC595_CUSTOM_SHIFT_IO" label="Board uses a custom IO expander callback"
-								configfile="boardmap" if="!app_state.SHIFT_REGISTER_USE_HW_SPI"></toggle>
+							<toggle name="SHIFT_REGISTER_CUSTOM_CALLBACK" alias="IC74HC595_CUSTOM_SHIFT_IO"
+								label="Board uses a custom IO expander callback" configfile="boardmap"
+								if="!app_state.SHIFT_REGISTER_USE_HW_SPI"></toggle>
 
 							<toggle name="SHIFT_REGISTER_USE_HW_SPI" label="Board uses an hardware SPI to control the IO expander"
 								if="!app_state.SHIFT_REGISTER_CUSTOM_CALLBACK"></toggle>
@@ -305,7 +312,8 @@
 									if="!app_state.SHIFT_REGISTER_USE_HW_SPI && app_state.IC74HC165_COUNT"
 									filter="item.type.includes('generic_input')" configfile="boardmap"></pin>
 								<pin name="IC74HC165_LOAD" label="Select the data in load pin" initial="DIN11"
-									if="app_state.IC74HC165_COUNT" filter="item.type.includes('generic_input')" configfile="boardmap"></pin>
+									if="app_state.IC74HC165_COUNT" filter="item.type.includes('generic_input')" configfile="boardmap">
+								</pin>
 							</controlgroup>
 						</accordion-card>
 
@@ -642,7 +650,8 @@
 							<accordion-card :label="item.tool + ' (' + app_state[item.tool] + ')' "
 								:id="'tool-accordion'+item.toolcount" accordionid="tools-config-accordion">
 								<combobox :name="item.tool" :label="'Choose a tool controller for '+item.tool"
-									:opts="app_options.TOOL_OPTIONS" keyname="id" valname="name" initial="spindle_pwm" configfile="hal"></combobox>
+									:opts="app_options.TOOL_OPTIONS" keyname="id" valname="name" initial="spindle_pwm" configfile="hal">
+								</combobox>
 								<toolsloader :tool="item.tool"></toolsloader>
 
 							</accordion-card>
@@ -726,7 +735,8 @@
 							<repeater label="Linear actuators masks" :opts="app_options.LINACTS"
 								filter="item.axisnum&lt;app_state.AXIS_COUNT" if="app_state.ENABLE_MULTI_STEPPER_AXIS">
 								<template #default="{ item: i }">
-									<bitfield bitprefix="STEP" :name="i.name" :label="i.label" :initial="i.value" configfile="hal"></bitfield>
+									<bitfield bitprefix="STEP" :name="i.name" :label="i.label" :initial="i.value" configfile="hal">
+									</bitfield>
 								</template>
 							</repeater>
 
