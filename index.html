@@ -925,9 +925,10 @@
 							</textfield>
 							<textareafield name="CUSTOM_PIO_BUILDFLAGS" label="Custom PIO additional build flags" configfile="pio"
 								placeholder="-D myextraflag=1"
-							tooltip="In here you can manually specify the PIO board that you are going to compile code to. The list of boards can be checked [here](https://docs.platformio.org/en/stable/boards/index.html)"></textareafield>
+							tooltip="In here you can manually specify some PIO build flags (compiler flags)"></textareafield>
 							<textareafield name="CUSTOM_PIO_CONFIGS" label="Custom PIO additional options" configfile="pio"
-								placeholder="board_build.offset = 0x2000"></textareafield>
+								placeholder="board_build.offset = 0x2000"
+								tooltip="In here you can manually specify some PIO environment and build configuration flags."></textareafield>
 						</accordion-card>
 					</accordion>
 				</tab>
