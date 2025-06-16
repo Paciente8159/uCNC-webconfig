@@ -20,9 +20,9 @@ tooltip="Enables support for I2C LCD displays. Multiple LCD sizes/formats are su
 
 <controlgroup if="app_state.GRAPHIC_DISPLAY_INTERFACE=='GRAPHIC_DISPLAY_SW_I2C'" label="Software emulated I2C pinout">
 <pin name="GRAPHIC_DISPLAY_I2C_CLOCK" label="Select the I2C clock pin" initial="DOUT30"
-filter="item.type.includes('generic_output')||item.type.includes('unsafe_generic_input')" configfile="hal"></pin>
+filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)" configfile="hal"></pin>
 <pin name="GRAPHIC_DISPLAY_I2C_DATA" label="Select the I2C data pin" initial="DOUT29"
-filter="item.type.includes('generic_output')||item.type.includes('unsafe_generic_input')" configfile="hal"></pin>
+filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)" configfile="hal"></pin>
 </controlgroup>
 </controlgroup>
 

@@ -71,7 +71,7 @@ window.TMCDriverComponent = {
 									<controlgroup :if="'app_state.STEPPER'+item.id +'_TMC_INTERFACE==&quot;TMC_ONEWIRE&quot;'"
 										label="TMC Software OneWire options">
 										<pin :name="'STEPPER'+item.id +'_UART_RX'" :label="'TMC' + item.id + ' TMC OneWire TX/RX'"
-											filter="item.type.includes('generic_output')||item.type.includes('unsafe_generic_input')"
+											filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)"
 											configfile="hal"></pin>
 										<pin :name="'STEPPER'+item.id +'_UART_CS'" :label="'TMC' + item.id + ' TMC OneWire chip select'"
 											filter="item.type.includes('generic_output')" configfile="hal"></pin>

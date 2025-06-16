@@ -29,7 +29,7 @@
 			<div class="d-flex flex-column justify-content-center align-items-center align-text-center">
 				<img class="card-img-top logo-sm d-flex flex-column justify-content-center align-items-center" src="logo.png"
 					alt="µCNC logo">
-				<h1 class="fs-4 d-flex flex-column justify-content-center align-items-center">µCNC configuration generator v2
+				<h1 class="fs-4 d-flex flex-column justify-content-center align-items-center">µCNC config webapp
 				</h1>
 				<div></div>
 			</div>
@@ -93,7 +93,8 @@
 
 							<combobox name="BOARD" label="What board will you be using?" :opts="app_options.BOARDS" keyname="id"
 								valname="name" filter="item.mcu.includes(app_state.MCU)" initial="src/hal/boards/avr/boardmap_uno.h"
-								changecb="window.boardChanged" configfile="boardmap" vartype="string">
+								changecb="window.boardChanged" configfile="boardmap" vartype="string"
+								tooltip="Select a base configuration board and customize it, or select one of the custom board settings and build your config from scratch.">
 							</combobox>
 
 							<alert alerttype="info" labelcolor="var(--bs-alert-color)" label="Advanced configurations"
@@ -106,16 +107,19 @@
 							</alert>
 
 							<combobox name="KINEMATIC" label="What type of kinematic does your machine have?"
-								:opts="app_options.KINEMATICS" keyname="id" valname="name" configfile="boardmap"></combobox>
+								:opts="app_options.KINEMATICS" keyname="id" valname="name" configfile="boardmap"
+								tooltip="Select the kinematics that matches your machine. You can create custom kinematic if you need to. More information about [how to build your custom kinematics here](https://github.com/Paciente8159/uCNC/blob/master/uCNC/src/hal/kinematics/README.md)"></combobox>
 
-							<toggle name="MP_SCARA" label="Is MP Scara. In MP SCARA both shoulder and elbow
-							motors are fixed to the base." if="app_state.KINEMATIC=='KINEMATIC_SCARA'" configfile="boardmap"></toggle>
+							<toggle name="MP_SCARA" label="Is MP Scara kinematic type" if="app_state.KINEMATIC=='KINEMATIC_SCARA'" configfile="boardmap"
+							tooltip="In MP SCARA both the shoulder and elbow motors are fixed to the base."></toggle>
 
 							<range name="AXIS_COUNT" label="How many axis does your machine have?" min="1" max="6" step="1"
-								configfile="boardmap" initial="3" vartype="int"></range>
+								configfile="boardmap" initial="3" vartype="int"
+								tooltip="Select the number of axis your machine will have"></range>
 
 							<combobox name="BAUDRATE" label="What is your COM port baudrate" :opts="app_options.BAUDRATES"
-								keyname="id" valname="id" configfile="boardmap"></combobox>
+								keyname="id" valname="id" configfile="boardmap"
+								tooltip="Select default communication baudrate with your Sender"></combobox>
 
 						</accordion-card>
 
@@ -131,24 +135,28 @@
 								tooltip="Enables setting $1 to turn off steppers after some idle time"></toggle>
 
 							<toggle name="ENABLE_SKEW_COMPENSATION" label="Enable X-Y-Z axis skew
-							compensation" configfile="hal"></toggle>
+							compensation" configfile="hal"
+							tooltip="It's possible to enable skew compensation to fix axis that are not perfectly perpendicular to each other. This assumes the frame deformation is shaped like a parallelogram. This does not fix trapesoidal deformed frames"></toggle>
 
 							<check name="SKEW_COMPENSATION_XY_ONLY" label="Enable skew compensation for
-								X-Y axis only" configfile="hal" show="app_state.ENABLE_SKEW_COMPENSATION"></check>
+								X-Y axis only" configfile="hal" show="app_state.ENABLE_SKEW_COMPENSATION"
+								tooltip="Implements the correction math only to the XY axis. This simplifies calculations."></check>
 
 							<toggle name="ENABLE_LINACT_PLANNER" label="Enable linear actuator planner"
 								tooltip="This modifies the motion acceleration to support hard direction changes in machines with heavy mobile parts"
 								configfile="hal"></toggle>
 
 							<check name="ENABLE_LINACT_COLD_START" label="Linear actuator cold start"
-								tooltip="This forces a stop on every direction change" configfile="hal"
+								tooltip="This forces a stop on every axis direction change. This makes the machine deaccelerate and accelerate again each time an axis changes direction even if the angle between both line segments is small." configfile="hal"
 								show="app_state.ENABLE_LINACT_PLANNER" configfile="hal"></check>
 
-							<toggle name="ENABLE_BACKLASH_COMPENSATION" label="Enable backlash compensation" configfile="hal">
+							<toggle name="ENABLE_BACKLASH_COMPENSATION" label="Enable backlash compensation" configfile="hal"
+							tooltip="Backlash compensation allow to compensate for direction changes on axis with some kind of transmission slack. The compensation is done in steps">
 							</toggle>
 
 							<combobox name="ENABLE_S_CURVE_ACCELERATION" label="Enable S-Curve
-							acceleration" :opts="app_options.ACCELERATIONS" keyname="id" valname="name" configfile="hal" initial="0">
+							acceleration" :opts="app_options.ACCELERATIONS" keyname="id" valname="name" configfile="hal" initial="0"
+							tooltip="Modifies the acceleration rate by applying a pseudo S curve to the acceleration. This might help improve stability in high speed/acceleration applications by smoothing the start/end acceleration forces of the motion.">
 							</combobox>
 
 							<toggle name="BRESENHAM_16BIT" label="Use 16-bit Bresenham step generation" configfile="hal"
@@ -669,7 +677,8 @@
 							<accordion-card :label="item.tool + ' (' + app_state[item.tool] + ')' "
 								:id="'tool-accordion'+item.toolcount" accordionid="tools-config-accordion">
 								<combobox :name="item.tool" :label="'Choose a tool controller for '+item.tool"
-									:opts="app_options.TOOL_OPTIONS" keyname="id" valname="name" initial="spindle_pwm" configfile="hal">
+									:opts="app_options.TOOL_OPTIONS" keyname="id" valname="name" initial="spindle_pwm" configfile="hal"
+									tooltip="Select the type of tool you will be using.">
 								</combobox>
 								<toolsloader :tool="item.tool"></toolsloader>
 

@@ -23,23 +23,23 @@ tooltip="Enables support for RepRap Full Graphic Display an other similar monoch
 
 <controlgroup if="app_state.GRAPHIC_DISPLAY_INTERFACE=='GRAPHIC_DISPLAY_SW_SPI'" label="Software emulated SPI pinout">
 <pin name="GRAPHIC_DISPLAY_SPI_CLOCK" label="Select the SPI clock pin" initial="DOUT4"
-filter="item.type.includes('generic_output')||item.type.includes('unsafe_generic_input')" configfile="hal"></pin>
+filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)" configfile="hal"></pin>
 <pin name="GRAPHIC_DISPLAY_SPI_DATA" label="Select the SPI data pin" initial="DOUT5"
-filter="item.type.includes('generic_output')||item.type.includes('unsafe_generic_input')" configfile="hal"></pin>
+filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)" configfile="hal"></pin>
 <pin name="GRAPHIC_DISPLAY_SPI_CS" label="Select the SPI select pin" initial="DOUT6"
-filter="item.type.includes('generic_output')||item.type.includes('unsafe_generic_input')" configfile="hal"></pin>
+filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)" configfile="hal"></pin>
 </controlgroup>
 
 <controlgroup if="app_state.GRAPHIC_DISPLAY_INTERFACE=='GRAPHIC_DISPLAY_HW_SPI'" label="Hardware SPI pinout">
 <pin name="GRAPHIC_DISPLAY_SPI_CS" label="Select the SPI select pin" initial="DOUT6"
-filter="item.type.includes('generic_output')||item.type.includes('unsafe_generic_input')" configfile="hal"></pin>
+filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)" configfile="hal"></pin>
 </controlgroup>
 
 <controlgroup if="app_state.GRAPHIC_DISPLAY_INTERFACE=='GRAPHIC_DISPLAY_SW_I2C'" label="Software emulated I2C pinout">
 <pin name="GRAPHIC_DISPLAY_I2C_CLOCK" label="Select the I2C clock pin" initial="DOUT30"
-filter="item.type.includes('generic_output')||item.type.includes('unsafe_generic_input')" configfile="hal"></pin>
+filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)" configfile="hal"></pin>
 <pin name="GRAPHIC_DISPLAY_I2C_DATA" label="Select the I2C data pin" initial="DOUT29"
-filter="item.type.includes('generic_output')||item.type.includes('unsafe_generic_input')" configfile="hal"></pin>
+filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)" configfile="hal"></pin>
 </controlgroup>
 
 <toggle name="ENABLE_GRAPHIC_DISPLAY_ROTARY_ENCODER" label="Display has rotary encoder"

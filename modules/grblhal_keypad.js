@@ -19,9 +19,9 @@ tooltip="Enables support for GrblHAL Keypad." configfile="module">
 
 <controlgroup if="app_state.KEYPAD_PORT=='KEYPAD_PORT_SW_I2C'" label="Software emulated I2C pinout">
 <pin name="KEYPAD_SCL" label="Select the I2C clock pin" initial="DOUT30"
-filter="item.type.includes('generic_output')||item.type.includes('unsafe_generic_input')" configfile="hal"></pin>
+filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)" configfile="hal"></pin>
 <pin name="KEYPAD_SDA" label="Select the I2C data pin" initial="DOUT29"
-filter="item.type.includes('generic_output')||item.type.includes('unsafe_generic_input')" configfile="hal"></pin>
+filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)" configfile="hal"></pin>
 <pin name="KEYPAD_DOWN" label="Select the Keypad button down pin" initial="DIN7"
 filter="item.type.includes('generic_input')" configfile="hal"></pin>
 </controlgroup>

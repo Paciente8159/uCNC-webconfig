@@ -17,9 +17,9 @@ tooltip="Enables support for I2C EEPROM to store settings." configfile="module">
 
     <controlgroup if="app_state.I2C_EEPROM_INTERFACE === 'SW_I2C'" label="Software I2C Pinout">
         <pin configfile="hal" name="I2C_EEPROM_I2C_CLOCK" label="Select I2C clock pin" initial="DIN30"
-            filter="item.type.includes('generic_output') || item.type.includes('unsafe_generic_input')"></pin>
+            filter="item.type.includes('generic_output') || (item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)"></pin>
         <pin configfile="hal" name="I2C_EEPROM_I2C_DATA" label="Select I2C data pin" initial="DIN31"
-            filter="item.type.includes('generic_output') || item.type.includes('unsafe_generic_input')"></pin>
+            filter="item.type.includes('generic_output') || (item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)"></pin>
     </controlgroup>
 
     <alert if="app_state.RAM_ONLY_SETTINGS" alerttype="warning">
