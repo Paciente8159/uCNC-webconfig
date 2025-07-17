@@ -804,8 +804,8 @@ window.PinComponent = {
 				return false;
 			}
 
-			if (this.$root.app_state[this.$root.app_state[this.name] + '_BIT'] != undefined && this.$root.app_state[this.$root.app_state[this.name] + '_BIT'].length) {
-				switch (window.app_vars.app_state) {
+			if (this.$root.app_state[this.$root.app_state[this.name] + '_BIT'] != undefined && this.$root.app_state[this.$root.app_state[this.name] + '_BIT'].toString().length) {
+				switch (this.$root.app_state.app_state) {
 					case 'MCU_ESP8266':
 					case 'MCU_ESP32':
 					case 'MCU_RP2040':
