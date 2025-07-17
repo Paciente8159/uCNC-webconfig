@@ -517,7 +517,7 @@
 						</accordion-card>
 						<accordion-card id="analogs-config" label="Analog input pins" accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
-								filter="item.type.includes('control') || item.type.includes('limit') || item.type.includes('probe')">
+								filter="item.type.includes('analog')">
 								<template #head>
 									<th scope="col">µCNC pin</th>
 									<th scope="col">Pin number</th>
