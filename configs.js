@@ -124,7 +124,7 @@ function isValidSyntax(code) {
 	}
 }
 
-async function processConditionalBlock(lines, startIndex = 0, settings = []) {
+async function processConditionalBlock(lines, startIndex = 0, settings = [], recursive = false) {
 	let branches = [];
 	let ifLine = lines[startIndex];
 	let currentCondition = "";
@@ -227,7 +227,7 @@ async function processConditionalBlock(lines, startIndex = 0, settings = []) {
 			try {
 				let func = new Function(evalStr);
 				if (func()) {
-					settings = await processBlock(activeContent, settings);
+					settings = await processBlock(activeContent, settings, recursive);
 					break;
 				}
 			} catch (e) {
@@ -237,7 +237,7 @@ async function processConditionalBlock(lines, startIndex = 0, settings = []) {
 	}
 
 	// Recursively process the chosen branch for further nested conditionals.
-	return await processBlock(lines.slice(conditionalBlockExit), settings);
+	return await processBlock(lines.slice(conditionalBlockExit), settings, recursive);
 }
 
 // Recursively process conditional blocks. We use a helper that
@@ -269,20 +269,20 @@ async function processBlock(lines, settings = [], recursive = false) {
 	while (i < lines.length) {
 		// Update the condition to handle #if, #ifdef, and #ifndef.
 		if (/^(#if\s+|#ifdef\s+|#ifndef\s+)/.test(lines[i])) {
-			settings = await processConditionalBlock(lines, i, settings);
+			settings = await processConditionalBlock(lines, i, settings, recursive);
 		}
 		// End-of-block markers should break processing.
 		else if (/^#(elif|else|endif)\b/.test(lines[i])) {
 			break;
 		} else {
-			settings = await processLine(lines[i], settings, recursive, lines, i);
+			settings = await processLine(lines[i], settings, recursive);
 		}
 		i++;
 	}
 	return settings;
 }
 
-async function processLine(line, settings = [], recursive = false, lines, index) {
+async function processLine(line, settings = [], recursive = false) {
 	// If recursive, process include files.
 	if (recursive) {
 		const includeregex = /^[\s]*#include[^'"]*(?<inc>[\-\w\d\.]+|"[^"]+")?/gm;
@@ -568,7 +568,6 @@ window.boardChanged = async function (scope, target) {
 	const mcuurl = coreurl + "/uCNC/" + scope.$root.app_options.MCUS.filter(i => i.id == scope.$root.app_state.MCU)[0].url;
 	const boardurl = coreurl + "/uCNC/" + scope.$root.app_state.BOARD;
 
-
 	let board_settings = await parsePreprocessorAdvanced(boardurl, [], true);
 	let mcu_settings = await parsePreprocessorAdvanced(mcuurl, board_settings.slice(), false);
 
@@ -616,7 +615,7 @@ window.halChanged = async function (scope, target) {
 	const coreurl = "https://raw.githubusercontent.com/Paciente8159/uCNC/" + version_name;
 	const hal = coreurl + "/uCNC/cnc_hal_config.h";
 
-	settings = await parsePreprocessorAdvanced(hal, []);
+	settings = await parsePreprocessorAdvanced(hal, [], false);
 	Object.keys(scope.$root.app_state).forEach(element => {
 		if (settings[element]) {
 			scope.$root.app_state[element] = settings[element];
