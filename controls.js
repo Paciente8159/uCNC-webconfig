@@ -566,6 +566,7 @@ window.TextFieldComponent = {
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
 		configfile: { type: String, default: "" },
+		vartype: { type: String, default: "string" },
 		placeholder: { type: String, default: "" },
 		initial: { type: String, default: "" },
 		tooltiptitle: { type: String, default: "Info" },
@@ -625,7 +626,7 @@ window.TextFieldComponent = {
 		:data-bs-title="tooltiptitle">
 		<label for="" class="form-label" v-if="label.length">{{label}}</label>
 		<input type="text" class="form-control" :name="name" :id="name" v-model="modelValue"
-		:placeholder="placeholder" :config-file="configfile" :pattern="pattern" @input="validateInput">
+		:placeholder="placeholder" :config-file="configfile" :pattern="pattern" :vartype="vartype" @input="validateInput">
 		</div>`
 };
 

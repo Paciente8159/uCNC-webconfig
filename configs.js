@@ -125,13 +125,13 @@ function isValidSyntax(code) {
 }
 
 function syncFetchText(url) {
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', url, false);  // third param = false → synchronous
-  xhr.send(null);
-  if (xhr.status >= 200 && xhr.status < 300) {
-    return xhr.responseText;
-  }
-  throw new Error(`Failed to load ${url}: ${xhr.status}`);
+	const xhr = new XMLHttpRequest();
+	xhr.open('GET', url, false);  // third param = false → synchronous
+	xhr.send(null);
+	if (xhr.status >= 200 && xhr.status < 300) {
+		return xhr.responseText;
+	}
+	throw new Error(`Failed to load ${url}: ${xhr.status}`);
 }
 
 function processConditionalBlockSync(file, lines, startIndex = 0, settings = [], recursive = false) {
@@ -140,26 +140,26 @@ function processConditionalBlockSync(file, lines, startIndex = 0, settings = [],
 	let currentCondition = "";
 
 	// Convert the starting directive (#if, #ifdef, #ifndef) into a JS evaluable condition.
-	if (/^#if\s+/.test(ifLine)) {
-		let match = ifLine.match(/^#if\s+(.*)/);
+	if (/^#if\b/.test(ifLine)) {
+		let match = ifLine.match(/^#if\s*(.*)/);
 		currentCondition = match[1].trim();
-	} else if (/^#ifdef\s+/.test(ifLine)) {
-		let match = ifLine.match(/^#ifdef\s+(\w+)/);
+	} else if (/^#ifdef\b/.test(ifLine)) {
+		let match = ifLine.match(/^#ifdef\s*(\w+)/);
 		// If defined means that the variable must exist in scope.
 		currentCondition = "defined(" + match[1].trim() + ")";
-	} else if (/^#ifndef\s+/.test(ifLine)) {
-		let match = ifLine.match(/^#ifndef\s+(\w+)/);
+	} else if (/^#ifndef\b/.test(ifLine)) {
+		let match = ifLine.match(/^#ifndef\s*(\w+)/);
 		currentCondition = "!defined(" + match[1].trim() + ")";
 	}
 
-	while (/defined[\s]+([a-zA-Z_][\w_]*)/.test(currentCondition)) {
-		let match = currentCondition.match(/defined[\s]+([a-zA-Z_][\w_]*)/);
+	while (/defined\b[\s]*([a-zA-Z_][\w_]*)/.test(currentCondition)) {
+		let match = currentCondition.match(/defined\b[\s]*([a-zA-Z_][\w_]*)/);
 		let varName = match[1].trim();
 		currentCondition = currentCondition.replace(match[0], `(typeof ${varName} !== 'undefined')`);
 	}
 
-	while (/defined[\s]+\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\)/.test(currentCondition)) {
-		let match = currentCondition.match(/defined[\s]+(\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\))/);
+	while (/defined\b[\s]*\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\)/.test(currentCondition)) {
+		let match = currentCondition.match(/defined\b[\s]*(\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\))/);
 		let varName = match[1].trim();
 		currentCondition = currentCondition.replace(match[0], `(typeof ${varName} !== 'undefined')`);
 	}
@@ -173,7 +173,7 @@ function processConditionalBlockSync(file, lines, startIndex = 0, settings = [],
 	while (i < lines.length) {
 		let line = lines[i];
 		// If a new nested conditional starts (#if, #ifdef, or #ifndef), increase nesting.
-		if (/^(#if\s+|#ifdef\s+|#ifndef\s+)/.test(line)) {
+		if (/^(#if|#ifdef|#ifndef)\b/.test(line)) {
 			nesting++;
 			branchContent.push(line);
 			i++;
@@ -194,9 +194,9 @@ function processConditionalBlockSync(file, lines, startIndex = 0, settings = [],
 			}
 		}
 		// At nesting level 1, if an #elif appears then treat it as ending the current branch.
-		if (nesting === 1 && /^#elif\s+/.test(line)) {
+		if (nesting === 1 && /^#elif\b/.test(line)) {
 			branches.push({ condition: currentCondition, content: branchContent });
-			let match = line.match(/^#elif\s+(.*)/);
+			let match = line.match(/^#elif\s*(.*)/);
 			currentCondition = match[1].trim();
 			branchContent = [];
 			i++;
@@ -220,6 +220,7 @@ function processConditionalBlockSync(file, lines, startIndex = 0, settings = [],
 
 	// Evaluate the branches. For non-else branches, build an evaluation string that declares
 	// all current settings as JavaScript variables.
+
 	let activeContent = [];
 	for (let branch of branches) {
 		if (branch.condition === "else") {
@@ -256,7 +257,7 @@ function processBlockSync(file, lines, settings = [], recursive = false) {
 	let i = 0;
 	while (i < lines.length) {
 		// Update the condition to handle #if, #ifdef, and #ifndef.
-		if (/^(#if\s+|#ifdef\s+|#ifndef\s+)/.test(lines[i])) {
+		if (/^(#ifndef|#ifdef|#if)\b/.test(lines[i])) {
 			settings = processConditionalBlockSync(file, lines, i, settings, recursive);
 		}
 		// End-of-block markers should break processing.
@@ -286,7 +287,7 @@ function processLineSync(file, line, settings = [], recursive = false) {
 
 	// Finally, process the #define and #undef directives.
 	// We also remove any inline comments that appear after the directive.
-	const defineRegex = /^#(define|undef)\s+([\a-zA-Z_][\w\d_]*(\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\))?)(\s+([^\n]*))?$/gm;
+	const defineRegex = /^#(define|undef)\b\s*([\a-zA-Z_][\w\d_]*(\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\))?)(\s+([^\n]*))?$/gm;
 	let matches = [...line.matchAll(defineRegex)];
 	for (let match of matches) {
 		try {
@@ -323,7 +324,8 @@ function parsePreprocessorAdvancedSync(file, settings = [], recursive = false) {
 	// clean trailing spaces
 	let lines = allText.split("\n").map(l => l.trim()).filter(l => l.length > 0);
 
-	return processBlockSync(file, lines, settings, recursive);
+	let newsettings = processBlockSync(file, lines, settings, recursive);
+	return newsettings;
 }
 
 
@@ -333,28 +335,38 @@ async function processConditionalBlock(file, lines, startIndex = 0, settings = [
 	let currentCondition = "";
 
 	// Convert the starting directive (#if, #ifdef, #ifndef) into a JS evaluable condition.
-	if (/^#if\s+/.test(ifLine)) {
-		let match = ifLine.match(/^#if\s+(.*)/);
+	if (/^#if\b/.test(ifLine)) {
+		let match = ifLine.match(/^#if\s*(.*)/);
 		currentCondition = match[1].trim();
-	} else if (/^#ifdef\s+/.test(ifLine)) {
-		let match = ifLine.match(/^#ifdef\s+(\w+)/);
+	} else if (/^#ifdef\b/.test(ifLine)) {
+		let match = ifLine.match(/^#ifdef\s*(\w+)/);
 		// If defined means that the variable must exist in scope.
 		currentCondition = "defined(" + match[1].trim() + ")";
-	} else if (/^#ifndef\s+/.test(ifLine)) {
-		let match = ifLine.match(/^#ifndef\s+(\w+)/);
+	} else if (/^#ifndef\b/.test(ifLine)) {
+		let match = ifLine.match(/^#ifndef\s*(\w+)/);
 		currentCondition = "!defined(" + match[1].trim() + ")";
 	}
 
-	while (/defined[\s]+([a-zA-Z_][\w_]*)/.test(currentCondition)) {
-		let match = currentCondition.match(/defined[\s]+([a-zA-Z_][\w_]*)/);
-		let varName = match[1].trim();
-		currentCondition = currentCondition.replace(match[0], `(typeof ${varName} !== 'undefined')`);
+	while (/defined\b[\s]*([a-zA-Z_][\w_]*)/.test(currentCondition)) {
+		try {
+			let match = currentCondition.match(/defined\b[\s]*([a-zA-Z_][\w_]*)/);
+			let varName = match[1].trim();
+			currentCondition = currentCondition.replace(match[0], `(typeof ${varName} !== 'undefined')`);
+		} catch (e) {
+			console.log('failed to parse defined condition ' + currentCondition + '. Error: ' + e);
+			break;
+		}
 	}
 
-	while (/defined[\s]+\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\)/.test(currentCondition)) {
-		let match = currentCondition.match(/defined[\s]+(\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\))/);
-		let varName = match[1].trim();
-		currentCondition = currentCondition.replace(match[0], `(typeof ${varName} !== 'undefined')`);
+	while (/defined\b[\s]*\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\)/.test(currentCondition)) {
+		try {
+			let match = currentCondition.match(/defined\b[\s]*(\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\))/);
+			let varName = match[1].trim();
+			currentCondition = currentCondition.replace(match[0], `(typeof ${varName} !== 'undefined')`);
+		} catch (e) {
+			console.log('failed to parse defined condition ' + currentCondition + '. Error: ' + e);
+			break;
+		}
 	}
 
 	let branchContent = [];
@@ -366,7 +378,7 @@ async function processConditionalBlock(file, lines, startIndex = 0, settings = [
 	while (i < lines.length) {
 		let line = lines[i];
 		// If a new nested conditional starts (#if, #ifdef, or #ifndef), increase nesting.
-		if (/^(#if\s+|#ifdef\s+|#ifndef\s+)/.test(line)) {
+		if (/^(#if|#ifdef|#ifndef)\b/.test(line)) {
 			nesting++;
 			branchContent.push(line);
 			i++;
@@ -387,9 +399,9 @@ async function processConditionalBlock(file, lines, startIndex = 0, settings = [
 			}
 		}
 		// At nesting level 1, if an #elif appears then treat it as ending the current branch.
-		if (nesting === 1 && /^#elif\s+/.test(line)) {
+		if (nesting === 1 && /^#elif\b/.test(line)) {
 			branches.push({ condition: currentCondition, content: branchContent });
-			let match = line.match(/^#elif\s+(.*)/);
+			let match = line.match(/^#elif\s*(.*)/);
 			currentCondition = match[1].trim();
 			branchContent = [];
 			i++;
@@ -449,7 +461,7 @@ async function processBlock(file, lines, settings = [], recursive = false) {
 	let i = 0;
 	while (i < lines.length) {
 		// Update the condition to handle #if, #ifdef, and #ifndef.
-		if (/^(#if\s+|#ifdef\s+|#ifndef\s+)/.test(lines[i])) {
+		if (/^(#if|#ifdef|#ifndef)\b/.test(lines[i])) {
 			settings = await processConditionalBlock(file, lines, i, settings, recursive);
 		}
 		// End-of-block markers should break processing.
@@ -479,7 +491,7 @@ async function processLine(file, line, settings = [], recursive = false) {
 
 	// Finally, process the #define and #undef directives.
 	// We also remove any inline comments that appear after the directive.
-	const defineRegex = /^#(define|undef)\s+([\a-zA-Z_][\w\d_]*(\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\))?)(\s+([^\n]*))?$/gm;
+	const defineRegex = /^#(define|undef)\b\s*([\a-zA-Z_][\w\d_]*(\((?:[^()]|\((?:[^()]*|\([^()]*\))*\))*\))?)(\s+([^\n]*))?$/gm;
 	let matches = [...line.matchAll(defineRegex)];
 	for (let match of matches) {
 		try {
