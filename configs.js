@@ -601,7 +601,7 @@ function generate_user_config(rootscope = window.app_vars, options, defguard, re
 							gentext += "#define " + options[i] + ((val) ? " true" : " false") + "\n";
 							break;
 						case 'string':
-							gentext += `#define ${options[i]} "${val}"\n`;
+							gentext += `#define ${options[i]} "${val.replace(/^"+|"+$/g, '')}"\n`;
 							break;
 						default:
 							if (is_empty(val, field)) {
