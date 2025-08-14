@@ -15,7 +15,7 @@ window.addEventListener("ucnc_load_components", (e) => {
 
 function typeConverter(type = 'default', value) {
 
-	if (value === undefined) {
+	if (value === undefined || value === null) {
 		return '';
 	}
 

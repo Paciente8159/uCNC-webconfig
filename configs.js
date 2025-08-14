@@ -642,7 +642,7 @@ function generateBoardmapReset(rootscope = window.app_vars) {
 	let fields = [...document.querySelectorAll('[config-file="boardmap"]')].map(x => x.id);
 	// let fields = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('boardmap')).map(([k]) => k);
 	var overrides = generate_user_config(rootscope, fields, 'BOADMAP_RESET_H', '', false);
-	var customs = rootscope.app_state.CUSTOM_BOARDMAP_CONFIGS;
+	var customs = (rootscope.app_state.CUSTOM_BOARDMAP_CONFIGS != null) ? rootscope.app_state.CUSTOM_BOARDMAP_CONFIGS : '';
 	var defs = [...customs.matchAll(/#define[\s]+(?<def>[\w_]+)/gm)];
 	defs.forEach((e) => {
 		overrides += "#undef " + e[1] + "\n";
@@ -655,7 +655,7 @@ function generateHalReset(rootscope = window.app_vars) {
 	let fields = [...document.querySelectorAll('[config-file="hal"]')].map(x => x.id);
 	// let fields = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('hal')).map(([k]) => k);
 	var overrides = generate_user_config(rootscope, fields, 'CNC_HAL_RESET_H', '', false);
-	var customs = rootscope.app_state.CUSTOM_HAL_CONFIGS;
+	var customs = (rootscope.app_state.CUSTOM_HAL_CONFIGS != null) ? rootscope.app_state.CUSTOM_HAL_CONFIGS : '';
 	var defs = [...customs.matchAll(/#define[\s]+(?<def>[\w_]+)/gm)];
 	defs.forEach((e) => {
 		overrides += "#undef " + e[1] + "\n";
