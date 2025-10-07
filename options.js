@@ -41,8 +41,8 @@ window.app_vars = {
 			{ id: 'MCU_LPC176X', name: 'LPC176X', url: 'src/hal/mcus/lpc176x/mcumap_lpc176x.h' },
 			{ id: 'MCU_ESP8266', name: 'ESP8266', url: 'src/hal/mcus/esp8266/mcumap_esp8266.h' },
 			{ id: 'MCU_ESP32', name: 'ESP32', url: 'src/hal/mcus/esp32/mcumap_esp32.h' },
-			{ id: 'MCU_ESP32C3', name: 'ESP32C3', url: 'src/hal/mcus/esp32/mcumap_esp32c3.h' },
-			{ id: 'MCU_ESP32S3', name: 'ESP32S3', url: 'src/hal/mcus/esp32/mcumap_esp32s3.h' },
+			{ id: 'MCU_ESP32C3', name: 'ESP32C3', url: 'src/hal/mcus/esp32c3/mcumap_esp32c3.h' },
+			{ id: 'MCU_ESP32S3', name: 'ESP32S3', url: 'src/hal/mcus/esp32s3/mcumap_esp32s3.h' },
 			{ id: 'MCU_RP2040', name: 'RPi RP2040', url: 'src/hal/mcus/rp2040/mcumap_rp2040.h' },
 			{ id: 'MCU_RP2350', name: 'RPi RP2350', url: 'src/hal/mcus/rp2350/mcumap_rp2350.h' }
 		],
@@ -93,12 +93,12 @@ window.app_vars = {
 			{ id: 'src/hal/boards/esp32/boardmap_wemos_d1_r32.h', name: 'Wemos D1 R32', mcu: 'MCU_ESP32' },
 			{ id: 'src/hal/boards/esp32/boardmap_mks_tinybee.h', name: 'MKS Tinybee', mcu: 'MCU_ESP32' },
 			{ id: 'src/hal/boards/esp32/boardmap_mks_dlc32.h', name: 'MKS DLC32', mcu: 'MCU_ESP32' },
-			{ id: 'src/hal/boards/esp32/boardmap_core c3.h', name: 'CORE ESP32 S3', mcu: 'MCU_ESP32C3' },
+			{ id: 'src/hal/boards/esp32/boardmap_core_c3.h', name: 'CORE ESP32 S3', mcu: 'MCU_ESP32C3' },
 			{ id: 'src/hal/boards/esp32/boardmap_devkit_s3.h', name: 'Devkit S3', mcu: 'MCU_ESP32S3' },
 			{ id: 'src/hal/boards/rp2040/boardmap_rpi_pico.h', name: 'RPi Pico', mcu: 'MCU_RP2040' },
 			{ id: 'src/hal/boards/rp2040/boardmap_rpi_pico_w.h', name: 'RPi Pico W', mcu: 'MCU_RP2040' },
 			{ id: 'src/hal/boards/rp2350/boardmap_rpi_pico2.h', name: 'RPi Pico 2', mcu: 'MCU_RP2350' },
-			{ id: 'boardmap_overrides.h', name: 'Custom board', mcu: 'MCU_AVR,MCU_SAMD21,MCU_STM32F0X,MCU_STM32F1X,MCU_STM32F4X,MCU_STM32H7X,MCU_LPC176X,MCU_ESP8266,MCU_ESP32,MCU_RP2040,MCU_RP2350' }
+			{ id: 'boardmap_overrides.h', name: 'Custom board', mcu: 'MCU_AVR,MCU_SAMD21,MCU_STM32F0X,MCU_STM32F1X,MCU_STM32F4X,MCU_STM32H7X,MCU_LPC176X,MCU_ESP8266,MCU_ESP32,MCU_ESP32C3,MCU_ESP32S3,MCU_RP2040,MCU_RP2350' }
 		],
 		UCNCPINS: [
 			{ pin: 'STEP0', type: 'stepper,special_output' },
@@ -648,7 +648,7 @@ window.app_vars = {
 			{ id: 'mks_display', name: 'Adds support for MKS TS35-R display and similar ones.', condition: 'VERSION>019090', requires: 'touch_screen', lib_deps: 'lvgl/lvgl@^9.1.0', build_flags: '-DLV_CONF_PATH="${platformio.include_dir}/src/modules/mks_display/lv_conf.h"' },
 			{ id: 'tft_display', name: 'Adds support for TFT displays like the ILI9341 and others. Uses lvgl_support to display a Win95 style menu', condition: 'VERSION>019090', requires: 'lvgl_support', lib_deps: 'lvgl/lvgl@^9.1.0', build_flags: '-DLV_CONF_PATH="${platformio.include_dir}/src/modules/lvgl_support/lv_conf.h"' },
 			{ id: 'joystick', name: 'Adds support for an analog joystick to control up to 6 axis', condition: 'VERSION>019090' },
-			{ id: 'joystick_v2', name: 'Newer version of the analog joystick to control up to 6 axis', condition: 'VERSION>011201' },
+			// { id: 'joystick_v2', name: 'Newer version of the analog joystick to control up to 6 axis', condition: 'VERSION>011201' },
 			{ id: 'grblhal_keypad', name: 'Adds support for GrblHAL keypad consoles', condition: 'VERSION>010800' },
 			{ id: 'single_axis_homing', name: 'Adds single axis homing commands ($H<axis_letter> for example $HX)', condition: 'VERSION>010800' },
 			// { id: 'lvgl_support', name: 'LVGL system menu emulating Win95 for the tft_display module.', condition: 'VERSION>019090', lib_deps: 'lvgl/lvgl@^9.1.0', build_flags: '-DLV_CONF_PATH="${platformio.include_dir}/src/modules/lvgl_support/lv_conf.h"' },
