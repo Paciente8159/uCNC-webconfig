@@ -14,6 +14,7 @@ window.app_vars = {
 	app_options: {
 		VERSIONS: [
 			{ id: 'master', tag: 99999, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/master.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
+			{ id: 'v1.13.rc', tag: 11290, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.13.rc.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
 			{ id: 'v1.12.4', tag: 11204, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.12.4.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
 			{ id: 'v1.12.3', tag: 11203, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.12.3.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
 			{ id: 'v1.12.2', tag: 11202, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.12.2.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
@@ -40,6 +41,8 @@ window.app_vars = {
 			{ id: 'MCU_LPC176X', name: 'LPC176X', url: 'src/hal/mcus/lpc176x/mcumap_lpc176x.h' },
 			{ id: 'MCU_ESP8266', name: 'ESP8266', url: 'src/hal/mcus/esp8266/mcumap_esp8266.h' },
 			{ id: 'MCU_ESP32', name: 'ESP32', url: 'src/hal/mcus/esp32/mcumap_esp32.h' },
+			{ id: 'MCU_ESP32C3', name: 'ESP32C3', url: 'src/hal/mcus/esp32/mcumap_esp32c3.h' },
+			{ id: 'MCU_ESP32S3', name: 'ESP32S3', url: 'src/hal/mcus/esp32/mcumap_esp32s3.h' },
 			{ id: 'MCU_RP2040', name: 'RPi RP2040', url: 'src/hal/mcus/rp2040/mcumap_rp2040.h' },
 			{ id: 'MCU_RP2350', name: 'RPi RP2350', url: 'src/hal/mcus/rp2350/mcumap_rp2350.h' }
 		],
@@ -90,6 +93,8 @@ window.app_vars = {
 			{ id: 'src/hal/boards/esp32/boardmap_wemos_d1_r32.h', name: 'Wemos D1 R32', mcu: 'MCU_ESP32' },
 			{ id: 'src/hal/boards/esp32/boardmap_mks_tinybee.h', name: 'MKS Tinybee', mcu: 'MCU_ESP32' },
 			{ id: 'src/hal/boards/esp32/boardmap_mks_dlc32.h', name: 'MKS DLC32', mcu: 'MCU_ESP32' },
+			{ id: 'src/hal/boards/esp32/boardmap_core c3.h', name: 'CORE ESP32 S3', mcu: 'MCU_ESP32C3' },
+			{ id: 'src/hal/boards/esp32/boardmap_devkit_s3.h', name: 'Devkit S3', mcu: 'MCU_ESP32S3' },
 			{ id: 'src/hal/boards/rp2040/boardmap_rpi_pico.h', name: 'RPi Pico', mcu: 'MCU_RP2040' },
 			{ id: 'src/hal/boards/rp2040/boardmap_rpi_pico_w.h', name: 'RPi Pico W', mcu: 'MCU_RP2040' },
 			{ id: 'src/hal/boards/rp2350/boardmap_rpi_pico2.h', name: 'RPi Pico 2', mcu: 'MCU_RP2350' },
