@@ -154,6 +154,10 @@
 							tooltip="Backlash compensation allow to compensate for direction changes on axis with some kind of transmission slack. The compensation is done in steps">
 							</toggle>
 
+							<toggle name="ABC_INDEP_FEED_CALC" label="Enable ABC feed decoupling (for rotational axis)" configfile="hal" if="app_state.VERSION>11300"
+							tooltip="Enables ABC feed decoupling for rotational axis. Enable this if you are getting incorrect speed profiles when using roational axis. (only available in v1.13.1 and newer)">
+							</toggle>
+
 							<combobox name="ENABLE_S_CURVE_ACCELERATION" label="Enable S-Curve
 							acceleration" :opts="app_options.ACCELERATIONS" keyname="id" valname="name" configfile="hal" initial="0"
 							tooltip="Modifies the acceleration rate by applying a pseudo S curve to the acceleration. This might help improve stability in high speed/acceleration applications by smoothing the start/end acceleration forces of the motion.">
