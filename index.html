@@ -33,6 +33,11 @@
 				</h1>
 				<div></div>
 			</div>
+			<div class="mode-toggle" @click="modeToggle">
+				<div class="toggle">
+					<div id="dark-mode" type="checkbox"></div>
+				</div>
+			</div>
 		</header>
 
 		<div id="app_loader" class="d-flex flex-column justify-content-center align-items-center align-text-center">
@@ -1025,8 +1030,12 @@
 	<script src="component_loader.js"></script>
 	<script src="configs.js"></script>
 	<script>
+		if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+			document.documentElement.setAttribute('data-bs-theme', 'dark');
+		}
+
 		// Vue.config.devtools = true;
-		const { createApp, reactive } = Vue;
+		const {createApp, reactive} = Vue;
 		window.app_vars.app_state = reactive(window.app_vars.app_state);
 
 		window.ucnc_app = createApp({
@@ -1036,7 +1045,24 @@
 			mounted() {
 				document.getElementById('app_loader').classList.add('d-none');
 				document.getElementById('app_main').classList.remove('d-none');
-			}
+			},
+			methods: {
+				dark() {
+					document.documentElement.setAttribute('data-bs-theme', 'dark');
+				},
+
+				light() {
+					document.documentElement.removeAttribute('data-bs-theme');
+				},
+
+				modeToggle() {
+					if (document.documentElement.hasAttribute('data-bs-theme')) {
+						this.light();
+					} else {
+						this.dark();
+					}
+				},
+			},
 		});
 
 		window.addEventListener("ucnc_components_loaded", function () {
