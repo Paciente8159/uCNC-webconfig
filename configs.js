@@ -701,6 +701,7 @@ function generatePIOOverrides(rootscope = window.app_vars) {
 			build_flags += "\t" + flags;
 		}
 	}
+
 	if (active_modules && active_modules.length) {
 		var includes = ""
 		for (var i = 0; i < active_modules.length; i++) {
@@ -708,6 +709,7 @@ function generatePIOOverrides(rootscope = window.app_vars) {
 			if (mod.pre_requires && mod.pre_requires.length) {
 				includes += mod.pre_requires.replace(/,\s*$/, "") + ", ";
 			}
+			
 			includes += active_modules[i] + ", ";
 			if (mod.requires && mod.requires.length) {
 				includes += mod.requires.replace(/,\s*$/, "") + ", ";

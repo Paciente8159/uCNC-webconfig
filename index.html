@@ -886,7 +886,13 @@
 						<toggle name="ENABLE_MOTION_CONTROL_MODULES" label="Enable motion control
 							extension
 							callbacks" configfile="hal"
-							tooltip="Enables some extension callbacks in the firmware IO motion controller and planner. This provides some hooks used by extension modules to run code at specific events.">
+							tooltip="Enables some extension callbacks in the firmware IO motion controller. This provides some hooks used by extension modules to run code at specific events.">
+						</toggle>
+
+						<toggle name="ENABLE_PLANNER_MODULES" label="Enable motion planner
+							extension
+							callbacks" configfile="hal"
+							tooltip="Enables some extension callbacks in the firmware motion planner. This provides some hooks used by extension modules to run code at specific events.">
 						</toggle>
 
 						<toggle name="DISABLE_SETTINGS_MODULES" label="Disable settings storage
@@ -900,22 +906,27 @@
 							interpolation starving and hickups in the motion. To prevent this you can enable this feature to isolate
 							the stepper interpolator from the main loop and be regulary called from the RTC task.">
 						</toggle>
+
+						<toggle name="ENABLE_ATC_HOOKS" label="Enables tool change hooks/callbacks that are trigger with each tool change (M6)"
+							configfile="hal"
+							tooltip="Enables tool change hooks/callbacks that are trigger with each tool change (one callback for the tool unmounting and another for the next tool being mounted) via M6 command">
+						</toggle>
 					</controlgroup>
 					<accordion id="module-config-accordion">
 						<accordion-card id="module-config-mods-parser" accordionid="module-config-accordion" label="Parser modules">
 							<modulesloader modfilter="parser"></modulesloader>
 						</accordion-card>
-						<accordion-card id="module-config-mods-display" accordionid="module-config-accordion"
-							label="Display modules">
+						<accordion-card id="module-config-mods-display" accordionid="module-config-accordion" label="Display modules">
 							<modulesloader modfilter="display"></modulesloader>
 						</accordion-card>
-						<accordion-card id="module-config-mods-storage" accordionid="module-config-accordion"
-							label="Storage modules">
+						<accordion-card id="module-config-mods-storage" accordionid="module-config-accordion" label="Storage modules">
 							<modulesloader modfilter="storage"></modulesloader>
 						</accordion-card>
-						<accordion-card id="module-config-mods-pendants" accordionid="module-config-accordion"
-							label="Pendants modules">
+						<accordion-card id="module-config-mods-pendants" accordionid="module-config-accordion" label="Pendants modules">
 							<modulesloader modfilter="pendants"></modulesloader>
+						</accordion-card>
+						<accordion-card id="module-config-mods-tools" accordionid="module-config-accordion" label="Tool modules">
+							<modulesloader modfilter="tool"></modulesloader>
 						</accordion-card>
 						<accordion-card id="module-config-mods-other" accordionid="module-config-accordion" label="Other modules">
 							<modulesloader modfilter="other"></modulesloader>
@@ -1000,7 +1011,7 @@
 								<p><strong>Other actions</strong></p>
 								<p>You can click these buttons to copy the content of the generated files to the clipboard replace the
 									content of your files.</p>
-								<div class="d-flex flex-wrap">
+								<div class="d-flex flex-wrap d-gap-10">
 									<inputctrl type="button" label="boardmap_reset.h" customclass="btn btn-light"
 										clickcb="window.copyBoardmapReset"></inputctrl>
 									<inputctrl type="button" label="boardmap_overrides.h" customclass="btn btn-light"

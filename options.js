@@ -14,6 +14,7 @@ window.app_vars = {
 	app_options: {
 		VERSIONS: [
 			{ id: 'master', tag: 99999, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/master.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
+			{ id: 'v1.15.0', tag: 11500, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.15.0.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
 			{ id: 'v1.14.0', tag: 11400, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.14.0.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
 			{ id: 'v1.13.x-bugfix', tag: 11379, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/v1.13.x-bugfix.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
 			{ id: 'v1.13.1', tag: 11301, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.13.1.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
@@ -648,13 +649,14 @@ window.app_vars = {
 			{ id: 'web_pendant', name: 'Adds an improved web pendant for WiFi capable devices. (requires at least v1.9.0 to work)', condition: 'VERSION>010879' },
 			{ id: 'tmc_driver', name: 'Support for TMC drivers. (requires at least v1.8.7 to work)', condition: 'VERSION>010806' },
 			{ id: 'tone_speaker', name: 'Plays sounds and tunes using a PWM output.' },
-			{ id: 'mks_display', name: 'Adds support for MKS TS35-R display and similar ones.', condition: 'VERSION>019090', requires: 'touch_screen', lib_deps: 'lvgl/lvgl@^9.1.0', build_flags: '-DLV_CONF_PATH="${platformio.include_dir}/src/modules/mks_display/lv_conf.h"' },
-			{ id: 'tft_display', name: 'Adds support for TFT displays like the ILI9341 and others. Uses lvgl_support to display a Win95 style menu', condition: 'VERSION>019090', requires: 'lvgl_support', lib_deps: 'lvgl/lvgl@^9.1.0', build_flags: '-DLV_CONF_PATH="${platformio.include_dir}/src/modules/lvgl_support/lv_conf.h"' },
-			{ id: 'joystick', name: 'Adds support for an analog joystick to control up to 6 axis', condition: 'VERSION>019090' },
+			{ id: 'mks_display', name: 'Adds support for MKS TS35-R display and similar ones.', condition: 'VERSION>010990', requires: 'touch_screen', lib_deps: 'lvgl/lvgl@^9.1.0', build_flags: '-DLV_CONF_PATH="${platformio.include_dir}/src/modules/mks_display/lv_conf.h"' },
+			{ id: 'tft_display', name: 'Adds support for TFT displays like the ILI9341 and others. Uses lvgl_support to display a Win95 style menu', condition: 'VERSION>010990', requires: 'lvgl_support', lib_deps: 'lvgl/lvgl@^9.1.0', build_flags: '-DLV_CONF_PATH="${platformio.include_dir}/src/modules/lvgl_support/lv_conf.h"' },
+			{ id: 'joystick', name: 'Adds support for an analog joystick to control up to 6 axis', condition: 'VERSION>010990' },
 			// { id: 'joystick_v2', name: 'Newer version of the analog joystick to control up to 6 axis', condition: 'VERSION>011201' },
 			{ id: 'grblhal_keypad', name: 'Adds support for GrblHAL keypad consoles', condition: 'VERSION>010800' },
 			{ id: 'single_axis_homing', name: 'Adds single axis homing commands ($H<axis_letter> for example $HX)', condition: 'VERSION>010800' },
-			// { id: 'lvgl_support', name: 'LVGL system menu emulating Win95 for the tft_display module.', condition: 'VERSION>019090', lib_deps: 'lvgl/lvgl@^9.1.0', build_flags: '-DLV_CONF_PATH="${platformio.include_dir}/src/modules/lvgl_support/lv_conf.h"' },
+			// { id: 'lvgl_support', name: 'LVGL system menu emulating Win95 for the tft_display module.', condition: 'VERSION>010990', lib_deps: 'lvgl/lvgl@^9.1.0', build_flags: '-DLV_CONF_PATH="${platformio.include_dir}/src/modules/lvgl_support/lv_conf.h"' },
+			{ id: 'atc', name: 'Adds ATC (automatic tool changer) scripts that run on each tool change. (requires at least v1.15.0 to work)', condition: 'VERSION>011479' },
 		],
 		STEPPERS: [
 			{id:'0'},
