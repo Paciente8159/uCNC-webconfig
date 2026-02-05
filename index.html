@@ -831,6 +831,8 @@
 									<pin :name="item.id+'_DIR'" :label="'Encoder '+item.enccount+' direction pin'"
 										filter="item.type.includes('generic_input')" configfile="hal"
 										tooltip="Assign encoder direction pin. This uses a normal input pin and allows to determine the encoder direction when the pulse pin changes state. You can assign the same pin that was assigned to the encoder pulse pin. This will make the encoder work as a simple pulse counter (undirectional). This is useful to use it as an RPM counter for example."></pin>
+									<range :name="item.id+'_PPR'" :label="'Encoder '+item.enccount+' PPR count'" configfile="hal" min="0" max="99999" step="1" vartype="int"
+								tooltip="Encoder PPR count."></range>
 								</template>
 							</repeater>
 
