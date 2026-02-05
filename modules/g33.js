@@ -3,7 +3,7 @@ window.G33Component = {
 <toggle name="g33" label="Enable G33 module"
 tooltip="Enables the G33 parser extension module." configfile="module">
 </toggle>
-<buttoncb if="app_state.g33" enable="ENABLE_PARSER_MODULES,ENABLE_MAIN_LOOP_MODULES,ENABLE_IO_MODULES">Fix requirements!</buttoncb>` 
+<buttoncb if="app_state.g33" enable="ENABLE_PARSER_MODULES,ENABLE_MAIN_LOOP_MODULES,ENABLE_IO_MODULES,ENABLE_RT_SYNC_MOTIONS">Fix requirements!</buttoncb>` 
 };
 
 window.addEventListener("ucnc_load_components", (e) => {

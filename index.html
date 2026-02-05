@@ -913,6 +913,13 @@
 							configfile="hal"
 							tooltip="Enables tool change hooks/callbacks that are trigger with each tool change (one callback for the tool unmounting and another for the next tool being mounted) via M6 command">
 						</toggle>
+
+						<toggle name="ENABLE_RT_SYNC_MOTIONS" label="Enables realtime synchronized motions"
+							configfile="hal"
+							tooltip="Enables realtime synchronized motions, (like start motion on external signal or impulse).">
+						</toggle>
+
+						
 					</controlgroup>
 					<accordion id="module-config-accordion">
 						<accordion-card id="module-config-mods-parser" accordionid="module-config-accordion" label="Parser modules">
