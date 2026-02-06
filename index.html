@@ -27,8 +27,8 @@
 		<header class="d-flex flex-column justify-content-center align-items-center align-text-center">
 			<!-- place navbar here -->
 			<div class="d-flex flex-column justify-content-center align-items-center align-text-center">
-				<img class="card-img-top logo-sm d-flex flex-column justify-content-center align-items-center" src="logo.png"
-					alt="µCNC logo">
+				<img class="card-img-top logo-sm d-flex flex-column justify-content-center align-items-center"
+					src="logo.png" alt="µCNC logo">
 				<h1 class="fs-4 d-flex flex-column justify-content-center align-items-center">µCNC config webapp
 				</h1>
 				<div></div>
@@ -41,17 +41,20 @@
 		</header>
 
 		<div id="app_loader" class="d-flex flex-column justify-content-center align-items-center align-text-center">
-			<div class="card d-flex flex-column justify-content-center align-items-center text-center" style="width: 18rem;">
+			<div class="card d-flex flex-column justify-content-center align-items-center text-center"
+				style="width: 18rem;">
 				<img class="card-img-top logo-sm" src="logo.png" alt="µCNC logo">
 				<div class="card-body">
 					<div class="d-flex justify-content-center">
-						<div class="spinner-border d-flex justify-content-center text-success" style="width: 3rem; height: 3rem;"
-							role="status">
+						<div class="spinner-border d-flex justify-content-center text-success"
+							style="width: 3rem; height: 3rem;" role="status">
 							<span class="visually-hidden">Loading...</span>
 						</div>
 					</div>
-					<h5 class="card-title d-flex flex-column justify-content-center align-items-center">Loading data</h5>
-					<p class="card-text d-flex flex-column justify-content-center align-text-center">Please wait while data from
+					<h5 class="card-title d-flex flex-column justify-content-center align-items-center">Loading data
+					</h5>
+					<p class="card-text d-flex flex-column justify-content-center align-text-center">Please wait while
+						data from
 						the remote source code is loaded..</p>
 				</div>
 			</div>
@@ -59,16 +62,19 @@
 
 		<main id="app_main" class="d-none">
 			<div class="toast-container p-3 bottom-0 end-0">
-				<message name="startup-info1" label="Important notice" labelcolor="darkred" alerttype="danger">Config files of
+				<message name="startup-info1" label="Important notice" labelcolor="darkred" alerttype="danger">Config
+					files of
 					the older web builder
 					will not work correctly</message>
-				<message name="startup-info2" label="Issues" labelcolor="black" alerttype="primary">If you encounter any issue
+				<message name="startup-info2" label="Issues" labelcolor="black" alerttype="primary">If you encounter any
+					issue
 					please consider
 					[submiting an issue in the Github project
 					page](https://github.com/Paciente8159/uCNC-config-builder/issues/new), with an
 					attached zip with all the override files and the json config file.</message>
 				<message name="startup-info3" label="New core support" labelcolor="darkyellow" alerttype="warning">
-					Core support for ESP32-S3 and ESP32-C3 is now available. Support for Bluetooth or I2S is not yet available for these cores.</message>
+					Core support for ESP32-S3 and ESP32-C3 is now available. Support for Bluetooth or I2S is not yet
+					available for these cores.</message>
 			</div>
 			<tabgroup id="config-tabs">
 				<tab id="basic-config" label="Basic config" tabid="config-tabs" active>
@@ -86,19 +92,23 @@
 						</div>
 					</controlgroup>
 					<accordion id="basic-config-accordion">
-						<accordion-card id="basic-config-basic" accordionid="basic-config-accordion" label="Basic settings">
+						<accordion-card id="basic-config-basic" accordionid="basic-config-accordion"
+							label="Basic settings">
 
-							<combobox name="VERSION" label="What version will you be using?" :opts="app_options.VERSIONS"
-								keyname="tag" valname="id" changecb="window.halChanged" tooltip="Select the µCNC source code version">
+							<combobox name="VERSION" label="What version will you be using?"
+								:opts="app_options.VERSIONS" keyname="tag" valname="id" changecb="window.halChanged"
+								tooltip="Select the µCNC source code version">
 							</combobox>
 
-							<combobox name="MCU" label="What MCU family will you be using?" :opts="app_options.MCUS" keyname="id"
-								valname="name" configfile="boardmap" changecb="window.mcuChanged" tooltip="Select your target MCU">
+							<combobox name="MCU" label="What MCU family will you be using?" :opts="app_options.MCUS"
+								keyname="id" valname="name" configfile="boardmap" changecb="window.mcuChanged"
+								tooltip="Select your target MCU">
 							</combobox>
 
-							<combobox name="BOARD" label="What board will you be using?" :opts="app_options.BOARDS" keyname="id"
-								valname="name" filter="item.mcu.includes(app_state.MCU)" initial="src/hal/boards/avr/boardmap_uno.h"
-								changecb="window.boardChanged" configfile="boardmap" vartype="string"
+							<combobox name="BOARD" label="What board will you be using?" :opts="app_options.BOARDS"
+								keyname="id" valname="name" filter="item.mcu.includes(app_state.MCU)"
+								initial="src/hal/boards/avr/boardmap_uno.h" changecb="window.boardChanged"
+								configfile="boardmap" vartype="string"
 								tooltip="Select a base configuration board and customize it, or select one of the custom board settings and build your config from scratch.">
 							</combobox>
 
@@ -113,70 +123,95 @@
 
 							<combobox name="KINEMATIC" label="What type of kinematic does your machine have?"
 								:opts="app_options.KINEMATICS" keyname="id" valname="name" configfile="boardmap"
-								tooltip="Select the kinematics that matches your machine. You can create custom kinematic if you need to. More information about [how to build your custom kinematics here](https://github.com/Paciente8159/uCNC/blob/master/uCNC/src/hal/kinematics/README.md)"></combobox>
+								tooltip="Select the kinematics that matches your machine. You can create custom kinematic if you need to. More information about [how to build your custom kinematics here](https://github.com/Paciente8159/uCNC/blob/master/uCNC/src/hal/kinematics/README.md)">
+							</combobox>
 
-							<toggle name="MP_SCARA" label="Is MP Scara kinematic type" if="app_state.KINEMATIC=='KINEMATIC_SCARA'" configfile="boardmap"
-							tooltip="In MP SCARA both the shoulder and elbow motors are fixed to the base."></toggle>
+							<toggle name="MP_SCARA" label="Is MP Scara kinematic type"
+								if="app_state.KINEMATIC=='KINEMATIC_SCARA'" configfile="boardmap"
+								tooltip="In MP SCARA both the shoulder and elbow motors are fixed to the base.">
+							</toggle>
 
-							<range name="AXIS_COUNT" label="How many axis does your machine have?" min="1" max="6" step="1"
-								configfile="boardmap" initial="3" vartype="int"
+							<range name="AXIS_COUNT" label="How many axis does your machine have?" min="1" max="6"
+								step="1" configfile="boardmap" initial="3" vartype="int"
 								tooltip="Select the number of axis your machine will have"></range>
 
-							<combobox name="BAUDRATE" label="What is your COM port baudrate" :opts="app_options.BAUDRATES"
-								keyname="id" valname="id" configfile="boardmap"
+							<combobox name="BAUDRATE" label="What is your COM port baudrate"
+								:opts="app_options.BAUDRATES" keyname="id" valname="id" configfile="boardmap"
 								tooltip="Select default communication baudrate with your Sender"></combobox>
 
 						</accordion-card>
 
-						<accordion-card id="basic-config-advanced" accordionid="basic-config-accordion" label="Advanced settings">
+						<accordion-card id="basic-config-advanced" accordionid="basic-config-accordion"
+							label="Advanced settings">
 
 							<toggle name="ENABLE_WIFI" label="Enable Wifi" configfile="boardmap"
 								tooltip="Available for boards with Wifi (ex: ESP32, RP2040W, etc..)"></toggle>
 
+							<toggle name="USE_STATIC_IP" label="Use Wifi static IP" configfile="hal"
+								tooltip="Available for boards with Wifi (ex: ESP32, RP2040W, etc..)"
+								if="app_state.VERSION>11500" show="app_state.ENABLE_WIFI"></toggle>
+
+							<ipv4 name="STATIC_IP_IP" label="Set the Wifi static IP" configfile="hal"
+								tooltip="Available for boards with Wifi (ex: ESP32, RP2040W, etc..)"
+								if="app_state.USE_STATIC_IP"></ipv4>
+							<ipv4 name="STATIC_IP_GW" label="Set the Wifi static gateway" configfile="hal"
+								tooltip="Available for boards with Wifi (ex: ESP32, RP2040W, etc..)"
+								if="app_state.USE_STATIC_IP"></ipv4>
+							<ipv4 name="STATIC_IP_SUB" label="Set the Wifi static subnet mask" configfile="hal"
+								tooltip="Available for boards with Wifi (ex: ESP32, RP2040W, etc..)"
+								if="app_state.USE_STATIC_IP"></ipv4>
+
 							<toggle name="ENABLE_BLUETOOTH" label="Enable Bluetooth" configfile="boardmap"
 								tooltip="Available for boards with Bluetooth (ex: ESP32, RP2040W, etc..)"></toggle>
 
-							<toggle name="ENABLE_STEPPERS_DISABLE_TIMEOUT" label="Enable stepper idle timeout" configfile="hal"
-								tooltip="Enables setting $1 to turn off steppers after some idle time"></toggle>
+							<toggle name="ENABLE_STEPPERS_DISABLE_TIMEOUT" label="Enable stepper idle timeout"
+								configfile="hal" tooltip="Enables setting $1 to turn off steppers after some idle time">
+							</toggle>
 
 							<toggle name="ENABLE_SKEW_COMPENSATION" label="Enable X-Y-Z axis skew
 							compensation" configfile="hal"
-							tooltip="It's possible to enable skew compensation to fix axis that are not perfectly perpendicular to each other. This assumes the frame deformation is shaped like a parallelogram. This does not fix trapesoidal deformed frames"></toggle>
+								tooltip="It's possible to enable skew compensation to fix axis that are not perfectly perpendicular to each other. This assumes the frame deformation is shaped like a parallelogram. This does not fix trapesoidal deformed frames">
+							</toggle>
 
 							<check name="SKEW_COMPENSATION_XY_ONLY" label="Enable skew compensation for
 								X-Y axis only" configfile="hal" show="app_state.ENABLE_SKEW_COMPENSATION"
-								tooltip="Implements the correction math only to the XY axis. This simplifies calculations."></check>
+								tooltip="Implements the correction math only to the XY axis. This simplifies calculations.">
+							</check>
 
 							<toggle name="ENABLE_LINACT_PLANNER" label="Enable linear actuator planner"
 								tooltip="This modifies the motion acceleration to support hard direction changes in machines with heavy mobile parts"
 								configfile="hal"></toggle>
 
 							<check name="ENABLE_LINACT_COLD_START" label="Linear actuator cold start"
-								tooltip="This forces a stop on every axis direction change. This makes the machine deaccelerate and accelerate again each time an axis changes direction even if the angle between both line segments is small." configfile="hal"
-								show="app_state.ENABLE_LINACT_PLANNER" configfile="hal"></check>
+								tooltip="This forces a stop on every axis direction change. This makes the machine deaccelerate and accelerate again each time an axis changes direction even if the angle between both line segments is small."
+								configfile="hal" show="app_state.ENABLE_LINACT_PLANNER" configfile="hal"></check>
 
-							<toggle name="ENABLE_BACKLASH_COMPENSATION" label="Enable backlash compensation" configfile="hal"
-							tooltip="Backlash compensation allow to compensate for direction changes on axis with some kind of transmission slack. The compensation is done in steps">
+							<toggle name="ENABLE_BACKLASH_COMPENSATION" label="Enable backlash compensation"
+								configfile="hal"
+								tooltip="Backlash compensation allow to compensate for direction changes on axis with some kind of transmission slack. The compensation is done in steps">
 							</toggle>
 
-							<toggle name="ABC_INDEP_FEED_CALC" label="Enable ABC feed decoupling (for rotational axis)" configfile="hal" if="app_state.VERSION>11300"
-							tooltip="Enables ABC feed decoupling for rotational axis. Enable this if you are getting incorrect speed profiles when using roational axis. (only available in v1.13.1 and newer)">
+							<toggle name="ABC_INDEP_FEED_CALC" label="Enable ABC feed decoupling (for rotational axis)"
+								configfile="hal" if="app_state.VERSION>11300"
+								tooltip="Enables ABC feed decoupling for rotational axis. Enable this if you are getting incorrect speed profiles when using roational axis. (only available in v1.13.1 and newer)">
 							</toggle>
 
 							<combobox name="ENABLE_S_CURVE_ACCELERATION" label="Enable S-Curve
 							acceleration" :opts="app_options.ACCELERATIONS" keyname="id" valname="name" configfile="hal" initial="0"
-							tooltip="Modifies the acceleration rate by applying a pseudo S curve to the acceleration. This might help improve stability in high speed/acceleration applications by smoothing the start/end acceleration forces of the motion.">
+								tooltip="Modifies the acceleration rate by applying a pseudo S curve to the acceleration. This might help improve stability in high speed/acceleration applications by smoothing the start/end acceleration forces of the motion.">
 							</combobox>
 
 							<toggle name="BRESENHAM_16BIT" label="Use 16-bit Bresenham step generation" configfile="hal"
 								tooltip="Uses a 16-bit algorithm that is faster to compute. Good for machines/or processes that require lots of short length motions like deltas or laser engraving">
 							</toggle>
 
-							<toggle name="ENABLE_BIT_DEBUG_EXTRA_CMD" label="Enable extra pin state print commands" configfile="hal"
+							<toggle name="ENABLE_BIT_DEBUG_EXTRA_CMD" label="Enable extra pin state print commands"
+								configfile="hal"
 								tooltip="Enables $P command to print all pins states, stepping positions, encoders positions and system runtime">
 							</toggle>
 
-							<toggle name="ENABLE_EXTRA_SETTINGS_CMDS" label="Enable extra settings storage commands" configfile="hal"
+							<toggle name="ENABLE_EXTRA_SETTINGS_CMDS" label="Enable extra settings storage commands"
+								configfile="hal"
 								tooltip="Enables commands $SS (Save settings to storage), $SL (Load settings from storage), $SR (Reset settings from storage). This is a great for granullar settings read/write control, specially in Flash storaged settings.">
 							</toggle>
 
@@ -193,8 +228,8 @@
 								tooltip="Enables the creation of height maps that are stored internally and can be reusable.">
 							</toggle>
 
-							<range name="H_MAPING_GRID_FACTOR" label="Height map grid factor: " min="2" max="6" step="1" units=""
-								configfile="hal" if="app_state.ENABLE_G39_H_MAPPING" initial="2"
+							<range name="H_MAPING_GRID_FACTOR" label="Height map grid factor: " min="2" max="6" step="1"
+								units="" configfile="hal" if="app_state.ENABLE_G39_H_MAPPING" initial="2"
 								tooltip="Sets the height map number of points. The number of points is [grid factor]^2">
 							</range>
 
@@ -208,8 +243,8 @@
 							<check name="ENABLE_NAMED_PARAMETERS" label="Enable named parameters" configfile="hal"
 								tooltip="This option enables a subset of named parameters. Example &lt_x&gt.
 							Read more about it in [LinuxCNC named parameters](https://linuxcnc.org/docs/html/gcode/overview.html#gcode:named-parameters)
-							The list of supported name parameters can be found [here](https://github.com/Paciente8159/uCNC/blob/67ded74286b4c7b89f4f4d9cefce221bf577a163/uCNC/src/core/parser_expr.c#L51)" initial
-								if="app_state.ENABLE_RS274NGC_EXPRESSIONS">
+							The list of supported name parameters can be found [here](https://github.com/Paciente8159/uCNC/blob/67ded74286b4c7b89f4f4d9cefce221bf577a163/uCNC/src/core/parser_expr.c#L51)"
+								initial if="app_state.ENABLE_RS274NGC_EXPRESSIONS">
 							</check>
 							<check name="ENABLE_O_CODES" label="Enable OCodes (Sub routines)" configfile="hal"
 								tooltip="This option enables OCodes sub routines. µCNC sub routines require some sort of file system mounted (like SD card).
@@ -227,8 +262,8 @@
 					<accordion id="boardmap-config-accordion">
 						<accordion-card id="board-basic-config" accordionid="boardmap-config-accordion"
 							label="Board Ports and Timers">
-							<textfield name="BOARD_NAME" label="The board name printed with $I command?" configfile="boardmap"
-								tooltip="Name must be between quotation marks
+							<textfield name="BOARD_NAME" label="The board name printed with $I command?"
+								configfile="boardmap" tooltip="Name must be between quotation marks
 							(string). Ex. 'myboard'" initial="" vartype="string"
 								pattern="^'(?:[^'\\]|\\.)*'$|&quot;(?:[^&quot;\\]|\\.)*&quot;$">
 							</textfield>
@@ -236,20 +271,23 @@
 
 							<controlgroup label="AVR interrupt on change ports" if="app_state.MCU=='MCU_AVR'">
 
-								<combobox name="PCINT0_PORT" label="In which port are PCINT pins 0 to 7?" :opts="app_options.PORTS"
-									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
+								<combobox name="PCINT0_PORT" label="In which port are PCINT pins 0 to 7?"
+									:opts="app_options.PORTS" filter="item.mcu.includes(app_state.MCU)" keyname="port"
+									valname="port" configfile="boardmap"
 									tooltip="On AVR you can customize the interrupt on change capable ports to match your specific MCU (for example if you are customizing µCNC to run on a custom ATmega MCU other then Atmega328P or Atmega2560).
 									You can read a bit more about port on change configuration for AVR [here](https://github.com/Paciente8159/uCNC/wiki/AVR:-Customizing#interrupt-on-change-feature)">
 								</combobox>
 
-								<combobox name="PCINT1_PORT" label="In which port are PCINT pins 8 to 15?" :opts="app_options.PORTS"
-									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
+								<combobox name="PCINT1_PORT" label="In which port are PCINT pins 8 to 15?"
+									:opts="app_options.PORTS" filter="item.mcu.includes(app_state.MCU)" keyname="port"
+									valname="port" configfile="boardmap"
 									tooltip="On AVR you can customize the interrupt on change capable ports to match your specific MCU (for example if you are customizing µCNC to run on a custom ATmega MCU other then Atmega328P or Atmega2560).
 									You can read a bit more about port on change configuration for AVR [here](https://github.com/Paciente8159/uCNC/wiki/AVR:-Customizing#interrupt-on-change-feature)">
 								</combobox>
 
-								<combobox name="PCINT2_PORT" label="In which port are PCINT pins 16 to 23?" :opts="app_options.PORTS"
-									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
+								<combobox name="PCINT2_PORT" label="In which port are PCINT pins 16 to 23?"
+									:opts="app_options.PORTS" filter="item.mcu.includes(app_state.MCU)" keyname="port"
+									valname="port" configfile="boardmap"
 									tooltip="On AVR you can customize the interrupt on change capable ports to match your specific MCU (for example if you are customizing µCNC to run on a custom ATmega MCU other then Atmega328P or Atmega2560).
 									You can read a bit more about port on change configuration for AVR [here](https://github.com/Paciente8159/uCNC/wiki/AVR:-Customizing#interrupt-on-change-feature)">
 								</combobox>
@@ -258,15 +296,15 @@
 
 							<controlgroup label="UART">
 
-								<combobox name="UART_PORT" label="Which hardware port will be UART_PORT?" :opts="app_options.UCNCUARTS"
-									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
-									vartype="int" nullable
+								<combobox name="UART_PORT" label="Which hardware port will be UART_PORT?"
+									:opts="app_options.UCNCUARTS" filter="item.mcu.includes(app_state.MCU)"
+									keyname="port" valname="port" configfile="boardmap" vartype="int" nullable
 									tooltip="Select which (microcontroller) UART hardware port will you use as µCNC UART port. You will also need to configure the matching IO pins in the Hardware communications pin section">
 								</combobox>
 
 								<combobox name="UART2_PORT" label="Which hardware port will be UART2_PORT?"
-									:opts="app_options.UCNCUARTS" filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port"
-									configfile="boardmap" nullable
+									:opts="app_options.UCNCUARTS" filter="item.mcu.includes(app_state.MCU)"
+									keyname="port" valname="port" configfile="boardmap" nullable
 									tooltip="Select which (microcontroller) UART hardware port will you use as µCNC UART2 port. You will also need to configure the matching IO pins in the Hardware communications pin section">
 								</combobox>
 
@@ -274,15 +312,15 @@
 
 							<controlgroup label="SPI">
 
-								<combobox name="SPI_PORT" label="Which hardware port will be SPI_PORT?" :opts="app_options.UCNCSPI"
-									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
-									vartype="int" nullable
+								<combobox name="SPI_PORT" label="Which hardware port will be SPI_PORT?"
+									:opts="app_options.UCNCSPI" filter="item.mcu.includes(app_state.MCU)" keyname="port"
+									valname="port" configfile="boardmap" vartype="int" nullable
 									tooltip="Select which (microcontroller) SPI hardware port will you use as µCNC SPI port. You will also need to configure the matching IO pins in the Hardware communications pin section">
 								</combobox>
 
-								<combobox name="SPI2_PORT" label="Which hardware port will be SPI2_PORT?" :opts="app_options.UCNCSPI"
-									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
-									nullable
+								<combobox name="SPI2_PORT" label="Which hardware port will be SPI2_PORT?"
+									:opts="app_options.UCNCSPI" filter="item.mcu.includes(app_state.MCU)" keyname="port"
+									valname="port" configfile="boardmap" nullable
 									tooltip="Select which (microcontroller) SPI hardware port will you use as µCNC SPI2 port. You will also need to configure the matching IO pins in the Hardware communications pin section">
 								</combobox>
 
@@ -290,9 +328,9 @@
 
 							<controlgroup label="I2C">
 
-								<combobox name="I2C_PORT" label="Which hardware port will be I2C_PORT?" :opts="app_options.UCNCI2C"
-									filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
-									vartype="int" nullable
+								<combobox name="I2C_PORT" label="Which hardware port will be I2C_PORT?"
+									:opts="app_options.UCNCI2C" filter="item.mcu.includes(app_state.MCU)" keyname="port"
+									valname="port" configfile="boardmap" vartype="int" nullable
 									tooltip="Select which (microcontroller) I2C hardware port will you use as µCNC I2C port. You will also need to configure the matching IO pins in the Hardware communications pin section">
 								</combobox>
 
@@ -301,60 +339,72 @@
 							<repeater label="Timers" :opts="app_options.UCNCTIMERS" keyname="timer" valname="timer"
 								filter="item.mcu.includes(app_state.MCU)">
 								<template #default="{ value: timer }">
-									<combobox :name="timer+'_TIMER'" :label="'Which Timer will be used as ' + timer +'_TIMER?'"
-										:opts="app_options.TIMERS" filter="item.mcu.includes(app_state.MCU)" keyname="timer" valname="timer"
-										configfile="boardmap" vartype="int" nullable
+									<combobox :name="timer+'_TIMER'"
+										:label="'Which Timer will be used as ' + timer +'_TIMER?'"
+										:opts="app_options.TIMERS" filter="item.mcu.includes(app_state.MCU)"
+										keyname="timer" valname="timer" configfile="boardmap" vartype="int" nullable
 										tooltip="µCNC uses hardware timers to perform some tasks like step generation (ITP), the realtime ticker (RTC), servo signal generation, and some special purpose application timers. You need to select the adequate timer for each task. On some architectures some timing tasks are statically assigned and these settings have no effect. One example is the RTC timer for ARM processors that uses the Systick timer (not configurable)">
 									</combobox>
 								</template>
 							</repeater>
 						</accordion-card>
-						<accordion-card id="io-extender-config" accordionid="boardmap-config-accordion" label="IO extenders">
-							<range name="IC74HC595_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC595's:"
-								configfile="boardmap"
+						<accordion-card id="io-extender-config" accordionid="boardmap-config-accordion"
+							label="IO extenders">
+							<range name="IC74HC595_COUNT" min="0" max="7" step="1" vartype="int"
+								label="Set the number IC74HC595's:" configfile="boardmap"
 								tooltip="Defines the total number of daisy chained 74HC595 in your board. Depending on you configuration this number can be ignored. For example if the board uses a custom callback to drive the data to the shift register.">
 							</range>
 
-							<range name="IC74HC165_COUNT" min="0" max="7" step="1" vartype="int" label="Set the number IC74HC165's:"
-								configfile="boardmap"
+							<range name="IC74HC165_COUNT" min="0" max="7" step="1" vartype="int"
+								label="Set the number IC74HC165's:" configfile="boardmap"
 								tooltip="Defines the total number of daisy chained 74HC165 in your board. Depending on you configuration this number can be ignored. For example if the board uses a custom callback to drive the data to the shift register.">
 							</range>
 
 							<toggle name="SHIFT_REGISTER_CUSTOM_CALLBACK" alias="IC74HC595_CUSTOM_SHIFT_IO"
 								label="Board uses a custom IO expander callback" configfile="boardmap"
 								if="!app_state.SHIFT_REGISTER_USE_HW_SPI"
-							tooltip="In some cases the IO extender is implemented using a complete custom callback that handles pin updating (like the ESP32 I2S (outputs only) solution)."></toggle>
+								tooltip="In some cases the IO extender is implemented using a complete custom callback that handles pin updating (like the ESP32 I2S (outputs only) solution).">
+							</toggle>
 
-							<toggle name="SHIFT_REGISTER_USE_HW_SPI" label="Board uses an hardware SPI to control the IO expander"
+							<toggle name="SHIFT_REGISTER_USE_HW_SPI"
+								label="Board uses an hardware SPI to control the IO expander"
 								if="!app_state.SHIFT_REGISTER_CUSTOM_CALLBACK"
-								tooltip="In some cases the IO extender is implemented using the SPI hardware port with a custom callback (for example the ESP8266). This is different from using the extender with the SPI port but with the normal IO expander update callback implemented in the shift_register module."></toggle>
+								tooltip="In some cases the IO extender is implemented using the SPI hardware port with a custom callback (for example the ESP8266). This is different from using the extender with the SPI port but with the normal IO expander update callback implemented in the shift_register module.">
+							</toggle>
 
 							<controlgroup label="IO shifter pins"
 								if="!app_state.SHIFT_REGISTER_CUSTOM_CALLBACK && (app_state.IC74HC595_COUNT || app_state.IC74HC165_COUNT)">
 								<pin name="SHIFT_REGISTER_CLK" label="Select the shift clock pin" initial="DOUT9"
 									if="!app_state.SHIFT_REGISTER_USE_HW_SPI && (app_state.IC74HC595_COUNT || app_state.IC74HC165_COUNT)"
 									filter="item.type.includes('generic_output')" configfile="boardmap"
-									tooltip="Assigns the µCNC pin that will perform the shift register clock signal"></pin>
+									tooltip="Assigns the µCNC pin that will perform the shift register clock signal">
+								</pin>
 								<pin name="SHIFT_REGISTER_SDO" label="Select the data out pin" initial="DOUT8"
 									if="!app_state.SHIFT_REGISTER_USE_HW_SPI && app_state.IC74HC595_COUNT"
 									filter="item.type.includes('generic_output')" configfile="boardmap"
-									tooltip="Assigns the µCNC pin that will perform the shift register data signal"></pin>
+									tooltip="Assigns the µCNC pin that will perform the shift register data signal">
+								</pin>
 								<pin name="IC74HC595_LATCH" label="Select the output latch pin" initial="DOUT10"
 									if="app_state.IC74HC595_COUNT" filter="item.type.includes('generic_output')"
-									tooltip="Assigns the µCNC pin that will perform the shift register data conversion from serial to parallel"></pin>
+									tooltip="Assigns the µCNC pin that will perform the shift register data conversion from serial to parallel">
+								</pin>
 								<pin name="SHIFT_REGISTER_SDI" label="Select the data in pin" initial="DIN8"
 									if="!app_state.SHIFT_REGISTER_USE_HW_SPI && app_state.IC74HC165_COUNT"
 									filter="item.type.includes('generic_input')" configfile="boardmap"
-									tooltip="Assigns the µCNC pin that will perform the shift register data signal reading"></pin>
+									tooltip="Assigns the µCNC pin that will perform the shift register data signal reading">
+								</pin>
 								<pin name="IC74HC165_LOAD" label="Select the data in load pin" initial="DIN11"
-									if="app_state.IC74HC165_COUNT" filter="item.type.includes('generic_input')" configfile="boardmap"
-									 tooltip="Assigns the µCNC pin that will perform the shift register data conversion from parallel be readable in series">
+									if="app_state.IC74HC165_COUNT" filter="item.type.includes('generic_input')"
+									configfile="boardmap"
+									tooltip="Assigns the µCNC pin that will perform the shift register data conversion from parallel be readable in series">
 								</pin>
 							</controlgroup>
 						</accordion-card>
 
-						<accordion-card id="special-outputs-config" label="Stepper pins" accordionid="boardmap-config-accordion">
-							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('stepper')">
+						<accordion-card id="special-outputs-config" label="Stepper pins"
+							accordionid="boardmap-config-accordion">
+							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
+								filter="item.type.includes('stepper')">
 								<template #head>
 									<th scope="col">µCNC pin</th>
 									<th scope="col">Pin number</th>
@@ -365,26 +415,29 @@
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
 										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
-											vartype="int" nullable tooltip="Defines the pin gpio number">
+											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin"
+											configfile="boardmap" vartype="int" nullable
+											tooltip="Defines the pin gpio number">
 										</combobox>
 									</td>
 									<td>
 										<combobox :name="rowitem.pin+'_PORT'" label="" :opts="app_options.PORTS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
-											nullable tooltip="Defines the pin port">
+											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port"
+											configfile="boardmap" nullable tooltip="Defines the pin port">
 										</combobox>
 									</td>
 									<td v-if="this.$root.app_state.IC74HC595_COUNT">
-										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
-											valname="offset" configfile="boardmap" vartype="int" nullable
+										<combobox :name="rowitem.pin+'_IO_OFFSET'" label=""
+											:opts="app_options.IO_OFFSETS" keyname="offset" valname="offset"
+											configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC595 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly.">
 										</combobox>
 									</td>
 								</template>
 							</vtable>
 						</accordion-card>
-						<accordion-card id="pwms-servos-config" label="PWM & Servos pins" accordionid="boardmap-config-accordion">
+						<accordion-card id="pwms-servos-config" label="PWM & Servos pins"
+							accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
 								filter="item.type.includes('pwm') || item.type.includes('servo')">
 								<template #head>
@@ -400,41 +453,45 @@
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
 										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
-											vartype="int" nullable tooltip="Defines the pin gpio number">
+											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin"
+											configfile="boardmap" vartype="int" nullable
+											tooltip="Defines the pin gpio number">
 										</combobox>
 									</td>
 									<td>
 										<combobox :name="rowitem.pin+'_PORT'" label="" :opts="app_options.PORTS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
-											nullable tooltip="Defines the pin port">
+											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port"
+											configfile="boardmap" nullable tooltip="Defines the pin port">
 										</combobox>
 									</td>
 									<td>
 										<combobox :name="rowitem.pin+'_CHANNEL'" label="" :opts="app_options.CHANNELS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="channel" valname="channel"
-											configfile="boardmap" nullable
+											filter="item.mcu.includes(app_state.MCU)" keyname="channel"
+											valname="channel" configfile="boardmap" nullable
 											tooltip="Defines the PWM channel used by this pin (Architecture dependant)"
 											v-if="rowitem.type.includes('pwm')">
 										</combobox>
 									</td>
 									<td>
 										<combobox :name="rowitem.pin+'_TIMER'" label="" :opts="app_options.TIMERS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="timer" valname="timer" configfile="boardmap"
-											nullable tooltip="Defines the timer associated to this PWM (Architecture dependant)"
+											filter="item.mcu.includes(app_state.MCU)" keyname="timer" valname="timer"
+											configfile="boardmap" nullable
+											tooltip="Defines the timer associated to this PWM (Architecture dependant)"
 											v-if="rowitem.type.includes('pwm')">
 										</combobox>
 									</td>
 									<td v-if="this.$root.app_state.MCU=='MCU_SAMD21'">
 										<combobox :name="rowitem.pin+'_MUX'" label="" :opts="app_options.MUXS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="mux" valname="mux" configfile="boardmap"
-											nullable tooltip="Defines the PWM pin mux (Architecture dependant)"
+											filter="item.mcu.includes(app_state.MCU)" keyname="mux" valname="mux"
+											configfile="boardmap" nullable
+											tooltip="Defines the PWM pin mux (Architecture dependant)"
 											v-if="rowitem.type.includes('pwm')">
 									</td>
 									</vcell>
 									<td v-if="this.$root.app_state.IC74HC595_COUNT">
-										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
-											valname="offset" configfile="boardmap" vartype="int" nullable
+										<combobox :name="rowitem.pin+'_IO_OFFSET'" label=""
+											:opts="app_options.IO_OFFSETS" keyname="offset" valname="offset"
+											configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC595 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly.">
 										</combobox>
 									</td>
@@ -443,7 +500,8 @@
 						</accordion-card>
 						<accordion-card id="generic-outputs-config" label="Generic output pins"
 							accordionid="boardmap-config-accordion">
-							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('dout')">
+							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
+								filter="item.type.includes('dout')">
 								<template #head>
 									<th scope="col">µCNC pin</th>
 									<th scope="col">Pin number</th>
@@ -454,19 +512,21 @@
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
 										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
-											vartype="int" nullable tooltip="Defines the pin gpio number">
+											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin"
+											configfile="boardmap" vartype="int" nullable
+											tooltip="Defines the pin gpio number">
 										</combobox>
 									</td>
 									<td>
 										<combobox :name="rowitem.pin+'_PORT'" label="" :opts="app_options.PORTS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
-											nullable tooltip="Defines the pin port">
+											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port"
+											configfile="boardmap" nullable tooltip="Defines the pin port">
 										</combobox>
 									</td>
 									<td v-if="this.$root.app_state.IC74HC595_COUNT">
-										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
-											valname="offset" configfile="boardmap" vartype="int" nullable
+										<combobox :name="rowitem.pin+'_IO_OFFSET'" label=""
+											:opts="app_options.IO_OFFSETS" keyname="offset" valname="offset"
+											configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC595 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly.">
 										</combobox>
 									</td>
@@ -489,42 +549,48 @@
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
 										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
-											vartype="int" tooltip="Defines the pin gpio number" nullable>
+											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin"
+											configfile="boardmap" vartype="int" tooltip="Defines the pin gpio number"
+											nullable>
 										</combobox>
 									</td>
 									<td>
 										<combobox :name="rowitem.pin+'_PORT'" label="" :opts="app_options.PORTS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
-											nullable tooltip="Defines the pin port">
+											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port"
+											configfile="boardmap" nullable tooltip="Defines the pin port">
 										</combobox>
 									</td>
 									<td>
-										<toggle :name="rowitem.pin+'_PULLUP'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
-											valname="offset" configfile="boardmap" tooltip="Enables internal weak pull up on this pin">
+										<toggle :name="rowitem.pin+'_PULLUP'" label="" :opts="app_options.IO_OFFSETS"
+											keyname="offset" valname="offset" configfile="boardmap"
+											tooltip="Enables internal weak pull up on this pin">
 										</toggle>
 									</td>
 									<td>
-										<toggle :name="rowitem.pin+'_ISR'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
-											valname="offset" configfile="boardmap" if="app_state.MCU!='MCU_AVR'"
+										<toggle :name="rowitem.pin+'_ISR'" label="" :opts="app_options.IO_OFFSETS"
+											keyname="offset" valname="offset" configfile="boardmap"
+											if="app_state.MCU!='MCU_AVR'"
 											tooltip="Enables interrupt on change on this pin">
 										</toggle>
-										<combobox :name="rowitem.pin+'_ISR'" label="" :opts="app_options.ISRS" keyname="isr" valname="isr"
-											configfile="boardmap" if="app_state.MCU=='MCU_AVR'"
+										<combobox :name="rowitem.pin+'_ISR'" label="" :opts="app_options.ISRS"
+											keyname="isr" valname="isr" configfile="boardmap"
+											if="app_state.MCU=='MCU_AVR'"
 											tooltip="On AVR the interrupt on change feature needs to be set according to the selected pin like [explained here ](https://github.com/Paciente8159/uCNC/wiki/AVR:-Customizing#interrupt-on-change-feature)"
 											vartype="int" nullable>
 										</combobox>
 									</td>
 									<td v-if="this.$root.app_state.IC74HC165_COUNT">
-										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
-											valname="offset" configfile="boardmap" vartype="int" nullable
+										<combobox :name="rowitem.pin+'_IO_OFFSET'" label=""
+											:opts="app_options.IO_OFFSETS" keyname="offset" valname="offset"
+											configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC165 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly.">
 										</combobox>
 									</td>
 								</template>
 							</vtable>
 						</accordion-card>
-						<accordion-card id="analogs-config" label="Analog input pins" accordionid="boardmap-config-accordion">
+						<accordion-card id="analogs-config" label="Analog input pins"
+							accordionid="boardmap-config-accordion">
 							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
 								filter="item.type.includes('analog')">
 								<template #head>
@@ -538,26 +604,29 @@
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
 										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
-											vartype="int" tooltip="Defines the pin gpio number" nullable>
+											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin"
+											configfile="boardmap" vartype="int" tooltip="Defines the pin gpio number"
+											nullable>
 										</combobox>
 									</td>
 									<td>
 										<combobox :name="rowitem.pin+'_PORT'" label="" :opts="app_options.PORTS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
-											nullable tooltip="Defines the pin port">
+											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port"
+											configfile="boardmap" nullable tooltip="Defines the pin port">
 										</combobox>
 									</td>
 									<td>
-										<combobox :name="rowitem.pin+'_CHANNEL'" label="" :opts="app_options.ANALOG_CHANNELS"
-											keyname="channel" valname="channel" configfile="boardmap"
-											tooltip="Selects which ADC will be used with this pin" vartype="int" nullable>
+										<combobox :name="rowitem.pin+'_CHANNEL'" label=""
+											:opts="app_options.ANALOG_CHANNELS" keyname="channel" valname="channel"
+											configfile="boardmap" tooltip="Selects which ADC will be used with this pin"
+											vartype="int" nullable>
 										</combobox>
 									</td>
 									<td v-if="this.$root.app_state.MCU=='MCU_STM32H7X'">
-										<combobox :name="rowitem.pin+'_ADC'" label="" :opts="app_options.ANALOG_ADCS" keyname="adc"
-											valname="adc" configfile="boardmap" tooltip="Selects which ADC will be used with this pin"
-											vartype="int" nullable>
+										<combobox :name="rowitem.pin+'_ADC'" label="" :opts="app_options.ANALOG_ADCS"
+											keyname="adc" valname="adc" configfile="boardmap"
+											tooltip="Selects which ADC will be used with this pin" vartype="int"
+											nullable>
 										</combobox>
 									</td>
 								</template>
@@ -565,7 +634,8 @@
 						</accordion-card>
 						<accordion-card id="generic-inputs-config" label="Generic input pins"
 							accordionid="boardmap-config-accordion">
-							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('din')">
+							<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin"
+								filter="item.type.includes('din')">
 								<template #head>
 									<th scope="col">µCNC pin</th>
 									<th scope="col">Pin number</th>
@@ -578,37 +648,42 @@
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
 										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
-											vartype="int" nullable tooltip="Defines the pin gpio number">
+											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin"
+											configfile="boardmap" vartype="int" nullable
+											tooltip="Defines the pin gpio number">
 										</combobox>
 									</td>
 									<td>
 										<combobox :name="rowitem.pin+'_PORT'" label="" :opts="app_options.PORTS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
-											nullable tooltip="Defines the pin port">
+											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port"
+											configfile="boardmap" nullable tooltip="Defines the pin port">
 										</combobox>
 									</td>
 									<td>
-										<toggle :name="rowitem.pin+'_PULLUP'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
-											valname="offset" configfile="boardmap" tooltip="Enables internal weak pull up on this pin">
+										<toggle :name="rowitem.pin+'_PULLUP'" label="" :opts="app_options.IO_OFFSETS"
+											keyname="offset" valname="offset" configfile="boardmap"
+											tooltip="Enables internal weak pull up on this pin">
 										</toggle>
 									</td>
 									<td>
 										<div v-if="rowitem.type.includes('interruptable')">
-											<toggle :name="rowitem.pin+'_ISR'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
-												valname="offset" configfile="boardmap" if="app_state.MCU!='MCU_AVR'"
+											<toggle :name="rowitem.pin+'_ISR'" label="" :opts="app_options.IO_OFFSETS"
+												keyname="offset" valname="offset" configfile="boardmap"
+												if="app_state.MCU!='MCU_AVR'"
 												tooltip="Enables interrupt on change on this pin">
 											</toggle>
-											<combobox :name="rowitem.pin+'_ISR'" label="" :opts="app_options.ISRS" keyname="isr" valname="isr"
-												configfile="boardmap" if="app_state.MCU=='MCU_AVR'"
+											<combobox :name="rowitem.pin+'_ISR'" label="" :opts="app_options.ISRS"
+												keyname="isr" valname="isr" configfile="boardmap"
+												if="app_state.MCU=='MCU_AVR'"
 												tooltip="On AVR the interrupt on change feature needs to be set according to the selected pin like [explained here ](https://github.com/Paciente8159/uCNC/wiki/AVR:-Customizing#interrupt-on-change-feature)"
 												vartype="int" nullable>
 											</combobox>
 										</div>
 									</td>
 									<td v-if="this.$root.app_state.IC74HC165_COUNT">
-										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
-											valname="offset" configfile="boardmap" vartype="int" nullable
+										<combobox :name="rowitem.pin+'_IO_OFFSET'" label=""
+											:opts="app_options.IO_OFFSETS" keyname="offset" valname="offset"
+											configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC165 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly.">
 										</combobox>
 									</td>
@@ -630,24 +705,27 @@
 									<td><strong>{{rowitem.pin}}</strong></td>
 									<td>
 										<combobox :name="rowitem.pin+'_BIT'" label="" :opts="app_options.PINS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin" configfile="boardmap"
-											vartype="int" tooltip="Defines the pin gpio number" nullable>
+											filter="item.mcu.includes(app_state.MCU)" keyname="pin" valname="pin"
+											configfile="boardmap" vartype="int" tooltip="Defines the pin gpio number"
+											nullable>
 										</combobox>
 									</td>
 									<td>
 										<combobox :name="rowitem.pin+'_PORT'" label="" :opts="app_options.PORTS"
-											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port" configfile="boardmap"
-											nullable tooltip="Defines the pin port">
+											filter="item.mcu.includes(app_state.MCU)" keyname="port" valname="port"
+											configfile="boardmap" nullable tooltip="Defines the pin port">
 										</combobox>
 									</td>
 									<td>
-										<toggle :name="rowitem.pin+'_PULLUP'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
-											valname="offset" configfile="boardmap" tooltip="Enables internal weak pull up on this pin">
+										<toggle :name="rowitem.pin+'_PULLUP'" label="" :opts="app_options.IO_OFFSETS"
+											keyname="offset" valname="offset" configfile="boardmap"
+											tooltip="Enables internal weak pull up on this pin">
 										</toggle>
 									</td>
 									<td v-if="this.$root.app_state.IC74HC595_COUNT">
-										<combobox :name="rowitem.pin+'_IO_OFFSET'" label="" :opts="app_options.IO_OFFSETS" keyname="offset"
-											valname="offset" configfile="boardmap" vartype="int" nullable
+										<combobox :name="rowitem.pin+'_IO_OFFSET'" label=""
+											:opts="app_options.IO_OFFSETS" keyname="offset" valname="offset"
+											configfile="boardmap" vartype="int" nullable
 											tooltip="If this pin is implemented in a 74HC595 (single or daisy-chained) extender this defines the pin offset used for this function. This requires HAL IO extenders to be configured correctly."
 											v-if="rowitem.type.includes('generic_output')">
 										</combobox>
@@ -660,10 +738,12 @@
 				<tab id="tools-config" label="Tools" tabid="config-tabs">
 					<controlgroup label="Tools basic settings">
 
-						<range name="TOOL_COUNT" label="How many tools will your machine have?" min="0" max="15" step="1"
-							configfile="boardmap" initial="1" tooltip="Select the amount of tools you will be controlling on your machine"></range>
+						<range name="TOOL_COUNT" label="How many tools will your machine have?" min="0" max="15"
+							step="1" configfile="boardmap" initial="1"
+							tooltip="Select the amount of tools you will be controlling on your machine"></range>
 
-						<toggle name="ENABLE_COOLANT" label="Enable coolant" configfile="hal" tooltip="Enable coolant controlling capabilities in the firmware"></toggle>
+						<toggle name="ENABLE_COOLANT" label="Enable coolant" configfile="hal"
+							tooltip="Enable coolant controlling capabilities in the firmware"></toggle>
 
 						<alert if="!app_state.ENABLE_COOLANT" alerttype="primary" label="Notice">
 							Coolant is disabled!
@@ -686,8 +766,8 @@
 							<accordion-card :label="item.tool + ' (' + app_state[item.tool] + ')' "
 								:id="'tool-accordion'+item.toolcount" accordionid="tools-config-accordion">
 								<combobox :name="item.tool" :label="'Choose a tool controller for '+item.tool"
-									:opts="app_options.TOOL_OPTIONS" keyname="id" valname="name" initial="spindle_pwm" configfile="hal"
-									tooltip="Select the type of tool you will be using.">
+									:opts="app_options.TOOL_OPTIONS" keyname="id" valname="name" initial="spindle_pwm"
+									configfile="hal" tooltip="Select the type of tool you will be using.">
 								</combobox>
 								<toolsloader :tool="item.tool"></toolsloader>
 
@@ -699,44 +779,55 @@
 				<tab id="hal-config" label="HAL" tabid="config-tabs">
 
 					<accordion id="hal-config-accordion">
-						<accordion-card id="hal-config-pin-isr" accordionid="hal-config-accordion" label="Pins on change interrupt">
+						<accordion-card id="hal-config-pin-isr" accordionid="hal-config-accordion"
+							label="Pins on change interrupt">
 
 							<toggle name="FORCE_SOFT_POLLING" label="Force input soft polling" configfile="hal"
 								tooltip="Disables all interrupt on change features and monitors inputs only using software polling. Not recommend if using enconders. If you enable this feature it's recommended to enable the feature to check limits and probe in the stepper ISR.">
 							</toggle>
 
-							<toggle name="ENABLE_RT_LIMITS_CHECKING" label="Check limits on the stepper ISR" configfile="hal"
+							<toggle name="ENABLE_RT_LIMITS_CHECKING" label="Check limits on the stepper ISR"
+								configfile="hal"
 								tooltip="This makes the controller check the limit pins state before every motor step. This can increase homing precision.">
 							</toggle>
 
-							<toggle name="ENABLE_RT_PROBE_CHECKING" label="Check probe on the stepper ISR" configfile="hal"
+							<toggle name="ENABLE_RT_PROBE_CHECKING" label="Check probe on the stepper ISR"
+								configfile="hal"
 								tooltip="This makes the controller check the limit pins state before every motor step. This can increase homing precision.">
 							</toggle>
 
 						</accordion-card>
 
-						<accordion-card id="hal-config-control-pins" accordionid="hal-config-accordion" label="Controls pins">
+						<accordion-card id="hal-config-control-pins" accordionid="hal-config-accordion"
+							label="Controls pins">
 
-							<toggle name="DISABLE_ALL_CONTROLS" label="Disable all control pins" configfile="hal" tooltip="Disables all control pins. This will override all other configurations.">
+							<toggle name="DISABLE_ALL_CONTROLS" label="Disable all control pins" configfile="hal"
+								tooltip="Disables all control pins. This will override all other configurations.">
 							</toggle>
 
-							<repeater label="Weak pullups" :opts="app_options.CONTROLS" keyname="pin" valname="pin" if="!app_state.DISABLE_ALL_CONTROLS">
+							<repeater label="Weak pullups" :opts="app_options.CONTROLS" keyname="pin" valname="pin"
+								if="!app_state.DISABLE_ALL_CONTROLS">
 								<template #default="{ value: pin }">
-									<check :name="pin+'_PULLUP_ENABLE'" :label="'Enable '+pin+' internal weak pullup'" configfile="hal">
+									<check :name="pin+'_PULLUP_ENABLE'" :label="'Enable '+pin+' internal weak pullup'"
+										configfile="hal">
 									</check>
 								</template>
 							</repeater>
 
 						</accordion-card>
 
-						<accordion-card id="hal-config-limit-pins" accordionid="hal-config-accordion" label="Limit pins">
+						<accordion-card id="hal-config-limit-pins" accordionid="hal-config-accordion"
+							label="Limit pins">
 
-							<toggle name="DISABLE_ALL_LIMITS" label="Disable all limit pins" configfile="hal" tooltip="Disables all limits pins. This will override all other configurations.">
+							<toggle name="DISABLE_ALL_LIMITS" label="Disable all limit pins" configfile="hal"
+								tooltip="Disables all limits pins. This will override all other configurations.">
 							</toggle>
 
-							<repeater label="Weak pullups" :opts="app_options.LIMITS" keyname="pin" valname="pin" if="!app_state.DISABLE_ALL_LIMITS">
+							<repeater label="Weak pullups" :opts="app_options.LIMITS" keyname="pin" valname="pin"
+								if="!app_state.DISABLE_ALL_LIMITS">
 								<template #default="{ value: pin }">
-									<check :name="pin+'_PULLUP_ENABLE'" :label="'Enable '+pin+' internal weak pullup'" configfile="hal">
+									<check :name="pin+'_PULLUP_ENABLE'" :label="'Enable '+pin+' internal weak pullup'"
+										configfile="hal">
 									</check>
 								</template>
 							</repeater>
@@ -745,15 +836,18 @@
 
 						<accordion-card id="hal-config-probe-pin" accordionid="hal-config-accordion" label="Probe">
 
-							<toggle name="DISABLE_PROBE" label="Disable probe pin" configfile="hal" tooltip="Disables the probe pin. This will override all other configurations.">
+							<toggle name="DISABLE_PROBE" label="Disable probe pin" configfile="hal"
+								tooltip="Disables the probe pin. This will override all other configurations.">
 							</toggle>
 
-							<check name="PROBE_PULLUP_ENABLE" label="Enable PROBE internal weak pullup" configfile="hal" if="!app_state.DISABLE_PROBE">
+							<check name="PROBE_PULLUP_ENABLE" label="Enable PROBE internal weak pullup" configfile="hal"
+								if="!app_state.DISABLE_PROBE">
 							</check>
 
 						</accordion-card>
 
-						<accordion-card id="hal-config-other-io" accordionid="hal-config-accordion" label="Other IO settings">
+						<accordion-card id="hal-config-other-io" accordionid="hal-config-accordion"
+							label="Other IO settings">
 
 							<toggle name="DISABLE_HAL_CONFIG_PROTECTION" label="Allow generic inputs to be
 								configurable as outputs" configfile="hal" tooltip="By default the user can not reprogram an input pin as an output pin to prevent accidentally connect to driving pins to each other.
@@ -763,7 +857,8 @@
 
 						</accordion-card>
 
-						<accordion-card id="hal-config-multiaxis" accordionid="hal-config-accordion" label="Multi motor axis and Autolevel">
+						<accordion-card id="hal-config-multiaxis" accordionid="hal-config-accordion"
+							label="Multi motor axis and Autolevel">
 
 							<toggle name="ENABLE_MULTI_STEPPER_AXIS" label="Enable multi-drive axis" configfile="hal"
 								tooltip="Enable this if you have one ore more axis that have intependent motor driver signals.">
@@ -772,8 +867,9 @@
 							<repeater label="Linear actuators masks" :opts="app_options.LINACTS"
 								filter="item.axisnum&lt;app_state.AXIS_COUNT" if="app_state.ENABLE_MULTI_STEPPER_AXIS">
 								<template #default="{ item: i }">
-									<bitfield bitprefix="STEP" :name="i.name" :label="i.label" :initial="i.value" configfile="hal"
-									tooltip="Each axis linear actuator can be controller by one or more stepper motors. In here you can assign each stepper to a specific axis linear actuator">
+									<bitfield bitprefix="STEP" :name="i.name" :label="i.label" :initial="i.value"
+										configfile="hal"
+										tooltip="Each axis linear actuator can be controller by one or more stepper motors. In here you can assign each stepper to a specific axis linear actuator">
 									</bitfield>
 								</template>
 							</repeater>
@@ -786,8 +882,8 @@
 							<repeater label="Linear actuators masks" :opts="app_options.LINACTS_LIMITS"
 								if="app_state.ENABLE_AXIS_AUTOLEVEL">
 								<template #default="{ item: i }">
-									<bitfield bitprefix="STEP" :name="i.name" :label="i.label" :initial="i.value" configfile="hal"
-										tooltip="Assign a limit switch to the motor that it will stop when triggered. Limits names are not rigid.
+									<bitfield bitprefix="STEP" :name="i.name" :label="i.label" :initial="i.value"
+										configfile="hal" tooltip="Assign a limit switch to the motor that it will stop when triggered. Limits names are not rigid.
 										You can have a Z bed with 3 motors and you can assign limits Z Z2 and A for example to level the bed.
 										Each limit will stop the one or more stepper motors (mask configurable)">
 									</bitfield>
@@ -803,22 +899,24 @@
 								tooltip="Enable a shareable software emulated SPI port.">
 							</toggle>
 
-							<pin name="SOFT_SPI_CLK" label="Soft SPI clock pin" filter="item.type.includes('generic_output')"
-								configfile="hal" if="app_state.SOFT_SPI_ENABLED" tooltip="Select the SPI clock pin"></pin>
+							<pin name="SOFT_SPI_CLK" label="Soft SPI clock pin"
+								filter="item.type.includes('generic_output')" configfile="hal"
+								if="app_state.SOFT_SPI_ENABLED" tooltip="Select the SPI clock pin"></pin>
 
 							<pin name="SOFT_SPI_SDO" label="Soft SPI Serial Data Out pin"
-								filter="item.type.includes('generic_output')" configfile="hal" if="app_state.SOFT_SPI_ENABLED"
-								 tooltip="Select the SPI data output pin"></pin>
+								filter="item.type.includes('generic_output')" configfile="hal"
+								if="app_state.SOFT_SPI_ENABLED" tooltip="Select the SPI data output pin"></pin>
 
-							<pin name="SOFT_SPI_SDI" label="Soft SPI Serial Data In pin" filter="item.type.includes('generic_input')"
-								configfile="hal" if="app_state.SOFT_SPI_ENABLED"
-								 tooltip="Select the SPI data input pin"></pin>
+							<pin name="SOFT_SPI_SDI" label="Soft SPI Serial Data In pin"
+								filter="item.type.includes('generic_input')" configfile="hal"
+								if="app_state.SOFT_SPI_ENABLED" tooltip="Select the SPI data input pin"></pin>
 
 						</accordion-card>
 
 						<accordion-card id="hal-config-encoders" accordionid="hal-config-accordion" label="Encoders">
 
-							<range name="ENCODERS" label="Encoder count" configfile="hal" min="0" max="8" step="1" vartype="int"
+							<range name="ENCODERS" label="Encoder count" configfile="hal" min="0" max="8" step="1"
+								vartype="int"
 								tooltip="Enable encoders. There are multiple types of encoders available (pulse, communications based encoders, etc...). You can also assing encoders to perform several tasks">
 							</range>
 
@@ -827,12 +925,15 @@
 								<template #default="{item}">
 									<pin :name="item.id+'_PULSE'" :label="'Encoder '+item.enccount+' pulse pin'"
 										filter="item.type.includes('interruptable_generic_input')" configfile="hal"
-										tooltip="Assign encoder pulse pin. This requires using an interruptable capable pin that will read the encoder position when triggered."></pin>
+										tooltip="Assign encoder pulse pin. This requires using an interruptable capable pin that will read the encoder position when triggered.">
+									</pin>
 									<pin :name="item.id+'_DIR'" :label="'Encoder '+item.enccount+' direction pin'"
 										filter="item.type.includes('generic_input')" configfile="hal"
-										tooltip="Assign encoder direction pin. This uses a normal input pin and allows to determine the encoder direction when the pulse pin changes state. You can assign the same pin that was assigned to the encoder pulse pin. This will make the encoder work as a simple pulse counter (undirectional). This is useful to use it as an RPM counter for example."></pin>
-									<range :name="item.id+'_PPR'" :label="'Encoder '+item.enccount+' PPR count'" configfile="hal" min="0" max="99999" step="1" vartype="int"
-								tooltip="Encoder PPR count."></range>
+										tooltip="Assign encoder direction pin. This uses a normal input pin and allows to determine the encoder direction when the pulse pin changes state. You can assign the same pin that was assigned to the encoder pulse pin. This will make the encoder work as a simple pulse counter (undirectional). This is useful to use it as an RPM counter for example.">
+									</pin>
+									<range :name="item.id+'_PPR'" :label="'Encoder '+item.enccount+' PPR count'"
+										configfile="hal" min="0" max="99999" step="1" vartype="int"
+										tooltip="Encoder PPR count."></range>
 								</template>
 							</repeater>
 
@@ -843,26 +944,29 @@
 							<repeater label="Encoders assignment" :opts="app_options.STEP_ENCODERS" valname="id"
 								if="app_state.ASSIGN_ENCODERS">
 								<template #default="{item}">
-									<combobox :name="item.id" :label="item.id +' assignment'" :opts="app_options.ENCODER_LIST"
-										valname="id" configfile="hal" nullable tooltip="You can assing the encoder to a specific stepper. For example you can map encoder 0 to stepper 2."></combobox>
+									<combobox :name="item.id" :label="item.id +' assignment'"
+										:opts="app_options.ENCODER_LIST" valname="id" configfile="hal" nullable
+										tooltip="You can assing the encoder to a specific stepper. For example you can map encoder 0 to stepper 2.">
+									</combobox>
 								</template>
 							</repeater>
 
-							<toggle name="ENABLE_ENCODER_RPM" label="Assign RPM encoder" if="app_state.ENCODERS" configfile="hal">
-							</toggle 
-								tooltip="Allow using one of the encoders as the tool RPM counter.">
+							<toggle name="ENABLE_ENCODER_RPM" label="Assign RPM encoder" if="app_state.ENCODERS"
+								configfile="hal">
+							</toggle tooltip="Allow using one of the encoders as the tool RPM counter.">
 							<controlgroup if="app_state.ENABLE_ENCODER_RPM" label="RPM encoder settings">
 
-								<combobox name="RPM_ENCODER" label="RPM_ENCODER assignment" :opts="app_options.ENCODER_LIST"
-									valname="id" configfile="hal" nullable 
-								tooltip="Assign an encoder to the tool RPM counter."></combobox>
+								<combobox name="RPM_ENCODER" label="RPM_ENCODER assignment"
+									:opts="app_options.ENCODER_LIST" valname="id" configfile="hal" nullable
+									tooltip="Assign an encoder to the tool RPM counter."></combobox>
 
-								<range name="RPM_PPR" label="RPM encoder PPR (pulses per revolution)" configfile="hal" min="0"
-									max="10000" step="1" vartype="int"></range>
+								<range name="RPM_PPR" label="RPM encoder PPR (pulses per revolution)" configfile="hal"
+									min="0" max="10000" step="1" vartype="int"></range>
 
 								<pin name="RPM_INDEX_INPUT" label="Select the RPM index pin (360º input)"
 									filter="item.type.includes('generic_input')" configfile="hal"
-									tooltip="If the encoder has a pin that indicates when a full rotation was done (is at angle 0º). This can be used to improve repeatability in some special applications"></pin>
+									tooltip="If the encoder has a pin that indicates when a full rotation was done (is at angle 0º). This can be used to improve repeatability in some special applications">
+								</pin>
 							</controlgroup>
 						</accordion-card>
 
@@ -870,13 +974,13 @@
 				<tab id="module-config" label="Modules" tabid="config-tabs">
 					<controlgroup label="Modules basic settings">
 
-						<toggle name="ENABLE_MAIN_LOOP_MODULES" label="Enable main cnc application loop extension callbacks"
-							configfile="hal"
+						<toggle name="ENABLE_MAIN_LOOP_MODULES"
+							label="Enable main cnc application loop extension callbacks" configfile="hal"
 							tooltip="Enables some generic extension callbacks in the firmware main loop. This provides some hooks used by extension modules to run code at specific events.">
 						</toggle>
 
 						<toggle name="ENABLE_IO_MODULES" label="Enable IO extension callbacks" configfile="hal"
-						tooltip="Enables some extension callbacks in the firmware IO controller. This provides some hooks used by extension modules to run code at specific events.">
+							tooltip="Enables some extension callbacks in the firmware IO controller. This provides some hooks used by extension modules to run code at specific events.">
 						</toggle>
 
 						<toggle name="ENABLE_PARSER_MODULES" label="Enable Gcode and Grbl commands
@@ -903,13 +1007,15 @@
 							tooltip="Disables some extension callbacks in the firmware settings interface. This disables some hooks used by extension modules to store custom settings in Non volatile memory and allows to reduce Flash/RAM usage.">
 						</toggle>
 
-						<toggle name="ENABLE_ITP_FEED_TASK" label="Run the interpolator in the RTC task" configfile="hal" tooltip="**RECOMMENDED IF USING ANY EXTENSION MODULES!!** When running extra modules and functionalities this
+						<toggle name="ENABLE_ITP_FEED_TASK" label="Run the interpolator in the RTC task"
+							configfile="hal" tooltip="**RECOMMENDED IF USING ANY EXTENSION MODULES!!** When running extra modules and functionalities this
 							increases the computation time required for a whole internal cycle to be computed. This can lead to step
 							interpolation starving and hickups in the motion. To prevent this you can enable this feature to isolate
 							the stepper interpolator from the main loop and be regulary called from the RTC task.">
 						</toggle>
 
-						<toggle name="ENABLE_ATC_HOOKS" label="Enables tool change hooks/callbacks that are trigger with each tool change (M6)"
+						<toggle name="ENABLE_ATC_HOOKS"
+							label="Enables tool change hooks/callbacks that are trigger with each tool change (M6)"
 							configfile="hal"
 							tooltip="Enables tool change hooks/callbacks that are trigger with each tool change (one callback for the tool unmounting and another for the next tool being mounted) via M6 command">
 						</toggle>
@@ -919,25 +1025,31 @@
 							tooltip="Enables realtime synchronized motions, (like start motion on external signal or impulse).">
 						</toggle>
 
-						
+
 					</controlgroup>
 					<accordion id="module-config-accordion">
-						<accordion-card id="module-config-mods-parser" accordionid="module-config-accordion" label="Parser modules">
+						<accordion-card id="module-config-mods-parser" accordionid="module-config-accordion"
+							label="Parser modules">
 							<modulesloader modfilter="parser"></modulesloader>
 						</accordion-card>
-						<accordion-card id="module-config-mods-display" accordionid="module-config-accordion" label="Display modules">
+						<accordion-card id="module-config-mods-display" accordionid="module-config-accordion"
+							label="Display modules">
 							<modulesloader modfilter="display"></modulesloader>
 						</accordion-card>
-						<accordion-card id="module-config-mods-storage" accordionid="module-config-accordion" label="Storage modules">
+						<accordion-card id="module-config-mods-storage" accordionid="module-config-accordion"
+							label="Storage modules">
 							<modulesloader modfilter="storage"></modulesloader>
 						</accordion-card>
-						<accordion-card id="module-config-mods-pendants" accordionid="module-config-accordion" label="Pendants modules">
+						<accordion-card id="module-config-mods-pendants" accordionid="module-config-accordion"
+							label="Pendants modules">
 							<modulesloader modfilter="pendants"></modulesloader>
 						</accordion-card>
-						<accordion-card id="module-config-mods-tools" accordionid="module-config-accordion" label="Tool modules">
+						<accordion-card id="module-config-mods-tools" accordionid="module-config-accordion"
+							label="Tool modules">
 							<modulesloader modfilter="tool"></modulesloader>
 						</accordion-card>
-						<accordion-card id="module-config-mods-other" accordionid="module-config-accordion" label="Other modules">
+						<accordion-card id="module-config-mods-other" accordionid="module-config-accordion"
+							label="Other modules">
 							<modulesloader modfilter="other"></modulesloader>
 						</accordion-card>
 					</accordion>
@@ -947,26 +1059,31 @@
 						<accordion-card id="custom-boardmap-config" accordionid="custom-config-accordion"
 							label="Custom boardmap config">
 							<textareafield name="CUSTOM_BOARDMAP_CONFIGS" label="Custom boardmap configs"
-							tooltip="In here you can manually specify a set of macros that will be included at the end of the custom boardmap configuration file.
+								tooltip="In here you can manually specify a set of macros that will be included at the end of the custom boardmap configuration file.
 							You can override most of the configurations here, including the ones generated by this configuration generator app.
 							Boardmap configurations should contain mostly configurations that are required at the architecture level for configuring the MCU/pinout"></textareafield>
 						</accordion-card>
-						<accordion-card id="custom-hal-config" accordionid="custom-config-accordion" label="Custom HAL configs">
+						<accordion-card id="custom-hal-config" accordionid="custom-config-accordion"
+							label="Custom HAL configs">
 							<textareafield name="CUSTOM_HAL_CONFIGS" label="Custom HAL configs"
-							tooltip="In here you can manually specify a set of macros that will be included at the end of the custom hal configuration file.
+								tooltip="In here you can manually specify a set of macros that will be included at the end of the custom hal configuration file.
 							You can override most of the configurations here, including the ones generated by this configuration generator app.
 							Hal configurations contain the remaing configurations used in the core code and modules to define how the firmware works."></textareafield>
 						</accordion-card>
-						<accordion-card id="custom-pio-config" accordionid="custom-config-accordion" label="Custom PIO configs">
-							<textfield name="CUSTOM_PIO_BOARD" label="Custom PIO board" placeholder="PIO base board" configfile="pio"
-							tooltip="In here you can manually specify the PIO board that you are going to compile code to. The list of boards can be checked [here](https://docs.platformio.org/en/stable/boards/index.html)">
+						<accordion-card id="custom-pio-config" accordionid="custom-config-accordion"
+							label="Custom PIO configs">
+							<textfield name="CUSTOM_PIO_BOARD" label="Custom PIO board" placeholder="PIO base board"
+								configfile="pio"
+								tooltip="In here you can manually specify the PIO board that you are going to compile code to. The list of boards can be checked [here](https://docs.platformio.org/en/stable/boards/index.html)">
 							</textfield>
-							<textareafield name="CUSTOM_PIO_BUILDFLAGS" label="Custom PIO additional build flags" configfile="pio"
-								placeholder="-D myextraflag=1"
-							tooltip="In here you can manually specify some PIO build flags (compiler flags)"></textareafield>
-							<textareafield name="CUSTOM_PIO_CONFIGS" label="Custom PIO additional options" configfile="pio"
-								placeholder="board_build.offset = 0x2000"
-								tooltip="In here you can manually specify some PIO environment and build configuration flags."></textareafield>
+							<textareafield name="CUSTOM_PIO_BUILDFLAGS" label="Custom PIO additional build flags"
+								configfile="pio" placeholder="-D myextraflag=1"
+								tooltip="In here you can manually specify some PIO build flags (compiler flags)">
+							</textareafield>
+							<textareafield name="CUSTOM_PIO_CONFIGS" label="Custom PIO additional options"
+								configfile="pio" placeholder="board_build.offset = 0x2000"
+								tooltip="In here you can manually specify some PIO environment and build configuration flags.">
+							</textareafield>
 						</accordion-card>
 					</accordion>
 				</tab>
@@ -996,7 +1113,8 @@
 
 								<li v-if="app_state.TOOLCHAIN!='pio'">
 									<p><strong>Step1 (part 2):</strong> Download the addon modules code</p>
-									<p>After downloading the source code extract only the modules you are going to use to
+									<p>After downloading the source code extract only the modules you are going to use
+										to
 										uCNC/src/modules/
 										project directory</p>
 									<a class="btn btn-primary" target="_blank"
@@ -1007,18 +1125,20 @@
 
 								<li>
 									<p><strong>Step2:</strong> Download the configuration files</p>
-									<p>After downloading the configuration files extract them to the project root directory (this will
+									<p>After downloading the configuration files extract them to the project root
+										directory (this will
 										replace some existing files)
 										project directory</p>
-									<inputctrl type="button" label="Download the configuration files" customclass="btn btn-primary"
-										clickcb="window.loadGenerateConfig"></inputctrl>
+									<inputctrl type="button" label="Download the configuration files"
+										customclass="btn btn-primary" clickcb="window.loadGenerateConfig"></inputctrl>
 									<!-- <button class="btn btn-primary"
 								id="config_files">
 								Download the configuration files
 							</button> -->
 								</li>
 								<p><strong>Other actions</strong></p>
-								<p>You can click these buttons to copy the content of the generated files to the clipboard replace the
+								<p>You can click these buttons to copy the content of the generated files to the
+									clipboard replace the
 									content of your files.</p>
 								<div class="d-flex flex-wrap d-gap-10">
 									<inputctrl type="button" label="boardmap_reset.h" customclass="btn btn-light"
@@ -1055,7 +1175,7 @@
 		}
 
 		// Vue.config.devtools = true;
-		const {createApp, reactive} = Vue;
+		const { createApp, reactive } = Vue;
 		window.app_vars.app_state = reactive(window.app_vars.app_state);
 
 		window.ucnc_app = createApp({
