@@ -61,6 +61,10 @@ fieldset>legend {
 	text-align:initial;
 }
 
+input[readonly]{
+	background-color: #ccc;
+}
+
 div.tab-content {
 	padding: 20px;
 }
