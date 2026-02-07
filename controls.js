@@ -147,7 +147,7 @@ window.CheckComponent = {
 		modelValue: {
 			get() {
 				let aliasstate = false;
-				
+
 				if (this.alias && this.alias.length) {
 					aliasstate = typeConverter('bool', this.$root.app_state[this.alias]);
 				}
@@ -931,100 +931,130 @@ window.InputComponent = {
 }
 
 window.IPv4FieldComponent = {
-  props: {
-    name: { type: String, required: true },
-    label: { type: String, default: "IPv4 Address" },
-    configfile: { type: String, default: "" },
-    vartype: { type: String, default: "int" },
-    show: { type: String, default: "true" },
-    if: { type: String, default: "true" },
-    initial: { type: [String, Number], default: 0 },
-    tooltiptitle: { type: String, default: "Info" },
-    tooltip: { type: String, default: "" },
-    nullable: { type: Boolean, default: false }
-  },
-  data() {
-    return {
-      octets: [0, 0, 0, 0] // [a, b, c, d] where address = a.b.c.d
-    };
-  },
-  computed: {
-    modelValue: {
-      get() {
-        return typeConverter('int', this.$root.app_state[this.name]);
-      },
-      set(newValue) {
-        // store integer and refresh octets
-        this.$root.app_state[this.name] = typeConverter('int', newValue);
-        this.updateOctets();
-      }
-    },
-    showCondition() {
-      try { return new Function('app_state', `return ${this.show};`)(this.$root.app_state); }
-      catch (error) { console.error("Invalid expression:", error); return true; }
-    },
-    ifCondition() {
-      try { return new Function('app_state', `return ${this.if};`)(this.$root.app_state); }
-      catch (error) { console.error("Invalid expression:", error); return true; }
-    }
-  },
-  created() {
-	debugger;
-    if (!(this.name in this.$root.app_state)) {
-      Object.assign(this.$root.app_fields, JSON.parse(`{\"${this.name}\":{\"type\":\"${this.vartype}\", \"nullable\":${this.nullable}, \"file\":\"${this.configfile}\"}}`));
-      // ensure integer initial value
-      const initVal = Number(this.initial) || 0;
-      Object.assign(this.$root.app_state, JSON.parse(`{\"${this.name}\":${initVal}}`));
-    }
-    // initialize octets from current value
-    this.updateOctets();
-  },
-  mounted() {
-    componentTooltip(this);
-  },
-  updated() {
-    componentTooltip(this);
-	this.updateOctets();
-  },
-  methods: {
-    // Convert stored integer to four octets (big-endian: a is highest byte)
-    updateOctets() {
-      const val = Number(this.modelValue) >>> 0; // ensure unsigned 32-bit
-      this.octets[0] = (val >>> 24) & 0xFF;
-      this.octets[1] = (val >>> 16) & 0xFF;
-      this.octets[2] = (val >>> 8) & 0xFF;
-      this.octets[3] = val & 0xFF;
-      // force reactivity if needed
-    //   this.$forceUpdate();
-    },
-    // Combine octets into 32-bit integer and write to modelValue
-    updateInteger() {
-      // sanitize octets to 0..255
-      const a = Math.max(0, Math.min(255, Number(this.octets[0]) || 0));
-      const b = Math.max(0, Math.min(255, Number(this.octets[1]) || 0));
-      const c = Math.max(0, Math.min(255, Number(this.octets[2]) || 0));
-      const d = Math.max(0, Math.min(255, Number(this.octets[3]) || 0));
-      const intVal = ((a << 24) >>> 0) + ((b << 16) >>> 0) + ((c << 8) >>> 0) + (d >>> 0);
-      this.modelValue = intVal;
-	  this.$forceUpdate();
-    },
-    // Called when user edits a single octet input
-    onOctetInput(index, event) {
-      let v = Number(event.target.value);
-      if (Number.isNaN(v)) v = 0;
-      v = Math.max(0, Math.min(255, Math.floor(v)));
-      this.octets.splice(index, 1, v);
-      this.updateInteger();
-    },
-    // If someone sets the integer directly, keep octets in sync
-    onIntegerChange(event) {
-      const v = Number(event.target.value);
-      if (!Number.isNaN(v)) {
-        this.modelValue = v >>> 0;
-      }
-    }
-  },
-  template: `
+	props: {
+		name: { type: String, required: true },
+		label: { type: String, default: "IPv4 Address" },
+		configfile: { type: String, default: "" },
+		vartype: { type: String, default: "int" },
+		show: { type: String, default: "true" },
+		if: { type: String, default: "true" },
+		initial: { type: [String, Number], default: 0 },
+		tooltiptitle: { type: String, default: "Info" },
+		tooltip: { type: String, default: "" },
+		nullable: { type: Boolean, default: false },
+		littleendian: { type: Boolean, default: true }
+	},
+	data() {
+		return {
+			octets: [0, 0, 0, 0] // [a, b, c, d] where address = a.b.c.d
+		};
+	},
+	computed: {
+		modelValue: {
+			get() {
+				return typeConverter('int', this.$root.app_state[this.name]);
+			},
+			set(newValue) {
+				// store integer and refresh octets
+				this.$root.app_state[this.name] = typeConverter('int', newValue);
+				this.updateOctets();
+			}
+		},
+		showCondition() {
+			try { return new Function('app_state', `return ${this.show};`)(this.$root.app_state); }
+			catch (error) { console.error("Invalid expression:", error); return true; }
+		},
+		ifCondition() {
+			try { return new Function('app_state', `return ${this.if};`)(this.$root.app_state); }
+			catch (error) { console.error("Invalid expression:", error); return true; }
+		}
+	},
+	created() {
+		debugger;
+		if (!(this.name in this.$root.app_state)) {
+			Object.assign(this.$root.app_fields, JSON.parse(`{\"${this.name}\":{\"type\":\"${this.vartype}\", \"nullable\":${this.nullable}, \"file\":\"${this.configfile}\"}}`));
+			// ensure integer initial value
+			const initVal = Number(this.initial) || 0;
+			Object.assign(this.$root.app_state, JSON.parse(`{\"${this.name}\":${initVal}}`));
+		}
+		// initialize octets from current value
+		this.updateOctets();
+	},
+	mounted() {
+		componentTooltip(this);
+	},
+	updated() {
+		componentTooltip(this);
+		this.updateOctets();
+	},
+	methods: {
+		// Convert stored integer to four octets (big-endian: a is highest byte)
+		updateOctets() {
+			if (!this.$root || !this.$root.app_state) return;
+
+			const raw = this.$root.app_state[this.name];
+			const val = (typeof raw === 'number') ? (raw >>> 0) : ((Number(raw) >>> 0) || 0);
+
+			if (this.littleendian) {
+				// d.c.b.a  (LSB first)
+				this.octets[0] = val & 0xFF;
+				this.octets[1] = (val >>> 8) & 0xFF;
+				this.octets[2] = (val >>> 16) & 0xFF;
+				this.octets[3] = (val >>> 24) & 0xFF;
+			} else {
+				// a.b.c.d  (MSB first)
+				this.octets[0] = (val >>> 24) & 0xFF;
+				this.octets[1] = (val >>> 16) & 0xFF;
+				this.octets[2] = (val >>> 8) & 0xFF;
+				this.octets[3] = val & 0xFF;
+			}
+		},
+		// Combine octets into 32-bit integer and write to modelValue
+		updateInteger() {
+			if (!this.$root || !this.$root.app_state) return;
+
+			const a = Math.max(0, Math.min(255, Number(this.octets[0]) || 0));
+			const b = Math.max(0, Math.min(255, Number(this.octets[1]) || 0));
+			const c = Math.max(0, Math.min(255, Number(this.octets[2]) || 0));
+			const d = Math.max(0, Math.min(255, Number(this.octets[3]) || 0));
+
+			let intVal;
+
+			if (this.littleendian) {
+				// LSB first: a is least significant byte
+				intVal =
+					((a & 0xFF)) +
+					((b & 0xFF) << 8) +
+					((c & 0xFF) << 16) +
+					((d & 0xFF) << 24);
+			} else {
+				// MSB first: a is most significant byte
+				intVal =
+					((a & 0xFF) << 24) >>> 0 +
+					((b & 0xFF) << 16) +
+					((c & 0xFF) << 8) +
+					(d & 0xFF);
+			}
+
+			this.modelValue = intVal >>> 0;
+		},
+		// Called when user edits a single octet input
+		onOctetInput(index, event) {
+			let v = Number(event.target.value);
+			if (Number.isNaN(v)) v = 0;
+			v = Math.max(0, Math.min(255, Math.floor(v)));
+			this.octets.splice(index, 1, v);
+			this.updateInteger();
+		},
+		// If someone sets the integer directly, keep octets in sync
+		onIntegerChange(event) {
+			const v = Number(event.target.value);
+			if (!Number.isNaN(v)) {
+				this.modelValue = v >>> 0;
+			}
+		}
+	},
+	template: `
     <div :class="label.length ? 'mb-3':''" v-if="ifCondition" v-show="showCondition" data-bs-toggle="popover" :data-bs-title="tooltiptitle">
       <label class="form-label" v-if="label.length">{{ label }}</label>
       <div class="d-flex gap-2 align-items-center">
