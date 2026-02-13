@@ -782,7 +782,7 @@ window.BitFieldComponent = {
 		<label v-for="(bit, index) in bitval" :key="index" class="d-inline-flex p-1">
 		<input class="form-check-input" type="checkbox"	v-model="bitval[index]" @change="updateDecimal"><div class="d-flex ml-2">{{bitprefix}}{{index}}{{bitsufix}}</div>
 		</label>
-		<input type="number" min="0" max="255" class="form-control w-25" style="min-width:70px;" v-model="modelValue" @change="updateBits">
+		<input type="number" min="0" max="255" class="form-control w-25" style="min-width:70px;" v-model="modelValue" @change="updateBits" readonly :name="name" :id="name" :config-file="configfile">
 		</div>
 		</div>`,
 };
@@ -970,7 +970,6 @@ window.IPv4FieldComponent = {
 		}
 	},
 	created() {
-		debugger;
 		if (!(this.name in this.$root.app_state)) {
 			Object.assign(this.$root.app_fields, JSON.parse(`{\"${this.name}\":{\"type\":\"${this.vartype}\", \"nullable\":${this.nullable}, \"file\":\"${this.configfile}\"}}`));
 			// ensure integer initial value

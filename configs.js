@@ -665,7 +665,6 @@ function generateHalReset(rootscope = window.app_vars) {
 }
 
 function generateHalOverrides(rootscope = window.app_vars) {
-	debugger;
 	let fields = [...document.querySelectorAll('[config-file="hal"]')].map(x => x.id);
 	// let fields = Object.entries(rootscope.app_fields).filter(([k, v]) => v.file.split(',').includes('hal')).map(([k]) => k);
 	var overrides = generate_user_config(rootscope, fields, 'CNC_HAL_OVERRIDES_H', "cnc_hal_reset", false);
