@@ -585,6 +585,7 @@ function generate_user_config(rootscope = window.app_vars, options, defguard, re
 		try {
 			let val = rootscope.app_state[options[i]];
 			let field = rootscope.app_fields[options[i]];
+
 			if (val != undefined) {
 				if (reset_file === "") {
 					// gentext += "//undefine " + options[i] + "\n";
@@ -592,27 +593,40 @@ function generate_user_config(rootscope = window.app_vars, options, defguard, re
 					gentext += "#undef " + options[i] + "\n";
 				}
 				else {
-					if (field === undefined) { debugger; }
-					switch (field.type) {
-						case 'bool':
-							if (is_empty(val, field)) {
+					if (field === undefined) {
+						debugger;
+						if (val !== undefined) {
+							if (val !== "") {
+								if (val !== true) {
+									gentext += `#define ${options[i]} ${val}\n`;
+								} else {
+									gentext += `#define ${options[i]}\n`;
+								}
+							}
+						}
+					}
+					else {
+						switch (field.type) {
+							case 'bool':
+								if (is_empty(val, field)) {
+									break;
+								}
+								gentext += "#define " + options[i] + ((val) ? " true" : " false") + "\n";
 								break;
-							}
-							gentext += "#define " + options[i] + ((val) ? " true" : " false") + "\n";
-							break;
-						case 'string':
-							gentext += `#define ${options[i]} "${val.replace(/^"+|"+$/g, '')}"\n`;
-							break;
-						default:
-							if (is_empty(val, field)) {
+							case 'string':
+								gentext += `#define ${options[i]} "${val.replace(/^"+|"+$/g, '')}"\n`;
 								break;
-							}
-							if (val !== true) {
-								gentext += `#define ${options[i]} ${val}\n`;
-							} else {
-								gentext += `#define ${options[i]}\n`;
-							}
-							break;
+							default:
+								if (is_empty(val, field)) {
+									break;
+								}
+								if (val !== true) {
+									gentext += `#define ${options[i]} ${val}\n`;
+								} else {
+									gentext += `#define ${options[i]}\n`;
+								}
+								break;
+						}
 					}
 				}
 			}
@@ -709,7 +723,7 @@ function generatePIOOverrides(rootscope = window.app_vars) {
 			if (mod.pre_requires && mod.pre_requires.length) {
 				includes += mod.pre_requires.replace(/,\s*$/, "") + ", ";
 			}
-			
+
 			includes += active_modules[i] + ", ";
 			if (mod.requires && mod.requires.length) {
 				includes += mod.requires.replace(/,\s*$/, "") + ", ";
@@ -828,6 +842,7 @@ window.loadConfigFile = async function (scope, event) {
 	reader.onload = function (e) {
 		scope.$root.app_state = JSON.parse(e.target.result);
 		scope.$nextTick();
+		scope.$forceUpdate();
 		endLoadAnimation();
 	};
 
