@@ -801,13 +801,12 @@ window.PinComponent = {
 	},
 	computed: {
 		isPinUndefined() {
-
 			if (this.$root.app_state[this.name] == undefined || !this.$root.app_state[this.name].length) {
 				return false;
 			}
 
 			if (this.$root.app_state[this.$root.app_state[this.name] + '_BIT'] != undefined && this.$root.app_state[this.$root.app_state[this.name] + '_BIT'].toString().length) {
-				switch (this.$root.app_state.app_state) {
+				switch (this.$root.app_state.MCU) {
 					case 'MCU_ESP8266':
 					case 'MCU_ESP32':
 					case 'MCU_RP2040':
