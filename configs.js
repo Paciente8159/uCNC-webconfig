@@ -594,7 +594,6 @@ function generate_user_config(rootscope = window.app_vars, options, defguard, re
 				}
 				else {
 					if (field === undefined) {
-						debugger;
 						if (val !== undefined) {
 							if (val !== "") {
 								if (val !== true) {
