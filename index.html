@@ -269,7 +269,7 @@
 							</textfield>
 							<!-- pattern="^(['&quot;])(.*?)\1$" -->
 
-							<controlgroup label="AVR interrupt on change ports" if="app_state.MCU=='MCU_AVR'">
+							<controlgroup label="AVR interrupt on change ports" if="app_state.MCU=='MCU_AVR' && app_state.VERSION<11501">
 
 								<combobox name="PCINT0_PORT" label="In which port are PCINT pins 0 to 7?"
 									:opts="app_options.PORTS" filter="item.mcu.includes(app_state.MCU)" keyname="port"
@@ -573,7 +573,7 @@
 											tooltip="Enables interrupt on change on this pin">
 										</toggle>
 										<combobox :name="rowitem.pin+'_ISR'" label="" :opts="app_options.ISRS"
-											keyname="isr" valname="isr" configfile="boardmap"
+											keyname="isr" valname="isr" filter="app_state.VERSION>=item.ver" configfile="boardmap"
 											if="app_state.MCU=='MCU_AVR'"
 											tooltip="On AVR the interrupt on change feature needs to be set according to the selected pin like [explained here ](https://github.com/Paciente8159/uCNC/wiki/AVR:-Customizing#interrupt-on-change-feature)"
 											vartype="int" nullable>
