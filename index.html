@@ -750,12 +750,20 @@
 							Some options might be ommited.
 						</alert>
 
+						<toggle name="ENABLE_LASER_PWM" label="Enable Laser PWM tool mode" configfile="hal"
+							tooltip="This enables laser PWM tool mode. This adds dynamic power changing on speed change (direction changes) using M4 to ensure a more uniform laser burn." initial="1">
+						</toggle>
+
 						<toggle name="ENABLE_LASER_PPI" label="Enable Laser PPI tool mode" configfile="hal"
 							tooltip="This enables laser PPI (points per inch) tool mode. This adds some features to the motion planner to allow laser to also work in a pulse per inche specific motion pattern. This is an effective way to get consistent results with laser.">
 						</toggle>
 
 						<toggle name="ENABLE_PLASMA_THC" label="Enable Plasma THC tool mode" configfile="hal"
 							tooltip="This enables Plasma THC tool mode. This adds some features to the motion planner to allow THC specific motion patterns.">
+						</toggle>
+
+						<toggle name="ENABLE_EMBROIDERY" label="Enable Embroidery tool mode" configfile="hal"
+							tooltip="This enables Embroidery tool mode. This adds some features to the motion planner to allow Embroidery specific motion patterns.">
 						</toggle>
 
 					</controlgroup>
@@ -921,7 +929,7 @@
 							</range>
 
 							<repeater label="Encoders pinout" :opts="app_options.ENCODER_LIST" valname="id"
-								filter="item.enccount&lt;app_state.ENCODERS" if="app_state.ENCODERS">
+								filter="item.enccount&lt;app_state.ENCODERS" if="app_state.ENCODERS>0">
 								<template #default="{item}">
 									<pin :name="item.id+'_PULSE'" :label="'Encoder '+item.enccount+' pulse pin'"
 										filter="item.type.includes('interruptable_generic_input')" configfile="hal"
@@ -931,13 +939,18 @@
 										filter="item.type.includes('generic_input')" configfile="hal"
 										tooltip="Assign encoder direction pin. This uses a normal input pin and allows to determine the encoder direction when the pulse pin changes state. You can assign the same pin that was assigned to the encoder pulse pin. This will make the encoder work as a simple pulse counter (undirectional). This is useful to use it as an RPM counter for example.">
 									</pin>
+									<pin :name="item.id+'_INDEX'" :label="'Encoder '+item.enccount+' index pin (optional)'"
+										filter="item.type.includes('generic_input')" configfile="hal"
+										tooltip="Encoder index pin. If the encoder has an index pin that also changes state simultaneously with pulse, this can be used as an index pin and allow to fire a callback event for this specific trigger."
+										if="(app_state.VERSION>11500)">
+									</pin>
 									<range :name="item.id+'_PPR'" :label="'Encoder '+item.enccount+' PPR count'"
 										configfile="hal" min="0" max="99999" step="1" vartype="int"
-										tooltip="Encoder PPR count."></range>
+										tooltip="Encoder PPR count." if="!(app_state.VERSION>11500)"></range>
 								</template>
 							</repeater>
 
-							<toggle name="ASSIGN_ENCODERS" label="Assign step encoders" if="app_state.ENCODERS"
+							<toggle name="ASSIGN_ENCODERS" label="Assign step encoders" if="app_state.ENCODERS>0"
 								tooltip="Assign the pulse directional encoder to a stepper motors. The position returned by the status position will be the actual encoder position and not the step pulse position that is kept by the step interpolator.">
 							</toggle>
 
@@ -951,10 +964,10 @@
 								</template>
 							</repeater>
 
-							<toggle name="ENABLE_ENCODER_RPM" label="Assign RPM encoder" if="app_state.ENCODERS"
-								configfile="hal">
-							</toggle tooltip="Allow using one of the encoders as the tool RPM counter.">
-							<controlgroup if="app_state.ENABLE_ENCODER_RPM" label="RPM encoder settings">
+							<toggle name="ENABLE_ENCODER_RPM" label="Assign RPM encoder" if="app_state.ENCODERS>0 && !(app_state.VERSION>11500)"
+								configfile="hal" tooltip="Allow using one of the encoders as the tool RPM counter.">
+							</toggle>
+							<controlgroup if="app_state.ENABLE_ENCODER_RPM && !(app_state.VERSION>11500)" label="RPM encoder settings">
 
 								<combobox name="RPM_ENCODER" label="RPM_ENCODER assignment"
 									:opts="app_options.ENCODER_LIST" valname="id" configfile="hal" nullable
