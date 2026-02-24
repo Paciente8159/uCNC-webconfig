@@ -12,8 +12,6 @@ window.SpindlePWMComponent = {
 			<pin name="SPINDLE_PWM_DIR" label="Select the Spindle dir pin" filter="item.type.includes('generic_output')" configfile="hal"></pin>
 			<pin name="SPINDLE_PWM_COOLANT_FLOOD" label="Select the Spindle coolant flood pin" filter="item.type.includes('generic_output')" if="app_state.ENABLE_COOLANT" configfile="hal"></pin>
 			<pin name="SPINDLE_PWM_COOLANT_MIST" label="Select the Spindle coolant mist pin" filter="item.type.includes('generic_output')" if="app_state.ENABLE_COOLANT" configfile="hal"></pin>
-			<toggle name="SPINDLE_PWM_RPM_ENCODER" label="Use an encoder to read the tool RPM" configfile="hal"
-								tooltip="Selects an enconder to detect the spindle RPM"></toggle>
 			<combobox name="SPINDLE_PWM_RPM_ENCODER" label="Use an encoder to read the tool RPM"
 									:opts="[
 			{ id: 'ENC0', enccount: 0 },
