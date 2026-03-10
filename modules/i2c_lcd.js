@@ -11,7 +11,7 @@ tooltip="Enables support for I2C LCD displays. Multiple LCD sizes/formats are su
 <range configfile="hal" name="LCD_ROWS" label="Set the LCD number of lines" min="1" max="8" vartype="int" initial="2"></range>
 <range configfile="hal" name="LCD_COLUMNS" label="Set the LCD number of columns" min="1" max="32" vartype="int" initial="16"></range>
 
-<toggle name="I2C_LCD_USE_HW_I2C" label="Use hardware I2C?"
+<toggle name="I2C_LCD_USE_HW_I2C" label="Use hardware I2C?"  configfile="hal">
 </toggle>
 
 <controlgroup if="!app_state.I2C_LCD_USE_HW_I2C" label="Software emulated I2C pinout">
