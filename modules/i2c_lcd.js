@@ -11,17 +11,13 @@ tooltip="Enables support for I2C LCD displays. Multiple LCD sizes/formats are su
 <range configfile="hal" name="LCD_ROWS" label="Set the LCD number of lines" min="1" max="8" vartype="int" initial="2"></range>
 <range configfile="hal" name="LCD_COLUMNS" label="Set the LCD number of columns" min="1" max="32" vartype="int" initial="16"></range>
 
-<combobox configfile="hal" name="GRAPHIC_DISPLAY_INTERFACE" label="Select the graphic display interface"
-:opts="[
-{id:'GRAPHIC_DISPLAY_SW_SPI', value:'Software emulated SPI'},
-{id:'GRAPHIC_DISPLAY_HW_SPI', value:'Hardware SPI'},
-{id:'GRAPHIC_DISPLAY_SW_I2C', value:'Software emulated I2C'},
-{id:'GRAPHIC_DISPLAY_HW_I2C', value:'Hardware I2C'}]" initial="GRAPHIC_DISPLAY_SW_SPI"></combobox>
+<toggle name="I2C_LCD_USE_HW_I2C" label="Use hardware I2C?"
+</toggle>
 
-<controlgroup if="app_state.GRAPHIC_DISPLAY_INTERFACE=='GRAPHIC_DISPLAY_SW_I2C'" label="Software emulated I2C pinout">
-<pin name="GRAPHIC_DISPLAY_I2C_CLOCK" label="Select the I2C clock pin" initial="DOUT30"
+<controlgroup if="!app_state.I2C_LCD_USE_HW_I2C" label="Software emulated I2C pinout">
+<pin name="LCD_I2C_SCL" label="Select the I2C clock pin" initial="DOUT30"
 filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)" configfile="hal"></pin>
-<pin name="GRAPHIC_DISPLAY_I2C_DATA" label="Select the I2C data pin" initial="DOUT29"
+<pin name="LCD_I2C_SDA" label="Select the I2C data pin" initial="DOUT29"
 filter="item.type.includes('generic_output')||(item.type.includes('unsafe_generic_input') & app_state.DISABLE_HAL_CONFIG_PROTECTION)" configfile="hal"></pin>
 </controlgroup>
 </controlgroup>
