@@ -15,7 +15,9 @@ tooltip="Enables the G33 parser extension module." configfile="module">
 			{ id: 'ENC6', enccount: 6 },
 			{ id: 'ENC7', enccount: 7 }
 		]" configfile="hal" nullable tooltip="You need to assign an encoder to be used by G33."></combobox>
-<pin name="G33_INDEX_PIN" label="Select an interruptable pin to detect the encoder index (encoder independent)" nullable filter="item.type.includes('interruptable_generic_input')" configfile="hal"></pin>
+		<toggle name="G33_FEEDBACK_LOOP_USE_ENC_PULSE" configfile="hal" label="Update the feedback loop using the pulse pin (faster)"
+tooltip="Update the feedback loop using the pulse pin. This runs the update loop to run on each pulse of the encoder instead of the index pin (once per rotation)">
+</toggle>
 </controlgroup>`
 };
 
