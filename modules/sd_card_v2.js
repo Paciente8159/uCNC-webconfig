@@ -35,7 +35,7 @@ tooltip="Enables SD Card support. SD card is required to be able to run subrotin
     <toggle configfile="hal" name="FF_USE_LFN" label="Enable long file names" initial="true">
     </toggle>
 
-    <toggle configfile="hal" name="SD_CARD_SPI_DMA" label="Enable SPI DMA for SD Card"></toggle>
+    <toggle configfile="hal" name="SD_CARD_SPI_DMA" label="Enable SPI DMA for SD Card" vartype='bool'></toggle>
     <toggle configfile="hal" name="ENABLE_SETTINGS_ON_SD_SDCARD" label="Store settings on the SD card"></toggle>
 
     <alert if="app_state.RAM_ONLY_SETTINGS" alerttype="warning">
