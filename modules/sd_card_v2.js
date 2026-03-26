@@ -32,7 +32,7 @@ tooltip="Enables SD Card support. SD card is required to be able to run subrotin
     <pin configfile="hal" name="SD_CARD_DETECT_PIN" label="Select card detect pin" initial="DIN19"
         filter="item.type.includes('generic_input')"></pin>
 
-    <toggle configfile="hal" name="FF_USE_LFN" label="Enable long file names" initial="true">
+    <toggle configfile="hal" name="FF_USE_LFN" label="Enable long file names" initial="true" vartype='bool'>
     </toggle>
 
     <toggle configfile="hal" name="SD_CARD_SPI_DMA" label="Enable SPI DMA for SD Card" vartype='bool'></toggle>
