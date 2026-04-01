@@ -7,7 +7,7 @@ tooltip="Adds support for TFT displays like the ILI9341 and others. Uses lvgl_su
 <buttoncb enable="ENABLE_MAIN_LOOP_MODULES,ENABLE_ITP_FEED_TASK" if="app_state.mks_display">Fix requirements!</buttoncb>
 
 
-<controlgroup label="TFT Display Settings" if="app_state.mks_display">
+<controlgroup label="TFT Display Settings" if="app_state.tft_display">
 <alert alerttype="info" labelcolor="primary" label="Dependencies">
 								This module requires lvgl_support module and external libraries. Download and use the platformio.ini for PlatformIO.
 							</alert>
