@@ -561,15 +561,13 @@
 										</combobox>
 									</td>
 									<td>
-										<toggle :name="rowitem.pin+'_PULLUP'" label="" :opts="app_options.IO_OFFSETS"
-											keyname="offset" valname="offset" configfile="boardmap"
+										<toggle :name="rowitem.pin+'_PULLUP'" label="" configfile="boardmap"
 											tooltip="Enables internal weak pull up on this pin">
 										</toggle>
 									</td>
 									<td>
-										<toggle :name="rowitem.pin+'_ISR'" label="" :opts="app_options.IO_OFFSETS"
-											keyname="offset" valname="offset" configfile="boardmap"
-											if="app_state.MCU!='MCU_AVR'"
+										<toggle :name="rowitem.pin+'_ISR'" label="" configfile="boardmap"
+											if="app_state.MCU!='MCU_AVR'" vartype="bool" nullable
 											tooltip="Enables interrupt on change on this pin">
 										</toggle>
 										<combobox :name="rowitem.pin+'_ISR'" label="" :opts="app_options.ISRS"
@@ -660,16 +658,14 @@
 										</combobox>
 									</td>
 									<td>
-										<toggle :name="rowitem.pin+'_PULLUP'" label="" :opts="app_options.IO_OFFSETS"
-											keyname="offset" valname="offset" configfile="boardmap"
+										<toggle :name="rowitem.pin+'_PULLUP'" label="" configfile="boardmap"
 											tooltip="Enables internal weak pull up on this pin">
 										</toggle>
 									</td>
 									<td>
 										<div v-if="rowitem.type.includes('interruptable')">
-											<toggle :name="rowitem.pin+'_ISR'" label="" :opts="app_options.IO_OFFSETS"
-												keyname="offset" valname="offset" configfile="boardmap"
-												if="app_state.MCU!='MCU_AVR'"
+											<toggle :name="rowitem.pin+'_ISR'" label="" configfile="boardmap"
+												if="app_state.MCU!='MCU_AVR'" vartype="bool" nullable
 												tooltip="Enables interrupt on change on this pin">
 											</toggle>
 											<combobox :name="rowitem.pin+'_ISR'" label="" :opts="app_options.ISRS"
