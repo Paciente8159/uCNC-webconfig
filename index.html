@@ -567,7 +567,7 @@
 									</td>
 									<td>
 										<toggle :name="rowitem.pin+'_ISR'" label="" configfile="boardmap"
-											if="app_state.MCU!='MCU_AVR'" vartype="bool" nullable
+											if="app_state.MCU!='MCU_AVR'"
 											tooltip="Enables interrupt on change on this pin">
 										</toggle>
 										<combobox :name="rowitem.pin+'_ISR'" label="" :opts="app_options.ISRS"
@@ -665,7 +665,7 @@
 									<td>
 										<div v-if="rowitem.type.includes('interruptable')">
 											<toggle :name="rowitem.pin+'_ISR'" label="" configfile="boardmap"
-												if="app_state.MCU!='MCU_AVR'" vartype="bool" nullable
+												if="app_state.MCU!='MCU_AVR'"
 												tooltip="Enables interrupt on change on this pin">
 											</toggle>
 											<combobox :name="rowitem.pin+'_ISR'" label="" :opts="app_options.ISRS"

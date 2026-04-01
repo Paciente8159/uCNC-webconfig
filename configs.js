@@ -11,7 +11,7 @@ getPIOContent();
 
 window.resetPins = function (scope) {
 	const pins = scope.$root.app_options.UCNCPINS;
-	const pindefs = ['_BIT', '_PORT', '_CHANNEL', '_MUX', '_TIMER', '_IO_OFFSET']
+	const pindefs = ['_BIT', '_PORT', '_ISR', '_PULLUP', '_ADC', '_CHANNEL', '_MUX', '_TIMER', '_IO_OFFSET']
 	for (let i = 0; i < pins.length; i++) {
 		for (let j = 0; j < pindefs.length; j++) {
 			if (scope.$root.app_state[pins[i].pin + pindefs[j]])
