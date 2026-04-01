@@ -1,6 +1,6 @@
 window.TFTDisplayComponent = {
 	template: `
-		<toggle name="tft_display" label="Enable TFT Display module"
+		<toggle name="tft_display" label="Enable TFT Display module Win95 style menu"
 tooltip="Adds support for TFT displays like the ILI9341 and others. Uses lvgl_support to display a Win95 style menu" configfile="module">
 </toggle>
 
