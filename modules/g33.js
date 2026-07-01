@@ -18,6 +18,7 @@ tooltip="Enables the G33 parser extension module." configfile="module">
 		<toggle name="G33_FEEDBACK_LOOP_USE_ENC_PULSE" configfile="hal" label="Update the feedback loop using the pulse pin (faster)"
 tooltip="Update the feedback loop using the pulse pin. This runs the update loop to run on each pulse of the encoder instead of the index pin (once per rotation)">
 </toggle>
+<range configfile="hal" name="G33_SYNCHRONIZATION_SPEED" label="G33 synchronization speed/gain" units="" min="0" max="100" step="0.1" vartype="float" initial="8"></range>
 </controlgroup>`
 };
 
