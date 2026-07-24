@@ -85,6 +85,7 @@ window.app_vars = {
 			{ id: 'src/hal/boards/stm32/boardmap_mks_robin_nano_v3_1.h', name: 'MKS Robin Nano v3.1', mcu: 'MCU_STM32F4X' },
 			{ id: 'src/hal/boards/stm32/boardmap_srk_pro_v1_2.h', name: 'SKR Pro v1.2', mcu: 'MCU_STM32F4X' },
 			{ id: 'src/hal/boards/stm32/boardmap_nucleo_f411re_shield_v3.h', name: 'STM32 Nucleo F411RE', mcu: 'MCU_STM32F4X' },
+			{ id: 'src/hal/boards/stm32/boardmap_mks_monster8_v2.h', name: 'MKS Monster8 v2', mcu: 'MCU_STM32F4X' },
 			{ id: 'src/hal/boards/stm32/boardmap_generic_h750.h', name: 'WeAct STM32H750 Mini', mcu: 'MCU_STM32H7X' },
 			{ id: 'src/hal/boards/stm32/boardmap_skr3.h', name: 'BTT SKR3', mcu: 'MCU_STM32H7X' },
 			{ id: 'src/hal/boards/samd21/boardmap_mzero.h', name: 'Arduino M0', mcu: 'MCU_SAMD21' },
