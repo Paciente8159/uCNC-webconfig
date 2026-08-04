@@ -14,12 +14,12 @@ window.app_vars = {
 	app_options: {
 		VERSIONS: [
 			{ id: 'master', tag: 99999, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/master.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
-			{ id: 'v1.16.6', tag: 11606, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.6.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
-			{ id: 'v1.16.5', tag: 11605, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.5.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
-			{ id: 'v1.16.4', tag: 11604, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.4.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
-			{ id: 'v1.16.2', tag: 11602, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.2.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
-			{ id: 'v1.16.1', tag: 11601, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.1.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
-			{ id: 'v1.16.0', tag: 11600, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.0.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
+			{ id: 'v1.16.6', tag: 11606, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.6.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v11600.zip' },
+			{ id: 'v1.16.5', tag: 11605, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.5.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v11600.zip' },
+			{ id: 'v1.16.4', tag: 11604, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.4.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v11600.zip' },
+			{ id: 'v1.16.2', tag: 11602, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.2.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v11600.zip' },
+			{ id: 'v1.16.1', tag: 11601, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.1.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v11600.zip' },
+			{ id: 'v1.16.0', tag: 11600, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.0.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v11600.zip' },
 			{ id: 'v1.15.0', tag: 11500, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.15.0.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v11500.zip' },
 			{ id: 'v1.14.0', tag: 11400, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.14.0.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v11500.zip' },
 			{ id: 'v1.13.x-bugfix', tag: 11379, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/v1.13.x-bugfix.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v11500.zip' },
