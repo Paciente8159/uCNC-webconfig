@@ -666,6 +666,7 @@ window.app_vars = {
 			{ id: 'm66', name: 'LinuxCNC M66 and allows to wait on digital or analog input pin of the µCNC' },
 			{ id: 'm67_m68', name: 'LinuxCNC M67-M68 and allows to turn on and off any analog pin (synched or immediately)' },
 			{ id: 'm80_m81', name: 'Marlin M80-M81 and allows to turn on and off a pin controling the PSU' },
+			{ id: 'g96_g97', name: 'Linux CNC G7/G8 to set radius mode for lathes', condition: 'VERSION>011680' },
 			{ id: 'i2c_lcd', name: 'Support for an I2C LCD that display the current machine position and limits state' },
 			{ id: 'smoothie_clustering', name: 'Smoothieware S Cluster support' },
 			{ id: 'i2c_eeprom', name: 'Adds support for external I2C EEPROMs to store settings' },
