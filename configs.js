@@ -607,9 +607,6 @@ function generate_user_config(rootscope = window.app_vars, options, defguard, re
 					else {
 						switch (field.type) {
 							case 'bool':
-								if (is_empty(val, field)) {
-									break;
-								}
 								gentext += "#define " + options[i] + ((val) ? " true" : " false") + "\n";
 								break;
 							case 'string':
