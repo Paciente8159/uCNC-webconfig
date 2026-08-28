@@ -29,13 +29,14 @@ The first delivery covers **Foundation** and **Workflow shell**. Focused pin sel
 
 ### Workflow navigation
 
-Replace the top-level tabs with five ordered steps:
+Replace the top-level tabs with six ordered steps:
 
 1. **Machine** — template, kinematics, axes, steppers, and communication basics.
 2. **Board & MCU** — MCU selection, an MCU-filtered board selection, and advanced board properties.
-3. **Pins** — pin assignments grouped by purpose with compatibility and collision checks.
-4. **Features** — tools, modules, networking, motion, storage, displays, and advanced HAL features.
-5. **Review & Export** — summary, validation, generated-file changes, build target, and downloads.
+3. **HAL** — pin assignments grouped by purpose with compatibility and collision checks.
+4. **Tools** — spindle, coolant, and laser/plasma/embroidery tool modes with per-tool settings.
+5. **Modules** — networking, motion, storage, displays, and advanced HAL extension modules.
+6. **Review & Export** — summary, validation, generated-file changes, build target, and downloads.
 
 Desktop uses a persistent left step rail. Mobile uses a compact step header with Back/Continue controls. Users may revisit completed steps at any time. Expert mode may expose direct firmware-oriented navigation.
 
@@ -73,7 +74,7 @@ Restore an autosaved draft when available, with explicit **Restore** and **Disca
 - New defaults must load successfully before the destructive change is committed; failure leaves the prior configuration intact.
 - Importing editable JSON restores its saved pin values and does not invoke the clean-board reset.
 
-### Pins
+### HAL
 
 - Group assignments into motion, limits/probe, controls, communications, tools, and auxiliary I/O.
 - Each pin selector shows capability, current assignment, and board label.
@@ -82,9 +83,9 @@ Restore an autosaved draft when available, with explicit **Restore** and **Disca
 - Provide **Auto-assign available pins**, **Reset group**, and per-setting **Reset to board default** actions.
 - Provide a boardmap-only **Clear all pins** action and a per-row **Clear this pin** action. These actions do not modify HAL, tool, or module references; existing undefined-pin warnings remain responsible for those references.
 
-### Features
+### Tools and Modules
 
-- Present selectable tools/modules as compact cards with description, compatibility, dependencies, and enabled state.
+The former Features step is split into separate Tools and Modules steps. Present selectable tools/modules as compact cards with description, compatibility, dependencies, and enabled state.
 - Use **Basic**, **Advanced**, and **Expert** visibility levels.
 - Search matches user labels, descriptions, and macro names.
 - Enabling a feature reveals only its dependent settings and clearly lists automatically enabled prerequisites.
@@ -182,7 +183,7 @@ Minimum rules cover duplicate pins, missing required assignments, board/MCU mism
 ## Delivery phases
 
 1. **Foundation** — changed/default tracking, advisory structured validation, autosave, editable-configuration migration, generator compatibility tests, and accessibility fixes.
-2. **Workflow shell** — five mounted step panels, sticky summary, responsive layout, search and visibility levels.
+2. **Workflow shell** — eight mounted step panels, sticky summary, responsive layout, search and visibility levels.
 3. **Focused flows** — board-first selection, grouped pin assignment, feature cards, dependency handling.
 4. **Review/export** — readiness report, diff preview, consolidated downloads, version migration preview.
 5. **Polish** — templates, recent boards, automatic pin suggestions, keyboard/mobile usability testing.

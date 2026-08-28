@@ -27,7 +27,7 @@ directory is generated output, currently not committed. Tests: currently 18 (7 c
 ## UI shell (new-ui.md implementation)
 
 The app has been restructured from firmware-oriented `tabgroup/tab` components into a **workflow
-shell** (`index.html` + `style.css` + `workflow.css`) with 8 step panels (Machine, Board & MCU, Pins,
+shell** (`index.html` + `style.css` + `workflow.css`) with 8 step panels (Machine, Board & MCU, HAL,
 Tools, Modules, Custom, Review & Export, Files) driven by
 `v-show="app_state.__WORKFLOW_STEP==='<step>'"`. **All step panels stay mounted and behind `v-show`,
 never `v-if`, so the generation DOM queries in `configs.js` still find every field.** The five core
