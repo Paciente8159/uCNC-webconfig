@@ -469,6 +469,21 @@ div#app, header, main {
 	white-space: nowrap;
 }
 
+.findings-list .finding .finding-jump {
+	font-size: 0.8rem;
+	text-decoration: none;
+	flex-shrink: 0;
+}
+
+.finding-target {
+	animation: finding-pulse 2s ease-out;
+}
+
+@keyframes finding-pulse {
+	0% { box-shadow: 0 0 0 3px rgba(176, 42, 55, 0.55); }
+	100% { box-shadow: 0 0 0 0 rgba(176, 42, 55, 0); }
+}
+
 .changed-list {
 	list-style: none;
 	padding: 0;

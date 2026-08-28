@@ -136,6 +136,9 @@
 							<li v-for="(finding, index) in app_state.__VALIDATION" :key="index" class="finding" :class="finding.severity">
 								<span class="setting">{{ finding.setting }}</span>
 								<span>{{ finding.message }}</span>
+								<button type="button" class="btn btn-link btn-sm finding-jump p-0 ms-auto"
+									v-if="finding.target" @click="gotoField(finding.target)"
+									:title="'Go to the ' + finding.target.setting + ' definition'">Locate</button>
 							</li>
 						</ul>
 						<p class="text-muted" v-else>No validation issues found.</p>
@@ -333,6 +336,36 @@
 				toggleNotifications() {
 					this.showNotifications = !this.showNotifications;
 					this.app_state.__SHOW_NOTIFICATIONS = this.showNotifications;
+				},
+				gotoField(payload) {
+					var step = payload && payload.step;
+					var setting = payload && payload.setting;
+					if (step) {
+						this.app_state.__WORKFLOW_STEP = step;
+						this.app_state.__WORKFLOW_INDEX = this.workflowSteps.findIndex(s => s.id === step);
+					}
+					this.$nextTick(() => {
+						if (!setting) return;
+						const el = document.getElementById(setting);
+						if (!el) return;
+						const collapse = el.closest('.accordion-collapse');
+						const expanding = collapse && !collapse.classList.contains('show');
+						if (expanding) {
+							const button = collapse.closest('.accordion-item') && collapse.closest('.accordion-item').querySelector('.accordion-button');
+							if (button) button.click();
+							else if (window.bootstrap && window.bootstrap.Collapse && window.bootstrap.Collapse.getOrCreateInstance) {
+								window.bootstrap.Collapse.getOrCreateInstance(collapse, { toggle: false }).show();
+							}
+						}
+						const reveal = () => {
+							if (!el.isConnected) return;
+							el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+							el.classList.add('finding-target');
+							setTimeout(() => { el.classList.remove('finding-target'); }, 2000);
+						};
+						if (expanding) setTimeout(reveal, 400);
+						else reveal();
+					});
 				},
 				goStep(stepId) {
 					ucncfoundation.goStep(stepId, WORKFLOW_STEPS);

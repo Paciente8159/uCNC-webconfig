@@ -115,8 +115,8 @@
 		var seenGpio = {};
 		var uintRegex = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
-		function push(severity, setting, message) {
-			findings.push({ severity: severity, setting: setting, message: message });
+		function push(severity, setting, message, step) {
+			findings.push({ severity: severity, setting: setting, message: message, target: step ? { step: step, setting: setting } : undefined });
 		}
 
 		if (!state.MCU) {
@@ -136,6 +136,10 @@
 		// value without colliding.
 		var pins = (options.UCNCPINS || []).map(function (item) { return item.pin; });
 		var seenOffset = {};
+		// First µCNC pin that claimed each collision key, so a duplicate error
+		// can point at the earlier definition that the user should change.
+		var seenGpioOwner = {};
+		var seenOffsetOwner = {};
 		for (var i = 0; i < pins.length; i++) {
 			var pin = pins[i];
 			var bit = state[pin + '_BIT'];
@@ -149,9 +153,10 @@
 				// offset collide with each other, but never with a gpio port+bit.
 				var offsetKey = 'offset:' + offset;
 				if (Object.prototype.hasOwnProperty.call(seenOffset, offsetKey)) {
-					push('error', pin + '_IO_OFFSET', 'IO offset ' + offset + ' is assigned to more than one µCNC pin.');
+					push('error', pin + '_IO_OFFSET', 'IO offset ' + offset + ' is assigned to more than one µCNC pin. The first define is in pin ' + seenOffsetOwner[offsetKey] + '.', 'board-mcu');
 				}
 				seenOffset[offsetKey] = true;
+				seenOffsetOwner[offsetKey] = seenOffsetOwner[offsetKey] || pin;
 				continue;
 			}
 			// Gpio pins are identified by their port+bit combination, not by the
@@ -160,9 +165,10 @@
 			// keys the pin, so two pins with the same bit are duplicates.
 			var key = 'gpio:' + (port || '?') + ':' + bit;
 			if (Object.prototype.hasOwnProperty.call(seenGpio, key)) {
-				push('error', pin + '_BIT', 'Physical pin ' + (port ? port + bit : bit) + ' is assigned to more than one µCNC pin.');
+				push('error', pin + '_BIT', 'Physical pin ' + (port ? port + bit : bit) + ' is assigned to more than one µCNC pin. The first define is in pin ' + seenGpioOwner[key] + '.', 'board-mcu');
 			}
 			seenGpio[key] = true;
+			seenGpioOwner[key] = seenGpioOwner[key] || pin;
 		}
 
 		// Board / MCU mismatch: the board list is already filtered by MCU, so a
