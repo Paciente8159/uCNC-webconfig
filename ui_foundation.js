@@ -130,23 +130,37 @@
 		}
 
 		// Duplicate physical pin detection: two µCNC pins must not reuse the same
-		// port+bit (or IO offset) combination. Only boardmap _BIT entries count.
+		// physical pin. A pin is identified either by its gpio port+bit (or bit
+		// alone on CPUs with no port concept) or by its IO extender offset; the
+		// two namespaces are separate, so a gpio bit and an offset may share a
+		// value without colliding.
 		var pins = (options.UCNCPINS || []).map(function (item) { return item.pin; });
+		var seenOffset = {};
 		for (var i = 0; i < pins.length; i++) {
 			var pin = pins[i];
 			var bit = state[pin + '_BIT'];
 			var port = state[pin + '_PORT'];
 			var offset = state[pin + '_IO_OFFSET'];
-			if (bit === '' || bit === undefined || bit === null) continue;
-			if (offset !== '' && offset !== undefined && offset !== null) {
-				// A pin defined through an IO extender offset must not collide with a
-				// pin defined through a port+bit gpio.
+			var hasBit = bit !== '' && bit !== undefined && bit !== null;
+			var hasOffset = offset !== '' && offset !== undefined && offset !== null;
+			if (!hasBit && !hasOffset) continue;
+			if (hasOffset) {
+				// IO extender pins live in their own namespace: two pins sharing an
+				// offset collide with each other, but never with a gpio port+bit.
+				var offsetKey = 'offset:' + offset;
+				if (Object.prototype.hasOwnProperty.call(seenOffset, offsetKey)) {
+					push('error', pin + '_IO_OFFSET', 'IO offset ' + offset + ' is assigned to more than one µCNC pin.');
+				}
+				seenOffset[offsetKey] = true;
+				continue;
 			}
-			// A physical pin is identified by its port+bit combination, not the bit
-			// number alone: two pins on different ports may share the same bit.
-			var key = offset !== '' && offset !== undefined ? 'offset:' + offset : 'gpio:' + (port || '?') + ':' + bit;
+			// Gpio pins are identified by their port+bit combination, not by the
+			// bit alone: two pins on different ports may share a bit. On CPUs
+			// without a port concept the port is always empty and the bit alone
+			// keys the pin, so two pins with the same bit are duplicates.
+			var key = 'gpio:' + (port || '?') + ':' + bit;
 			if (Object.prototype.hasOwnProperty.call(seenGpio, key)) {
-				push('error', pin + '_BIT', 'Physical pin ' + (offset !== '' && offset !== undefined ? offset : (port ? port + bit : bit)) + ' is assigned to more than one µCNC pin.');
+				push('error', pin + '_BIT', 'Physical pin ' + (port ? port + bit : bit) + ' is assigned to more than one µCNC pin.');
 			}
 			seenGpio[key] = true;
 		}
