@@ -1,0 +1,67 @@
+name: Build manifests and deploy Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+  schedule:
+    - cron: '23 4 * * 1'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out web configurator
+        uses: actions/checkout@v4
+
+      - name: Check out uCNC history
+        run: git clone --filter=blob:none https://github.com/Paciente8159/uCNC.git "$RUNNER_TEMP/ucnc"
+
+      - name: Generate compiler-resolved manifests
+        shell: bash
+        run: |
+          while IFS= read -r ref; do
+            if git -C "$RUNNER_TEMP/ucnc" rev-parse --verify --quiet "refs/tags/$ref"; then
+              revision="$ref"
+            else
+              revision="origin/$ref"
+            fi
+            git -C "$RUNNER_TEMP/ucnc" checkout --force "$revision"
+            node scripts/generate-manifests.mjs \
+              --ucnc-dir "$RUNNER_TEMP/ucnc" \
+              --ref "$ref" \
+              --output manifests
+          done < <(node scripts/list-supported-refs.mjs)
+
+      - name: Run regression tests
+        run: node --test
+
+      - name: Stage static site
+        run: |
+          mkdir "$RUNNER_TEMP/site"
+          rsync -a --exclude='.git' --exclude='.github' ./ "$RUNNER_TEMP/site/"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ runner.temp }}/site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

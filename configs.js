@@ -763,44 +763,32 @@ function endLoadAnimation() {
  */
 window.boardChanged = async function (scope, target) {
 	startLoadAnimation();
-	window.resetPins(scope);
-	await scope.$nextTick();
-	const version_name = scope.$root.app_options.VERSIONS.filter(i => i.tag == scope.$root.app_state.VERSION)[0].id;
-	const coreurl = "https://raw.githubusercontent.com/Paciente8159/uCNC/" + version_name;
-
-	const mcuurl = coreurl + "/uCNC/" + scope.$root.app_options.MCUS.filter(i => i.id == scope.$root.app_state.MCU)[0].url;
-	const boardurl = coreurl + "/uCNC/" + scope.$root.app_state.BOARD;
-
-	let board_settings = parsePreprocessorAdvancedSync(boardurl, [], true);
-	let mcu_settings = parsePreprocessorAdvancedSync(mcuurl, board_settings.slice(), false);
-
-	/**
-	 * Old version
-	 */
-
-	// let mcu_settings = await parsePreprocessor(mcuurl, [], false);
-	// let board_settings = await parsePreprocessor(boardurl, [], true);
-
-	let elems = Object.keys(board_settings);
-	for (let i = 0; i < elems.length; i++) {
-		scope.$root.app_state[elems[i]] = board_settings[elems[i]];
+	try {
+		window.resetPins(scope);
 		await scope.$nextTick();
-	}
-
-	Object.keys(board_settings).forEach(element => {
-		if (!document.getElementById(element)) {
-			scope.$root.app_state['CUSTOM_BOARDMAP_CONFIGS'] = scope.$root.app_state['CUSTOM_BOARDMAP_CONFIGS'] + `#define ${element} ${board_settings[element]}\n`;
+		if (scope.$root.app_state.BOARD === 'boardmap_overrides.h') return;
+		const version = scope.$root.app_options.VERSIONS.find(i => i.tag == scope.$root.app_state.VERSION);
+		const mcu = scope.$root.app_options.MCUS.find(i => i.id == scope.$root.app_state.MCU);
+		if (!version || !mcu) throw new Error('Unable to resolve the selected uCNC version or MCU');
+		const defaults = await window.UcncDefaults.loadBoardDefaults({
+			ref: version.id,
+			board: scope.$root.app_state.BOARD,
+			mcuPath: mcu.url,
+		});
+		window.UcncDefaults.replaceDefaults(scope.$root, defaults.macros, '__boardDefaultKeys');
+		scope.$root.app_state.CUSTOM_BOARDMAP_CONFIGS = Object.entries(defaults.boardMacros || {})
+			.filter(([name]) => !document.getElementById(name))
+			.map(([name, value]) => `#define ${name}${value === true ? '' : ` ${value}`}\n`)
+			.join('');
+		if (defaults.source === 'browser-fallback' || defaults.diagnostics.some(item => item.level === 'error')) {
+			console.warn('Board defaults were loaded with fallback diagnostics.', defaults.diagnostics);
 		}
-	});
-
-	elems = Object.keys(mcu_settings);
-	for (let i = 0; i < elems.length; i++) {
-		scope.$root.app_state[elems[i]] = mcu_settings[elems[i]];
 		await scope.$nextTick();
+	} catch (error) {
+		console.error('Failed to load board defaults.', error);
+	} finally {
+		endLoadAnimation();
 	}
-
-	await scope.$nextTick();
-	endLoadAnimation();
 }
 
 window.mcuChanged = async function (scope, target) {
@@ -812,20 +800,24 @@ window.mcuChanged = async function (scope, target) {
 
 window.halChanged = async function (scope, target) {
 	startLoadAnimation();
-	scope.$root.app_state['CUSTOM_HAL_CONFIGS'] = '';
-	var settings = [];
-	const version_name = scope.$root.app_options.VERSIONS.filter(i => i.tag == scope.$root.app_state.VERSION)[0].id;
-	const coreurl = "https://raw.githubusercontent.com/Paciente8159/uCNC/" + version_name;
-	const hal = coreurl + "/uCNC/cnc_hal_config.h";
-
-	settings = await parsePreprocessorAdvanced(hal, [], false);
-	Object.keys(scope.$root.app_state).forEach(element => {
-		if (settings[element]) {
-			scope.$root.app_state[element] = settings[element];
+	try {
+		scope.$root.app_state.CUSTOM_HAL_CONFIGS = '';
+		const version = scope.$root.app_options.VERSIONS.find(i => i.tag == scope.$root.app_state.VERSION);
+		if (!version) throw new Error('Unable to resolve the selected uCNC version');
+		const defaults = await window.UcncDefaults.loadHalDefaults({ ref: version.id });
+		const knownMacros = Object.fromEntries(Object.keys(scope.$root.app_state)
+			.filter(name => Object.prototype.hasOwnProperty.call(defaults.macros, name))
+			.map(name => [name, defaults.macros[name]]));
+		window.UcncDefaults.replaceDefaults(scope.$root, knownMacros, '__halDefaultKeys');
+		if (defaults.source === 'browser-fallback' || defaults.diagnostics.some(item => item.level === 'error')) {
+			console.warn('HAL defaults were loaded with fallback diagnostics.', defaults.diagnostics);
 		}
-	});
-	await scope.$nextTick();
-	endLoadAnimation();
+		await scope.$nextTick();
+	} catch (error) {
+		console.error('Failed to load HAL defaults.', error);
+	} finally {
+		endLoadAnimation();
+	}
 }
 
 window.loadConfigFile = async function (scope, event) {
