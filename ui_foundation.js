@@ -339,12 +339,17 @@
 			}
 		}
 
-		function saveCompleteSnapshot() {
+		function buildSnapshot() {
 			var snapshot = { format: FORMAT_VERSION, savedAt: new Date().toISOString(), state: {} };
 			Object.keys(rootScope.app_state).forEach(function (key) {
 				if (key.indexOf('__') === 0) return;
 				snapshot.state[key] = rootScope.app_state[key];
 			});
+			return snapshot;
+		}
+
+		function saveCompleteSnapshot() {
+			var snapshot = buildSnapshot();
 			var blob = new Blob([JSON.stringify(snapshot, null, '\t')], { type: 'application/json' });
 			var a = document.createElement('a');
 			var url = URL.createObjectURL(blob);
@@ -555,6 +560,7 @@
 			applyJsonConfig: applyJsonConfig,
 			applyTheme: applyTheme,
 			autosave: autosave,
+			buildSnapshot: buildSnapshot,
 			changedDetails: changedDetails,
 			changedKeyList: changedKeyList,
 			checkDraft: checkDraft,

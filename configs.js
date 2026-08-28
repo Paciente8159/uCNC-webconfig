@@ -837,7 +837,13 @@ window.loadConfigFile = async function (scope, event) {
 	startLoadAnimation();
 
 	reader.onload = function (e) {
-		scope.$root.app_state = JSON.parse(e.target.result);
+		const result = window.ucncfoundation.applyJsonConfig(e.target.result);
+		if (result && !result.ok) {
+			window.alert(result.message);
+			endLoadAnimation();
+			return;
+		}
+		window.ucncfoundation.refresh();
 		scope.$nextTick();
 		scope.$forceUpdate();
 		endLoadAnimation();
@@ -858,7 +864,7 @@ window.loadGenerateConfig = async function (scope, event) {
 	zip.file('platformio.ini', generatePIOOverrides(scope.$root));
 
 
-	zip.file('ucnc_build.json', JSON.stringify(scope.$root.app_state));
+	zip.file('ucnc_build.json', JSON.stringify(window.ucncfoundation.buildSnapshot()));
 
 	// Generate the zip file asynchronously
 	zip.generateAsync({ type: "blob" }).then(function (content) {

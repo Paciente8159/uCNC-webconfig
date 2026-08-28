@@ -290,6 +290,27 @@ test('applyJsonConfig accepts a legacy flat object and rejects invalid JSON', ()
 	assert.equal(invalid.ok, false);
 });
 
+test('applyJsonConfig accepts an old-format flat object alongside newer format', () => {
+	const context = createContext();
+	loadUiFoundation(context);
+	const scope = makeRootScope();
+	scope.app_fields.AXIS_COUNT = { type: 'int', nullable: false, file: 'boardmap' };
+	scope.app_state.AXIS_COUNT = 3;
+	const api = context.window.UiFoundation.initUiFoundation(scope, {});
+
+	// Old format: the whole file is the flat settings object (no state wrapper).
+	const legacy = api.applyJsonConfig(JSON.stringify({ AXIS_COUNT: '6', KINEMATIC: 'KINEMATIC_COREXY' }));
+	assert.equal(legacy.ok, true);
+	assert.equal(scope.app_state.AXIS_COUNT, 6);
+	assert.equal(scope.app_state.KINEMATIC, 'KINEMATIC_COREXY');
+	assert.equal(legacy.preserved.length, 0);
+
+	// Newer format still wins when the file is a versioned snapshot.
+	const current = api.applyJsonConfig(JSON.stringify({ format: 1, savedAt: '2026-01-01T00:00:00.000Z', state: { AXIS_COUNT: 4 } }));
+	assert.equal(current.ok, true);
+	assert.equal(scope.app_state.AXIS_COUNT, 4);
+});
+
 test('goStep validates steps and persists; resumeStep restores or defaults', () => {
 	const context = createContext();
 	loadUiFoundation(context);
