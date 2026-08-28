@@ -366,7 +366,9 @@ window.AlertComponent = {
 		alerttype: { type: String, default: "danger" },
 		show: { type: String, default: "true" },
 		if: { type: String, default: "true" },
-		noclose: { type: Boolean, default: false }
+		noclose: { type: Boolean, default: false },
+		action: { type: String, default: "" },
+		actionlabel: { type: String, default: "Locate" }
 	},
 	data() {
 		return {
@@ -394,7 +396,7 @@ window.AlertComponent = {
 			}
 		},
 		classVal() {
-			return `alert alert-${this.alerttype} left-align alert-dismissible fade show`;
+			return `finding ${this.alerttype} alert alert-${this.alerttype} left-align alert-dismissible fade show`;
 		},
 		titleColor() {
 			return (this.labelcolor.length) ? `color:${this.labelcolor}` : `color:${this.alerttype}`;
@@ -411,13 +413,22 @@ window.AlertComponent = {
 			});
 			converter.setOption('simpleLineBreaks', true);
 			this.convertedContent = converter.makeHtml(rawText); // Convert Markdown to HTML
+		},
+		runAction() {
+			if (!this.action || !this.$root.gotoField) return;
+			try {
+				this.$root.gotoField(JSON.parse(this.action));
+			} catch (error) {
+				console.error("Invalid action payload:", error);
+			}
 		}
 	},
-	template: `<div :class="classVal" role="alert" v-if="ifCondition" v-show="showCondition">
+	template: `<div class="findings-list"><div :class="classVal" role="alert" v-if="ifCondition" v-show="showCondition">
     <h2 :style="titleColor" v-if="label.length">{{label}}</h2>
     <p v-html="convertedContent"></p>
+    <button type="button" class="btn btn-link btn-sm finding-jump p-0 ms-2" v-if="action" @click="runAction">{{actionlabel}}</button>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" v-if="!noclose"></button>
-  </div>`
+  </div></div>`
 };
 
 window.MessageComponent = {
@@ -435,6 +446,14 @@ window.MessageComponent = {
 	},
 	mounted() {
 		this.convertSlotContent();
+		if (this.showCondition) this.showToast();
+	},
+	watch: {
+		showCondition() {
+			if (this.showCondition) {
+				this.$nextTick(() => this.showToast());
+			}
+		},
 	},
 	computed: {
 		showCondition() {
@@ -465,7 +484,8 @@ window.MessageComponent = {
 			});
 			converter.setOption('simpleLineBreaks', true);
 			this.convertedContent = converter.makeHtml(rawText); // Convert Markdown to HTML
-
+		},
+		showToast() {
 			const toast = new bootstrap.Toast(this.$el, {
 				delay: 5000,
 			});
@@ -826,6 +846,19 @@ window.PinComponent = {
 
 			return true;
 		},
+		pinTarget() {
+			if (!this.isPinUndefined || !this.$root.app_state[this.name]) {
+				return '';
+			}
+			const pinName = String(this.$root.app_state[this.name]).trim();
+			const bitKey = pinName + '_BIT';
+			const offsetKey = pinName + '_IO_OFFSET';
+			// The target setting is the pin definition that is missing: prefer a
+			// boardmap gpio bit if present, otherwise the IO extender offset row.
+			const hasBit = this.$root.app_state[bitKey] !== undefined && this.$root.app_state[bitKey].toString().length;
+			const setting = hasBit ? bitKey : (this.$root.app_state[offsetKey] !== undefined && this.$root.app_state[offsetKey].length ? offsetKey : bitKey);
+			return JSON.stringify({ step: 'board-mcu', setting: setting });
+		},
 		showCondition() {
 			try {
 				return new Function('app_state', `return ${this.show};`)(this.$root.app_state);
@@ -849,7 +882,7 @@ window.PinComponent = {
 	:filter="filter" nullable :initial="initial" :tooltip="tooltip"
 	:vartype="vartype" :configfile="configfile">
 	</combobox>
-	<alert alerttype="warning" labelcolor="warning" label="" v-if="isPinUndefined" noclose>**WARNING:** Pin {{this.$root.app_state[name]}} is not defined.</alert>
+	<alert alerttype="warning" labelcolor="warning" label="" v-if="isPinUndefined" noclose :action="pinTarget">**WARNING:** Pin {{this.$root.app_state[name]}} is not defined.</alert>
 	</div>`
 }
 

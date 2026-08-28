@@ -1,0 +1,659 @@
+/* µCNC Configurator workflow shell */
+
+:root {
+	--ucnc-green: #146c43;
+	--ucnc-green-soft: #d1e7dd;
+	--ucnc-bg: #f5f7f9;
+	--ucnc-surface: #ffffff;
+	--ucnc-border: #d7dee5;
+	--ucnc-ink: #1c2b3a;
+	--ucnc-muted: #5c6b7a;
+	--ucnc-accent: #3568a4;
+	--ucnc-amber: #b8860b;
+	--ucnc-red: #b02a37;
+	--ucnc-step-size: 44px;
+}
+
+html[data-bs-theme="dark"] {
+	--ucnc-bg: #12181f;
+	--ucnc-surface: #1b232c;
+	--ucnc-border: #33404d;
+	--ucnc-ink: #dce4ec;
+	--ucnc-muted: #93a2b1;
+}
+
+body {
+	background-color: var(--ucnc-bg);
+	color: var(--ucnc-ink);
+}
+
+/* Application shell ------------------------------------------------------------------ */
+
+div#app, header, main {
+	width: 1240px;
+	max-width: 100%;
+	margin: 20px auto;
+}
+
+.app-header {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	flex-wrap: wrap;
+	padding: 0.75rem 1rem;
+	background: var(--ucnc-surface);
+	border: 1px solid var(--ucnc-border);
+	border-radius: 8px;
+	margin-bottom: 1rem;
+}
+
+.app-header .brand {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	min-width: 0;
+}
+
+.app-header .brand img {
+	width: 44px;
+	height: 44px;
+}
+
+.app-header .brand .app-title {
+	font-size: 1.15rem;
+	font-weight: 600;
+	line-height: 1.1;
+	margin: 0;
+}
+
+.app-header .brand .app-subtitle {
+	font-size: 0.8rem;
+	color: var(--ucnc-muted);
+	margin: 0;
+}
+
+.app-header .header-spacer {
+	flex: 1 1 auto;
+}
+
+.app-header .header-version {
+	display: flex;
+	flex-direction: column;
+	min-width: 180px;
+	padding: 0.35rem 0.75rem;
+	border: 1px solid var(--ucnc-border);
+	border-radius: 6px;
+	background: var(--ucnc-bg);
+	color: var(--ucnc-ink);
+	text-align: left;
+}
+
+.app-header .header-version:hover {
+	border-color: var(--ucnc-green);
+}
+
+.app-header .header-version .label {
+	font-size: 0.72rem;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: var(--ucnc-muted);
+}
+
+.app-header .header-version .value {
+	font-weight: 600;
+}
+
+.header-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.header-actions .btn {
+	min-height: 44px;
+}
+
+.notification-btn {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	padding: 0;
+}
+
+.notification-icon {
+	font-size: 1.1rem;
+	line-height: 1;
+}
+
+.notification-dot {
+	position: absolute;
+	top: 6px;
+	right: 7px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: #dc3545;
+	border: 2px solid #fff;
+	box-shadow: 0 0 0 1px rgba(220, 53, 69, 0.3);
+}
+
+.workflow-layout {
+	display: grid;
+	grid-template-columns: 230px minmax(0, 1fr) 280px;
+	gap: 1rem;
+	align-items: start;
+}
+
+@media (max-width: 1100px) {
+	.workflow-layout {
+		grid-template-columns: 190px minmax(0, 1fr);
+	}
+	.workflow-summary {
+		grid-column: 1 / -1;
+		position: static !important;
+	}
+}
+
+@media (max-width: 767px) {
+	.workflow-layout {
+		grid-template-columns: 1fr;
+	}
+	.workflow-nav {
+		overflow-x: auto;
+	}
+	.mobile-step-actions {
+		display: flex !important;
+	}
+	.desktop-step-actions {
+		display: none !important;
+	}
+}
+
+/* Step rail -------------------------------------------------------------------------- */
+
+.workflow-nav {
+	background: var(--ucnc-bg);
+	position: sticky;
+	top: 0rem;
+	z-index: 9;
+}
+
+.workflow-nav .nav {
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.workflow-nav .nav-link {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	min-height: var(--ucnc-step-size);
+	padding: 0.375rem 0.75rem;
+	border-radius: 6px;
+	color: var(--ucnc-ink);
+	border: 1px solid transparent;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.workflow-nav .nav-link .step-dot {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	font-size: 0.8rem;
+	font-weight: 600;
+	background: var(--ucnc-border);
+	color: var(--ucnc-muted);
+}
+
+.workflow-nav .nav-link:hover {
+	background: var(--ucnc-green-soft);
+	color: var(--ucnc-ink);
+}
+
+.workflow-nav .nav-link.active {
+	background: var(--ucnc-green);
+	color: #fff;
+}
+
+.workflow-nav .nav-link.active .step-dot {
+	background: rgba(255, 255, 255, 0.2);
+	color: #fff;
+}
+
+.workflow-nav .nav-link.complete:not(.active) .step-dot {
+	background: var(--ucnc-green);
+	color: #fff;
+}
+
+.workflow-nav .nav-link .step-label {
+	font-weight: 500;
+}
+
+.workflow-nav .nav-link .step-badge {
+	margin-left: auto;
+	font-size: 0.7rem;
+}
+
+/* Workspace -------------------------------------------------------------------------- */
+
+.workflow-workspace {
+	background: var(--ucnc-surface);
+	border: 1px solid var(--ucnc-border);
+	border-radius: 8px;
+	padding: 1rem 1.25rem;
+	min-width: 0;
+}
+
+.workflow-panel {
+	padding: 0;
+}
+
+.workflow-panel > .card {
+	margin-bottom: 1rem;
+}
+
+fieldset {
+	margin-top: 2rem !important;
+}
+
+.workflow-heading {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	margin-bottom: 1rem;
+	padding-bottom: 0.75rem;
+	border-bottom: 2px solid var(--ucnc-green);
+}
+
+.workflow-heading h2 {
+	font-size: 1.3rem;
+	font-weight: 600;
+	margin: 0;
+}
+
+.step-actions {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.step-actions .btn {
+	min-height: 44px;
+}
+
+/* Summary panel ---------------------------------------------------------------------- */
+
+.workflow-summary {
+	position: sticky;
+	top: 1rem;
+	background: var(--ucnc-surface);
+	border: 1px solid var(--ucnc-border);
+	border-radius: 8px;
+	padding: 1rem;
+}
+
+.workflow-summary h3 {
+	font-size: 0.85rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--ucnc-muted);
+	margin-bottom: 0.75rem;
+}
+
+.summary-status {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 0.75rem;
+	border-radius: 6px;
+	margin-bottom: 0.75rem;
+	font-weight: 600;
+	font-size: 0.9rem;
+}
+
+.summary-status.clickable {
+	cursor: pointer;
+	transition: filter 0.15s ease;
+}
+
+.summary-status.clickable:hover {
+	filter: brightness(0.95);
+}
+
+.summary-status.ready {
+	background: var(--ucnc-green-soft);
+	color: var(--ucnc-green);
+}
+
+.summary-status.warnings {
+	background: #fff3cd;
+	color: #9a6700;
+}
+
+.summary-status.action-required {
+	background: #f8d7da;
+	color: var(--ucnc-red);
+}
+
+.summary-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+	font-size: 0.85rem;
+}
+
+.summary-list dt {
+	color: var(--ucnc-muted);
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	margin-bottom: 0.1rem;
+}
+
+.summary-list dd {
+	margin-bottom: 0.25rem;
+	font-weight: 600;
+	word-break: break-word;
+}
+
+.summary-list dd.text-muted {
+	color: var(--ucnc-muted) !important;
+	font-weight: 400;
+}
+
+.summary-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.2rem 0.55rem;
+	border-radius: 999px;
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+
+.summary-chip.changed { background: var(--ucnc-green-soft); color: var(--ucnc-green); }
+.summary-chip.errors { background: #f8d7da; color: var(--ucnc-red); }
+.summary-chip.warnings { background: #fff3cd; color: #9a6700; }
+
+/* Step navigation bar ----------------------------------------------------------------- */
+
+.mobile-step-actions {
+	display: none;
+	position: sticky;
+	bottom: 0;
+	z-index: 10;
+	background: var(--ucnc-surface);
+	border-top: 1px solid var(--ucnc-border);
+	padding: 0.6rem 1rem;
+	gap: 0.5rem;
+	margin: 1rem -1.25rem -1rem;
+}
+
+.mobile-step-actions .btn {
+	flex: 1 1 0;
+	min-height: 44px;
+}
+
+/* Config field polish ---------------------------------------------------------------- */
+
+.workflow-workspace fieldset {
+	margin: 0.75rem 0;
+}
+
+.workflow-workspace .form-check.form-switch,
+.workflow-workspace div.mb-3 {
+	margin: 0.75rem 0.5rem;
+}
+
+.field-macro {
+	font-size: 0.75rem;
+	color: var(--ucnc-muted);
+}
+
+.field-state {
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+.field-state.modified {
+	color: var(--ucnc-green);
+}
+
+.field-state.warning {
+	color: var(--ucnc-amber);
+}
+
+.field-state.error {
+	color: var(--ucnc-red);
+}
+
+/* Review & export step ---------------------------------------------------------------- */
+
+.review-section {
+	margin-bottom: 1.25rem;
+}
+
+.review-section > h3 {
+	font-size: 1rem;
+	font-weight: 600;
+	padding-bottom: 0.35rem;
+	border-bottom: 1px solid var(--ucnc-border);
+	margin-bottom: 0.75rem;
+}
+
+.findings-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+}
+
+.findings-list .finding {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.5rem;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--ucnc-border);
+	border-radius: 6px;
+	font-size: 0.875rem;
+}
+
+.findings-list .finding.error { border-left: 4px solid var(--ucnc-red); }
+.findings-list .finding.warning { border-left: 4px solid var(--ucnc-amber); }
+.findings-list .finding.info { border-left: 4px solid var(--ucnc-accent); }
+
+.findings-list .finding .setting {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 0.8rem;
+	color: var(--ucnc-muted);
+	white-space: nowrap;
+}
+
+.findings-list .finding .finding-jump {
+	font-size: 0.8rem;
+	text-decoration: none;
+	flex-shrink: 0;
+}
+
+.finding-target {
+	animation: finding-pulse 2s ease-out;
+}
+
+@keyframes finding-pulse {
+	0% { box-shadow: 0 0 0 3px rgba(176, 42, 55, 0.55); }
+	100% { box-shadow: 0 0 0 0 rgba(176, 42, 55, 0); }
+}
+
+.changed-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	font-size: 0.875rem;
+}
+
+.changed-list .changed-row {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5rem;
+	padding: 0.4rem 0.75rem;
+	border: 1px solid var(--ucnc-border);
+	border-radius: 6px;
+	background: var(--ucnc-bg);
+}
+
+.changed-list .changed-row .key {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+
+.changed-list .changed-row .arrow {
+	color: var(--ucnc-muted);
+}
+
+.changed-list .changed-row .btn {
+	min-height: 0;
+	padding: 0.15rem 0.5rem;
+	font-size: 0.75rem;
+	margin-left: auto;
+}
+
+.download-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+}
+
+.download-list li {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.875rem;
+}
+
+.download-list .btn {
+	margin-left: auto;
+	min-height: 44px;
+}
+
+/* Draft notice ------------------------------------------------------------------------ */
+
+.draft-banner {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	padding: 0.6rem 0.9rem;
+	background: #fff3cd;
+	border: 1px solid #f0df9a;
+	border-radius: 8px;
+	margin-bottom: 1rem;
+}
+
+[data-bs-theme="dark"] .draft-banner {
+	background: #3a3320;
+	border-color: #6b5e2e;
+	color: #f0df9a;
+}
+
+.draft-banner .draft-text {
+	flex: 1 1 auto;
+	font-size: 0.9rem;
+}
+
+.draft-banner .btn {
+	min-height: 44px;
+}
+
+/* Dark theme fixes ------------------------------------------------------------------- */
+
+[data-bs-theme="dark"] fieldset > legend {
+	background-color: var(--bs-body-bg);
+}
+
+/* Mobile step rail (timeline) -------------------------------------------------------- */
+
+.workflow-nav-current {
+	display: none;
+}
+
+@media (max-width: 767px) {
+	.workflow-nav-current {
+		display: block;
+		text-align: center;
+		font-weight: 600;
+		font-size: 0.95rem;
+		margin-top: 0.75rem;
+	}
+	.workflow-nav .nav {
+		flex-direction: row;
+		flex-wrap: nowrap;
+		min-width: max-content;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0;
+		margin: 0 auto;
+		padding: 0.75rem 0 0.5rem;
+		position: relative;
+	}
+	.workflow-nav .nav::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 13px;
+		right: 13px;
+		height: 2px;
+		transform: translateY(-50%);
+		background: var(--ucnc-border);
+	}
+	.workflow-nav .nav-item {
+		flex: 0 0 auto;
+		position: relative;
+		display: flex;
+		justify-content: center;
+		z-index: 1;
+	}
+	.workflow-nav .nav-link {
+		padding: 0;
+		border: 0;
+		background: transparent;
+	}
+	.workflow-nav .nav-link.active {
+		background: transparent;
+		color: var(--ucnc-ink);
+	}
+	.workflow-nav .nav-link.active .step-dot {
+		background: var(--ucnc-green);
+		color: #fff;
+		box-shadow: 0 0 0 3px var(--ucnc-bg), 0 0 0 5px var(--ucnc-green-soft);
+	}
+	.workflow-nav .nav-link.complete:not(.active) .step-dot {
+		background: var(--ucnc-green);
+	}
+	.workflow-nav .nav-link:hover {
+		background: transparent;
+	}
+	.workflow-nav .nav-link .step-label,
+	.workflow-nav .nav-link .step-badge {
+		display: none;
+	}
+}

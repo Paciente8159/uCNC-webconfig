@@ -225,3 +225,18 @@ html[data-bs-theme="dark"] .mode-toggle .toggle #dark-mode:before {
 html[data-bs-theme="dark"] fieldset > legend {
 	background-color: var(--bs-body-bg);
 }
+/* Board pin table: keep the pin name and its clear button side by side,
+   vertically centered in the name cell. */
+.pin-name-cell {
+	vertical-align: middle;
+}
+
+.pin-name-cell .pin-clear-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	vertical-align: middle;
+	line-height: 1;
+	padding: 0.15rem 0.35rem;
+	margin-left: 0.35rem;
+}

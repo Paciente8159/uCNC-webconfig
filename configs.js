@@ -10,15 +10,24 @@ function getPIOContent() {
 getPIOContent();
 
 window.resetPins = function (scope) {
+	const state = scope.$root.app_state;
 	const pins = scope.$root.app_options.UCNCPINS;
 	const pindefs = ['_BIT', '_PORT', '_ISR', '_PULLUP', '_ADC', '_CHANNEL', '_MUX', '_TIMER', '_IO_OFFSET']
+	let count = 0;
 	for (let i = 0; i < pins.length; i++) {
 		for (let j = 0; j < pindefs.length; j++) {
-			if (scope.$root.app_state[pins[i].pin + pindefs[j]])
-				scope.$root.app_state[pins[i].pin + pindefs[j]] = "";
+			const key = pins[i].pin + pindefs[j];
+			if (state[key] !== undefined) {
+				state[key] = '';
+				count++;
+			}
 		}
 	}
-	scope.$root.app_state['CUSTOM_BOARDMAP_CONFIGS'] = '';
+	if (state['CUSTOM_BOARDMAP_CONFIGS'] !== undefined) {
+		state['CUSTOM_BOARDMAP_CONFIGS'] = '';
+		count++;
+	}
+	return count;
 }
 
 // Processes a conditional block starting with a "#if" line.
@@ -828,7 +837,13 @@ window.loadConfigFile = async function (scope, event) {
 	startLoadAnimation();
 
 	reader.onload = function (e) {
-		scope.$root.app_state = JSON.parse(e.target.result);
+		const result = window.ucncfoundation.applyJsonConfig(e.target.result);
+		if (result && !result.ok) {
+			window.alert(result.message);
+			endLoadAnimation();
+			return;
+		}
+		window.ucncfoundation.refresh();
 		scope.$nextTick();
 		scope.$forceUpdate();
 		endLoadAnimation();
@@ -849,7 +864,7 @@ window.loadGenerateConfig = async function (scope, event) {
 	zip.file('platformio.ini', generatePIOOverrides(scope.$root));
 
 
-	zip.file('ucnc_build.json', JSON.stringify(scope.$root.app_state));
+	zip.file('ucnc_build.json', JSON.stringify(window.ucncfoundation.buildSnapshot()));
 
 	// Generate the zip file asynchronously
 	zip.generateAsync({ type: "blob" }).then(function (content) {
