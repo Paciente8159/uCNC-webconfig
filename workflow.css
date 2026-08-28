@@ -113,6 +113,32 @@ div#app, header, main {
 	min-height: 44px;
 }
 
+.notification-btn {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	padding: 0;
+}
+
+.notification-icon {
+	font-size: 1.1rem;
+	line-height: 1;
+}
+
+.notification-dot {
+	position: absolute;
+	top: 6px;
+	right: 7px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: #dc3545;
+	border: 2px solid #fff;
+	box-shadow: 0 0 0 1px rgba(220, 53, 69, 0.3);
+}
+
 .workflow-layout {
 	display: grid;
 	grid-template-columns: 230px minmax(0, 1fr) 280px;
@@ -152,8 +178,9 @@ div#app, header, main {
 /* Step rail -------------------------------------------------------------------------- */
 
 .workflow-nav {
+	background: var(--ucnc-bg);
 	position: sticky;
-	top: 1rem;
+	top: 0rem;
 }
 
 .workflow-nav .nav {

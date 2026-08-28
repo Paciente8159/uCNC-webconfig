@@ -435,6 +435,14 @@ window.MessageComponent = {
 	},
 	mounted() {
 		this.convertSlotContent();
+		if (this.showCondition) this.showToast();
+	},
+	watch: {
+		showCondition() {
+			if (this.showCondition) {
+				this.$nextTick(() => this.showToast());
+			}
+		},
 	},
 	computed: {
 		showCondition() {
@@ -465,7 +473,8 @@ window.MessageComponent = {
 			});
 			converter.setOption('simpleLineBreaks', true);
 			this.convertedContent = converter.makeHtml(rawText); // Convert Markdown to HTML
-
+		},
+		showToast() {
 			const toast = new bootstrap.Toast(this.$el, {
 				delay: 5000,
 			});
