@@ -190,7 +190,7 @@
 			</section>
 			<aside class="workflow-summary" aria-label="Configuration summary">
 				<h3>Configuration status</h3>
-				<div class="summary-status" :class="statusClass" role="status">
+				<div class="summary-status clickable" :class="statusClass" role="button" tabindex="0" @click="goStep('review')" @keydown.enter="goStep('review')" title="Go to Review & Export">
 					<span aria-hidden="true">{{ statusIcon }}</span> {{ statusLabel }}
 				</div>
 				<dl class="summary-list">

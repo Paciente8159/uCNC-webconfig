@@ -319,6 +319,15 @@ fieldset {
 	font-size: 0.9rem;
 }
 
+.summary-status.clickable {
+	cursor: pointer;
+	transition: filter 0.15s ease;
+}
+
+.summary-status.clickable:hover {
+	filter: brightness(0.95);
+}
+
 .summary-status.ready {
 	background: var(--ucnc-green-soft);
 	color: var(--ucnc-green);
