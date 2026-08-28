@@ -27,15 +27,16 @@ directory is generated output, currently not committed. Tests: currently 18 (7 c
 ## UI shell (new-ui.md implementation)
 
 The app has been restructured from firmware-oriented `tabgroup/tab` components into a **workflow
-shell** (`index.html` + `style.css` + `workflow.css`) with 7 step panels (Machine, Board & MCU, Pins,
-Features, Custom, Review & Export, Files) driven by
+shell** (`index.html` + `style.css` + `workflow.css`) with 8 step panels (Machine, Board & MCU, Pins,
+Tools, Modules, Custom, Review & Export, Files) driven by
 `v-show="app_state.__WORKFLOW_STEP==='<step>'"`. **All step panels stay mounted and behind `v-show`,
 never `v-if`, so the generation DOM queries in `configs.js` still find every field.** The five core
-tab bodies were moved verbatim into panels 1-4 and 6; the Config-files card went into panel 7 and
-Review & Export (panel 5) is new.
+tab bodies were moved verbatim into panels 1-4 and 6; the Config-files card went into panel 8 and
+Review & Export (panel 6) is new. The former Features panel was split into separate Tools and Modules
+panels.
 
 The shell is a three-column grid (`.workflow-layout`): a left step rail (`.workflow-nav`), the
-workspace (`.workflow-workspace`) holding the 7 mounted panels plus Back/Continue controls, and a
+workspace (`.workflow-workspace`) holding the 8 mounted panels plus Back/Continue controls, and a
 sticky summary sidebar (`.workflow-summary`). The header (`.app-header`) shows the product name, a
 firmware version button that jumps to the Machine step, and Load/Save/Theme actions. Panels are plain
 `<section class="workflow-panel" data-workflow-panel="<step>" v-show=...>` elements in index.html; the
