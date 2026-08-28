@@ -170,20 +170,34 @@
 					<div class="review-section">
 						<h3>Download</h3>
 						<ul class="download-list">
+							<li><span>µCNC source code matching {{ versionLabel }}</span>
+								<a class="btn btn-primary" target="_blank" :href="app_options.VERSIONS.filter(y => y.tag === app_state.VERSION).map(x => x.src)[0]">Download source code</a></li>
 							<li><span>Boardmap and HAL overrides, reset files, platformio.ini and the editable JSON configuration</span>
 								<button type="button" class="btn btn-success" @click="downloadZip">Download configuration ZIP</button></li>
 							<li><span>Editable configuration only</span>
 								<button type="button" class="btn btn-outline-primary" @click="saveConfig">Download JSON</button></li>
 						</ul>
 					</div>
+					<div class="review-section">
+						<h3>Copy generated files</h3>
+						<p class="text-muted">Copy the content of the generated files to the clipboard and replace the content of your files.</p>
+						<div class="d-flex flex-wrap d-gap-10">
+							<inputctrl type="button" label="boardmap_reset.h" customclass="btn btn-light btn-sm"
+								clickcb="window.copyBoardmapReset"></inputctrl>
+							<inputctrl type="button" label="boardmap_overrides.h" customclass="btn btn-light btn-sm"
+								clickcb="window.copyBoardmapOverride"></inputctrl>
+							<inputctrl type="button" label="cnc_hal_reset.h" customclass="btn btn-light btn-sm"
+								clickcb="window.copyHalReset"></inputctrl>
+							<inputctrl type="button" label="cnc_hal_overrides.h" customclass="btn btn-light btn-sm"
+								clickcb="window.copyHalOverride"></inputctrl>
+							<inputctrl type="button" label="platformio.ini" customclass="btn btn-light btn-sm"
+								clickcb="window.copyPioOverride"></inputctrl>
+						</div>
+					</div>
 				</section>
-				<section class="workflow-panel" data-workflow-panel="files" v-show="app_state.__WORKFLOW_STEP === 'files'">
-									<div class="card">						<div class="center-content card-header">							<img class="card-img-top logo" src="logo.png" alt="µCNC logo">							<h4 class="card-title">Config µCNC</h4>							<p class="card-text"><i>To build your custom version of µCNC follow these steps:</i></p>						</div>						<div class="card-body">							<combobox name="TOOLCHAIN" :opts="[					{id:'pio', value:'VSCode / PlatformIO'},					{id:'other', value:'Arduino IDE or makefiles'}					]" label="How will you build your code?" initial="pio"></combobox>							<ul>								<li>									<p><strong>Step1:</strong> Download the source code</p>									<a class="btn btn-primary" target="_blank" 									:href="app_options.VERSIONS.filter(y => y.tag === app_state.VERSION).map(x => x.src)[0]">										Download source code									</a>								</li>								<li v-if="app_state.TOOLCHAIN!='pio'">									<p><strong>Step1 (part 2):</strong> Download the addon modules code</p>									<p>After downloading the source code extract only the modules you are going to use										to										uCNC/src/modules/										project directory</p>									<a class="btn btn-primary" target="_blank" 									:href="app_options.VERSIONS.filter(y => y.tag === app_state.VERSION).map(x => x.src)[0]">										Download modules source code									</a>								</li>								<li>									<p><strong>Step2:</strong> Download the configuration files</p>									<p>After downloading the configuration files extract them to the project root										directory (this will										replace some existing files)										project directory</p>									<inputctrl type="button" label="Download the configuration files" 									customclass="btn btn-primary" clickcb="window.loadGenerateConfig"></inputctrl>									<!-- <button class="btn btn-primary" 							id="config_files">								Download the configuration files							</button> -->								</li>								<p><strong>Other actions</strong></p>								<p>You can click these buttons to copy the content of the generated files to the									clipboard replace the									content of your files.</p>								<div class="d-flex flex-wrap d-gap-10">									<inputctrl type="button" label="boardmap_reset.h" customclass="btn btn-light" 									clickcb="window.copyBoardmapReset"></inputctrl>									<inputctrl type="button" label="boardmap_overrides.h" customclass="btn btn-light" 									clickcb="window.copyBoardmapOverride"></inputctrl>									<inputctrl type="button" label="cnc_hal_reset.h" customclass="btn btn-light" 									clickcb="window.copyHalReset"></inputctrl>									<inputctrl type="button" label="cnc_hal_overrides.h" customclass="btn btn-light" 									clickcb="window.copyHalOverride"></inputctrl>									<inputctrl type="button" label="platformio.ini" customclass="btn btn-light" 									clickcb="window.copyPioOverride"></inputctrl>								</div>								<!-- <message hiden="true" name="copied-to-clipboard" label="Copied to clipboard" labelcolor="darkgreen" alerttype="sucess">The code was copied to clipboard</message> -->								</li>							</ul>						</div>					</div>
-				</section>
 
 
-
-				<div class="mobile-step-actions">
+									<div class="mobile-step-actions">
 					<button type="button" class="btn btn-outline-secondary" :disabled="app_state.__WORKFLOW_INDEX === 0" @click="goPrev">Back</button>
 					<button type="button" class="btn btn-success" :disabled="app_state.__WORKFLOW_INDEX >= workflowSteps.length - 1" @click="goNext">Continue</button>
 				</div>
@@ -263,8 +277,7 @@
 			{ id: 'tools', label: 'Tools' },
 			{ id: 'modules', label: 'Modules' },
 			{ id: 'custom', label: 'Custom' },
-			{ id: 'review', label: 'Review & Export' },
-			{ id: 'files', label: 'Files' }
+			{ id: 'review', label: 'Review & Export' }
 		];
 
 		const ucncfoundation = window.UiFoundation.initUiFoundation(window.app_vars, {});

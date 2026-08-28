@@ -9,9 +9,9 @@ const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 
 test('index.html keeps every firmware field mounted inside workflow panels', () => {
 	const panels = html.match(/data-workflow-panel="([a-z0-9-]+)"/g) || [];
-	assert.ok(panels.length >= 8, `expected at least 8 workflow panels, got ${panels.length}`);
+	assert.ok(panels.length >= 7, `expected at least 7 workflow panels, got ${panels.length}`);
 
-	const workflowSteps = ['machine', 'board-mcu', 'pins', 'tools', 'modules', 'custom', 'review', 'files'];
+	const workflowSteps = ['machine', 'board-mcu', 'pins', 'tools', 'modules', 'custom', 'review'];
 	for (const step of workflowSteps) {
 		assert.ok(html.includes(`data-workflow-panel="${step}"`), `missing panel ${step}`);
 	}
@@ -26,7 +26,7 @@ test('index.html hides workflow panels with v-show, keeping fields mounted', () 
 	const panelVIf = html.match(/v-if="[^"]*__WORKFLOW_STEP[^"]*"/g) || [];
 	assert.equal(panelVIf.length, 0, 'workflow panels must stay mounted via v-show, not v-if');
 	const panelVShow = html.match(/v-show="app_state.__WORKFLOW_STEP === '[a-z0-9-]+'"/g) || [];
-	assert.equal(panelVShow.length, 8, 'each workflow panel must be hidden with v-show');
+	assert.equal(panelVShow.length, 7, 'each workflow panel must be hidden with v-show');
 });
 
 test('index.html wires the workflow shell and ui_foundation', () => {
