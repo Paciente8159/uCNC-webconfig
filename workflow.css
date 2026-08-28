@@ -259,6 +259,10 @@ div#app, header, main {
 	margin-bottom: 1rem;
 }
 
+fieldset {
+	margin-top: 2rem !important;
+}
+
 .workflow-heading {
 	display: flex;
 	align-items: center;
@@ -268,7 +272,6 @@ div#app, header, main {
 	margin-bottom: 1rem;
 	padding-bottom: 0.75rem;
 	border-bottom: 2px solid var(--ucnc-green);
-	margin-bottom: 1.5rem;
 }
 
 .workflow-heading h2 {
