@@ -429,6 +429,41 @@
 			return keys.length;
 		}
 
+		function resetPins() {
+			var state = rootScope.app_state;
+			var pins = (rootScope.app_options.UCNCPINS || []).map(function (item) { return item.pin; });
+			var suffixes = ['_BIT', '_PORT', '_ISR', '_PULLUP', '_ADC', '_CHANNEL', '_MUX', '_TIMER', '_IO_OFFSET'];
+			var count = 0;
+			for (var i = 0; i < pins.length; i++) {
+				for (var j = 0; j < suffixes.length; j++) {
+					var key = pins[i] + suffixes[j];
+					if (state[key] !== undefined) {
+						state[key] = '';
+						count++;
+					}
+				}
+			}
+			if (state.CUSTOM_BOARDMAP_CONFIGS !== undefined) {
+				state.CUSTOM_BOARDMAP_CONFIGS = '';
+				count++;
+			}
+			return count;
+		}
+
+		function resetPin(pin) {
+			var state = rootScope.app_state;
+			var suffixes = ['_BIT', '_PORT', '_ISR', '_PULLUP', '_ADC', '_CHANNEL', '_MUX', '_TIMER', '_IO_OFFSET'];
+			var count = 0;
+			for (var j = 0; j < suffixes.length; j++) {
+				var key = pin + suffixes[j];
+				if (state[key] !== undefined) {
+					state[key] = '';
+					count++;
+				}
+			}
+			return count;
+		}
+
 		function goStep(stepId, steps) {
 			var valid = (steps || []).some(function (s) { return s.id === stepId; });
 			if (!valid) return false;
@@ -514,9 +549,11 @@
 			refresh: refresh,
 			resetAllModified: resetAllModified,
 			resetKey: resetKey,
+			resetPins: resetPins,
 			restoreDraft: restoreDraft,
 			resumeStep: resumeStep,
 			runValidation: runValidation,
+			resetPin: resetPin,
 			saveCompleteSnapshot: saveCompleteSnapshot,
 			setVisibility: setVisibility,
 			summarizeFindings: summarizeFindings,

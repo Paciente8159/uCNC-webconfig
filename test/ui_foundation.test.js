@@ -343,3 +343,62 @@ test('refresh feeds reactive keys used by the shell', () => {
 	assert.equal(typeof scope.app_state.__VALIDATION_STATUS, 'string');
 	assert.ok(Array.isArray(scope.app_state.__VALIDATION));
 });
+
+test('resetPins clears every pin definition field, including falsy values', () => {
+	const context = createContext();
+	loadUiFoundation(context);
+	const scope = makeRootScope();
+	// Seed every pin field the way the mounted components do, mixing numeric 0,
+	// false booleans, and populated values so falsy entries are not skipped.
+	const suffixes = ['_BIT', '_PORT', '_ISR', '_PULLUP', '_ADC', '_CHANNEL', '_MUX', '_TIMER', '_IO_OFFSET'];
+	const pins = scope.app_options.UCNCPINS.map(item => item.pin);
+	pins.forEach((pin, i) => {
+		suffixes.forEach((suffix, j) => {
+			if ((i === 0 && j === 0) || (i === 3 && j === 2)) scope.app_state[pin + suffix] = 0;
+			else if ((i === 0 && j === 2) || (i === 2 && j === 3)) scope.app_state[pin + suffix] = false;
+			else scope.app_state[pin + suffix] = '' + i + j;
+		});
+	});
+	scope.app_state.STEP0_BIT = 0;
+	scope.app_state.STEP0_ISR = false;
+	scope.app_state.CUSTOM_BOARDMAP_CONFIGS = '#define EXTRA 1';
+	const api = context.window.UiFoundation.initUiFoundation(scope, {});
+	const count = api.resetPins();
+
+	assert.equal(count, 4 * suffixes.length + 1);
+	const leftover = Object.keys(scope.app_state).filter(key =>
+		pins.some(pin => key.startsWith(pin + '_')) || key === 'CUSTOM_BOARDMAP_CONFIGS'
+	).filter(key => scope.app_state[key] !== '');
+	assert.deepEqual(leftover, [], 'every existing pin field must be reset to an empty string');
+	assert.equal(scope.app_state.STEP0_BIT, '');
+	assert.equal(scope.app_state.STEP0_ISR, '');
+	assert.equal(scope.app_state.LIMIT_X_PULLUP, '');
+	assert.equal(scope.app_state.CUSTOM_BOARDMAP_CONFIGS, '');
+});
+
+test('resetPin clears only the definitions of the given pin, including falsy values', () => {
+	const context = createContext();
+	loadUiFoundation(context);
+	const scope = makeRootScope();
+	const suffixes = ['_BIT', '_PORT', '_ISR', '_PULLUP', '_ADC', '_CHANNEL', '_MUX', '_TIMER', '_IO_OFFSET'];
+	scope.app_options.UCNCPINS.forEach(item => {
+		suffixes.forEach(suffix => { scope.app_state[item.pin + suffix] = 1; });
+	});
+	scope.app_state.STEP0_BIT = 0;
+	scope.app_state.STEP0_ISR = false;
+	scope.app_state.LIMIT_X_PULLUP = false;
+	scope.app_state.CUSTOM_BOARDMAP_CONFIGS = '#define EXTRA 1';
+	const api = context.window.UiFoundation.initUiFoundation(scope, {});
+
+	assert.equal(api.resetPin('STEP0'), suffixes.length);
+	assert.equal(api.resetPin('LIMIT_X'), suffixes.length);
+	suffixes.forEach(suffix => {
+		assert.equal(scope.app_state['STEP0' + suffix], '');
+		assert.equal(scope.app_state['LIMIT_X' + suffix], '');
+		// Unrelated pins keep their values.
+		assert.equal(scope.app_state['DIR0' + suffix], 1);
+		assert.equal(scope.app_state['PROBE' + suffix], 1);
+	});
+	// The custom boardmap block is not touched by the per-pin reset.
+	assert.equal(scope.app_state.CUSTOM_BOARDMAP_CONFIGS, '#define EXTRA 1');
+});

@@ -51,6 +51,15 @@ test('index.html review step offers download, reset and findings', () => {
 	assert.ok(html.includes('window.loadGenerateConfig'), 'ZIP download uses the existing generator');
 });
 
+test('index.html board-mcu panel has a full-clear button and per-pin bin buttons', () => {
+	const panel = html.match(/data-workflow-panel="board-mcu"[\s\S]*?<\/section>/)[0];
+	assert.ok(panel.includes('Clear all pin definitions'), 'board-mcu offers the full pin clear button');
+	assert.ok(panel.includes('resetPins'), 'full clear button is wired');
+	assert.ok(panel.includes('resetPin(rowitem.pin)'), 'per-pin clear buttons are wired');
+	const binButtons = panel.match(/class="[^"]*pin-clear-btn[^"]*"/g) || [];
+	assert.ok(binButtons.length >= 7, `expected a bin button per pin table, got ${binButtons.length}`);
+});
+
 test('index.html header exposes version, Load, Save and Theme controls', () => {
 	assert.ok(html.includes('header-version'), 'header holds the firmware version selector');
 	assert.ok(html.includes('loadConfig'), 'header Load action');
