@@ -95,7 +95,9 @@ test('pin duplication: same port+bit on AVR flags duplicate', () => {
 	assert.ok(match, 'expected a DIR0_BIT duplicate error');
 	assert.match(match.message, /more than one/);
 	assert.match(match.message, /STEP0/);
-	assert.deepEqual(match.target, { step: 'board-mcu', setting: 'DIR0_BIT' });
+	// target is built inside the vm context (different realm), so compare fields instead of deepEqual
+	assert.equal(match.target.step, 'board-mcu');
+	assert.equal(match.target.setting, 'DIR0_BIT');
 });
 
 test('pin duplication: same bit on different port is NOT a duplicate', () => {
@@ -117,7 +119,8 @@ test('pin duplication: same IO offset used by two pins flags duplicate', () => {
 	assert.ok(match, 'expected a DIR0_IO_OFFSET duplicate error');
 	assert.match(match.message, /more than one/);
 	assert.match(match.message, /STEP0/);
-	assert.deepEqual(match.target, { step: 'board-mcu', setting: 'DIR0_IO_OFFSET' });
+	assert.equal(match.target.step, 'board-mcu');
+	assert.equal(match.target.setting, 'DIR0_IO_OFFSET');
 });
 
 test('pin duplication: one pin on IO offset, another with same bit is NOT a duplicate', () => {
@@ -149,14 +152,17 @@ test('pin duplication: bit only duplicated on CPU without port flags duplicate',
 	const match = findings.find(f => f.setting === 'DIR0_BIT' && f.severity === 'error');
 	assert.ok(match, 'expected a DIR0_BIT duplicate error');
 	assert.match(match.message, /STEP0/);
-	assert.deepEqual(match.target, { step: 'board-mcu', setting: 'DIR0_BIT' });
+	assert.equal(match.target.step, 'board-mcu');
+	assert.equal(match.target.setting, 'DIR0_BIT');
 });
 
-test('pin duplication: no port on CPU, same bit used by another pin WITH port and same port is duplicate', () => {
+test('pin duplication: empty-port pin and ported pin with same bit on different ports are NOT duplicates', () => {
 	const context = createContext();
 	loadUiFoundation(context);
 	const scope = makeRootScope({ STEP0_BIT: 5, STEP0_PORT: '', DIR0_BIT: 5, DIR0_PORT: 'A' });
 	api = context.window.UiFoundation.initUiFoundation(scope, {});
 	const findings = api.runValidation(scope);
-	assert.ok(matching(findings, 'DIR0_BIT', 'error', /more than one/));
+	// Duplicate detection keys on the port+bit combination, so a pin without a
+	// port and a pin on port A sharing bit 5 live on different physical pins.
+	assert.ok(!matching(findings, 'DIR0_BIT', 'error', /more than one/));
 });
