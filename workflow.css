@@ -163,10 +163,6 @@ div#app, header, main {
 	.workflow-nav {
 		overflow-x: auto;
 	}
-	.workflow-nav .nav {
-		flex-wrap: nowrap;
-		min-width: max-content;
-	}
 	.mobile-step-actions {
 		display: flex !important;
 	}
@@ -181,6 +177,7 @@ div#app, header, main {
 	background: var(--ucnc-bg);
 	position: sticky;
 	top: 0rem;
+	z-index: 9;
 }
 
 .workflow-nav .nav {
@@ -563,4 +560,72 @@ div#app, header, main {
 
 [data-bs-theme="dark"] fieldset > legend {
 	background-color: var(--bs-body-bg);
+}
+
+/* Mobile step rail (timeline) -------------------------------------------------------- */
+
+.workflow-nav-current {
+	display: none;
+}
+
+@media (max-width: 767px) {
+	.workflow-nav-current {
+		display: block;
+		text-align: center;
+		font-weight: 600;
+		font-size: 0.95rem;
+		margin-top: 0.75rem;
+	}
+	.workflow-nav .nav {
+		flex-direction: row;
+		flex-wrap: nowrap;
+		min-width: max-content;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0;
+		margin: 0 auto;
+		padding: 0.75rem 0 0.5rem;
+		position: relative;
+	}
+	.workflow-nav .nav::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 13px;
+		right: 13px;
+		height: 2px;
+		transform: translateY(-50%);
+		background: var(--ucnc-border);
+	}
+	.workflow-nav .nav-item {
+		flex: 0 0 auto;
+		position: relative;
+		display: flex;
+		justify-content: center;
+		z-index: 1;
+	}
+	.workflow-nav .nav-link {
+		padding: 0;
+		border: 0;
+		background: transparent;
+	}
+	.workflow-nav .nav-link.active {
+		background: transparent;
+		color: var(--ucnc-ink);
+	}
+	.workflow-nav .nav-link.active .step-dot {
+		background: var(--ucnc-green);
+		color: #fff;
+		box-shadow: 0 0 0 3px var(--ucnc-bg), 0 0 0 5px var(--ucnc-green-soft);
+	}
+	.workflow-nav .nav-link.complete:not(.active) .step-dot {
+		background: var(--ucnc-green);
+	}
+	.workflow-nav .nav-link:hover {
+		background: transparent;
+	}
+	.workflow-nav .nav-link .step-label,
+	.workflow-nav .nav-link .step-badge {
+		display: none;
+	}
 }

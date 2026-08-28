@@ -90,6 +90,7 @@
 		</div>
 		<div class="workflow-layout">
 			<nav class="workflow-nav" aria-label="Configuration steps">
+				<div class="workflow-nav-current">{{ currentStepLabel }}</div>
 				<ul class="nav">
 					<li class="nav-item" v-for="(step, index) in workflowSteps" :key="step.id">
 						<button type="button" class="nav-link" :class="{ active: app_state.__WORKFLOW_STEP === step.id, complete: app_state.__WORKFLOW_STEP !== step.id && index < app_state.__WORKFLOW_INDEX }"
