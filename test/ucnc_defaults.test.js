@@ -10,15 +10,15 @@ test('uses a compiler manifest before the browser fallback', async () => {
 		return {
 			ok: true,
 			json: async () => ({
-				metadata: { requestedRef: 'v1.16.6', commit: 'abc123' },
+				metadata: { requestedRef: 'v1.17.0', commit: 'abc123' },
 				boards: { 'src/board.h': { macros: { PIN: '4' }, boardMacros: { PIN: '4' } } },
 			}),
 		};
 	};
-	const result = await defaults.loadBoardDefaults({ ref: 'v1.16.6', board: 'src/board.h', mcuPath: 'src/mcu.h', fetchImpl });
+	const result = await defaults.loadBoardDefaults({ ref: 'v1.17.0', board: 'src/board.h', mcuPath: 'src/mcu.h', fetchImpl });
 	assert.equal(result.source, 'manifest');
 	assert.equal(result.macros.PIN, '4');
-	assert.deepEqual(requests, ['./manifests/v1.16.6/defaults.json']);
+	assert.deepEqual(requests, ['./manifests/v1.17.0/defaults.json']);
 });
 
 test('falls back to raw headers for an arbitrary old branch', async () => {

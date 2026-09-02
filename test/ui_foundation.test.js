@@ -54,7 +54,7 @@ function makeRootScope(overrides) {
 			KINEMATIC: { type: '', nullable: false, file: 'hal' },
 		},
 		app_options: {
-			VERSIONS: [{ id: 'master', tag: 99999 }, { id: 'v1.16.6', tag: 11606 }],
+			VERSIONS: [{ id: 'master', tag: 99999 }, { id: 'v1.17.0', tag: 11700 }],
 			KINEMATICS: [
 				{ id: 'KINEMATIC_CARTESIAN', name: 'Cartesian', version: 0 },
 				{ id: 'KINEMATIC_COREXY', name: 'Core XY', version: 0 },

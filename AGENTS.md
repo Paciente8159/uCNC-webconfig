@@ -108,7 +108,7 @@ ucnc_defaults.js → ui_foundation.js → configs.js → inline Vue bootstrap
 **State (the "vuex-less" store):** everything lives in `window.app_vars` (`options.js`), made
 reactive via `reactive()` in the inline bootstrap:
 - `app_state` - every selected value, keyed by firmware macro name (e.g. `app_state.STEP0_BIT`).
-  `VERSION`, `MCU`, `BOARD` are encoded as integers/flags (e.g. `VERSION === 11606` for v1.16.6).
+  `VERSION`, `MCU`, `BOARD` are encoded as integers/flags (e.g. `VERSION === 11700` for v1.17.0).
 - `app_fields` - per-key metadata `{ type: 'bool'|'int'|'float'|'string', nullable, file }`.
 - `app_options` - hardcoded lookup tables: `VERSIONS` (firmware refs + zip URLs), `BOARDS`
   (paths relative to the uCNC repo), `MCUS`, `MODULES_OPTIONS`, `TOOL_OPTIONS`, `UCNCPINS`, etc.
@@ -171,7 +171,7 @@ drives PIO generation (deps, lib_deps, build_flags) but is not auto-validated at
 
 ## Key gotchas
 
-- **Version conditions:** firmware versions are encoded as integers (v1.16.6 = `11606`), and
+- **Version conditions:** firmware versions are encoded as integers (v1.17.0 = `11700`), and
   `MODULES_OPTIONS` entries carry `condition: 'VERSION>011680'` strings that are only used to
   filter `platformio.ini` entry lists, not to gate the module in the UI. "VERSION" appears as
   `app_state.VERSION` (numeric) but `options.js` initializes it to `99999` (master).
