@@ -60,6 +60,21 @@ test('index.html board-mcu panel has a full-clear button and per-pin bin buttons
 	assert.ok(binButtons.length >= 7, `expected a bin button per pin table, got ${binButtons.length}`);
 });
 
+test('encoder configuration exposes every firmware encoder type and its inputs', () => {
+	const options = fs.readFileSync(path.join(ROOT, 'options.js'), 'utf8');
+	for (const type of ['ENC_TYPE_PULSE', 'ENC_TYPE_I2C', 'ENC_TYPE_SSI', 'ENC_TYPE_CUSTOM']) {
+		assert.ok(options.includes(type), `missing encoder type ${type}`);
+	}
+	assert.ok(html.includes("item.id+'_TYPE'"), 'each encoder has a type selector');
+	assert.ok(html.includes("item.id+'_FREQ'"), 'serial encoders have a bus frequency override');
+	assert.ok(html.includes('I²C SCL pin'), 'I²C pin roles are labelled');
+	assert.ok(html.includes('SSI clock pin'), 'SSI pin roles are labelled');
+	for (const type of ['ENC_TYPE_PULSE', 'ENC_TYPE_I2C', 'ENC_TYPE_SSI']) {
+		assert.ok(html.includes(`v-if="app_state[item.id+'_TYPE']==='${type}'"`), `${type} controls use reactive Vue visibility`);
+	}
+	assert.ok(!html.includes(":if=\"'app_state.'+item.id+'_TYPE"), 'encoder visibility does not use generated condition strings');
+});
+
 test('index.html header exposes version, Load, Save and Theme controls', () => {
 	assert.ok(html.includes('header-version'), 'header holds the firmware version selector');
 	assert.ok(html.includes('loadConfig'), 'header Load action');

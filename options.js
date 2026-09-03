@@ -625,6 +625,12 @@ window.app_vars = {
 			{ id: 'ENC6', enccount: 6 },
 			{ id: 'ENC7', enccount: 7 }
 		],
+		ENCODER_TYPES: [
+			{ id: 'ENC_TYPE_PULSE', name: 'Pulse / direction' },
+			{ id: 'ENC_TYPE_I2C', name: 'I²C absolute (MT6701)' },
+			{ id: 'ENC_TYPE_SSI', name: 'SSI absolute (MT6701)' },
+			{ id: 'ENC_TYPE_CUSTOM', name: 'Custom read callback' }
+		],
 		STEP_ENCODERS: [
 			{ id: 'STEP0_ENCODER' },
 			{ id: 'STEP1_ENCODER' },
