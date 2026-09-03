@@ -688,6 +688,7 @@ window.app_vars = {
 			{ id: 'single_axis_homing', name: 'Adds single axis homing commands ($H<axis_letter> for example $HX)', condition: 'VERSION>010800' },
 			// { id: 'lvgl_support', name: 'LVGL system menu emulating Win95 for the tft_display module.', condition: 'VERSION>010990', lib_deps: 'lvgl/lvgl@^9.1.0', build_flags: '-DLV_CONF_PATH="${platformio.include_dir}/src/modules/lvgl_support/lv_conf.h"' },
 			{ id: 'atc', name: 'Adds ATC (automatic tool changer) scripts that run on each tool change. (requires at least v1.15.0 to work)', condition: 'VERSION>011479' },
+			{ id: 'wiznet_eth', name: 'Adds Wiznet W5xxx Ethernet support. (requires at least v1.17.0 to work)', condition: 'VERSION>011699' },
 		],
 		STEPPERS: [
 			{ id: '0' },
