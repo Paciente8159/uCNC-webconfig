@@ -169,6 +169,17 @@
 										tooltip="Optional bus frequency override. Blank uses the firmware default of 15000000 Hz.">
 										</textfield>
 									</div>
+									<div v-if="app_state[item.id+'_TYPE']!=='ENC_TYPE_PULSE'">
+										<toggle :name="item.id+'_IS_INCREMENTAL'"
+										:label="'Encoder '+item.enccount+' returns incremental positions'" configfile="hal"
+										tooltip="Treat each read as an incremental position and accumulate the difference between reads.">
+										</toggle>
+										<toggle :name="item.id+'_NO_WRAP_CORRECTION'"
+										:label="'Disable encoder '+item.enccount+' wrap correction'" configfile="hal"
+										v-if="app_state[item.id+'_IS_INCREMENTAL']"
+										tooltip="Disable wrap-around correction when calculating incremental position differences.">
+										</toggle>
+									</div>
 								</template>
 							</repeater>							<toggle name="ASSIGN_ENCODERS" label="Assign step encoders" if="app_state.ENCODERS>0" 							tooltip="Assign the pulse directional encoder to a stepper motors. The position returned by the status position will be the actual encoder position and not the step pulse position that is kept by the step interpolator.">							</toggle>							<repeater label="Encoders assignment" :opts="app_options.STEP_ENCODERS" valname="id" 							if="app_state.ASSIGN_ENCODERS">								<template #default="{item}">									<combobox :name="item.id" :label="item.id +' assignment'" 									:opts="app_options.ENCODER_LIST" valname="id" configfile="hal" nullable										tooltip="You can assing the encoder to a specific stepper. For example you can map encoder 0 to stepper 2.">									</combobox>								</template>							</repeater>							<toggle name="ENABLE_ENCODER_RPM" label="Assign RPM encoder" if="app_state.ENCODERS>0 && !(app_state.VERSION>11500)" 							configfile="hal" tooltip="Allow using one of the encoders as the tool RPM counter.">							</toggle>							<controlgroup if="app_state.ENABLE_ENCODER_RPM && !(app_state.VERSION>11500)" label="RPM encoder settings">								<combobox name="RPM_ENCODER" label="RPM_ENCODER assignment" 								:opts="app_options.ENCODER_LIST" valname="id" configfile="hal" nullable									tooltip="Assign an encoder to the tool RPM counter."></combobox>								<range name="RPM_PPR" label="RPM encoder PPR (pulses per revolution)" configfile="hal" 								min="0" max="10000" step="1" vartype="int"></range>								<pin name="RPM_INDEX_INPUT" label="Select the RPM index pin (360º input)" 								filter="item.type.includes('generic_input')" configfile="hal" 								tooltip="If the encoder has a pin that indicates when a full rotation was done (is at angle 0º). This can be used to improve repeatability in some special applications">								</pin>							</controlgroup>						</accordion-card>
 				</section>
