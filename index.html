@@ -169,6 +169,20 @@
 										tooltip="Optional bus frequency override. Blank uses the firmware default of 15000000 Hz.">
 										</textfield>
 									</div>
+									<div v-if="app_state[item.id+'_TYPE']==='ENC_TYPE_CUSTOM'">
+										<pin :name="item.id+'_PULSE'" :label="'Encoder '+item.enccount+' pulse pin'"
+										filter="item.type.includes('generic_input')" configfile="hal"
+										tooltip="Pulse input for a pulse/direction custom driver encoder.">
+										</pin>
+										<pin :name="item.id+'_DIR'" :label="'Encoder '+item.enccount+' direction pin'"
+										filter="item.type.includes('generic_input')" configfile="hal"
+										tooltip="Direction input. Reuse the pulse pin for an undirectional pulse counter.">
+										</pin>
+										<pin :name="item.id+'_INDEX'" :label="'Encoder '+item.enccount+' index pin (optional)'"
+										filter="item.type.includes('generic_input')" configfile="hal"
+										tooltip="Optional index input for a pulse encoder." if="app_state.VERSION>11500">
+										</pin>
+									</div>
 									<div v-if="app_state[item.id+'_TYPE']!=='ENC_TYPE_PULSE'">
 										<toggle :name="item.id+'_IS_INCREMENTAL'"
 										:label="'Encoder '+item.enccount+' returns incremental positions'" configfile="hal"
