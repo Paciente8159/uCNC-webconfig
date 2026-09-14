@@ -852,6 +852,14 @@ window.loadConfigFile = async function (scope, event) {
 	reader.readAsText(file);
 }
 
+window.assertSockets = async function (scope, event) {
+	scope.$root.app_state.ENABLE_SOCKETS = Array.from(document.querySelectorAll("[socket-control]"))
+		.some(el => {
+			const checkbox = el.querySelector('input[type="checkbox"]');
+			return checkbox && checkbox.checked;
+		});
+}
+
 window.loadGenerateConfig = async function (scope, event) {
 	event.preventDefault = true;
 	const zip = new JSZip();

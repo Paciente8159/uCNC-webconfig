@@ -66,7 +66,8 @@ window.ToggleComponent = {
 		tooltiptitle: { type: String, default: "Info" },
 		tooltip: { type: String, default: "" },
 		nullable: { type: Boolean, default: true },
-		alias: { type: String }
+		alias: { type: String },
+		changecb: { type: String }
 	},
 	computed: {
 		modelValue: {
@@ -117,14 +118,26 @@ window.ToggleComponent = {
 	},
 	mounted() {
 		componentTooltip(this);
+		if (this.changecb) {
+			const asyncFunc = new Function('app_scope', 'target', `return ${this.changecb}(app_scope, target);`);
+			asyncFunc(this, new Event('component_init'));
+		}
 	},
 	updated() {
 		componentTooltip(this);
 	},
+	methods: {
+		async handleChange(event) {
+			if (this.changecb) {
+				const asyncFunc = new Function('app_scope', 'target', `return ${this.changecb}(app_scope, target);`);
+				await asyncFunc(this, event.target.checked);
+			}
+		},
+	},
 	template: `<div class="form-check form-switch" v-if="ifCondition" v-show="showCondition"
 		data-bs-toggle="popover" :data-bs-title="tooltiptitle">
 		<input class="form-check-input" type="checkbox"
-		v-model="modelValue" :id="name" :name="name" :config-file="configfile" :var-type="vartype">
+		v-model="modelValue" :id="name" :name="name" :config-file="configfile" :var-type="vartype" @change="handleChange">
 		<label class="form-check-label" :for="name" v-if="label.length">{{ label }}</label>
 		</div>`
 };

@@ -1,7 +1,7 @@
 window.WiznetETHComponent = {
     template: `
 
-		<toggle name="wiznet_eth" label="Enable Wiznet W5xxx Ethernet module"
+		<toggle socket-control changecb="window.assertSockets" name="wiznet_eth" label="Enable Wiznet W5xxx Ethernet module"
 tooltip="Enables Wiznet W5xxx Ethernet support. This will disable any other networking (Wifi)." configfile="module">
 </toggle>
 
