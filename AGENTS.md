@@ -197,3 +197,16 @@ drives PIO generation (deps, lib_deps, build_flags) but is not auto-validated at
 - `new-ui.md` describes a planned redesign (workflow steps, validation, autosave) that is
   **speculative** - guard against rewriting the current architecture to match it unless explicitly
   asked.
+## Agent skills
+
+### Issue tracker
+
+Issues and specs live as local markdown files under `.scratch/<feature-slug>/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `CONTEXT.md` at the repo root plus `docs/adr/`. See `docs/agents/domain.md`.
