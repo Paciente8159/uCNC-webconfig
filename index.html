@@ -355,6 +355,21 @@
 										tooltip="Assigns the µCNC pin that will perform the shift register data conversion from parallel be readable in series">
 									</pin>
 								</controlgroup>
+								<controlgroup label="IO shifter pins"
+									if="app_state.SHIFT_REGISTER_CUSTOM_CALLBACK && (app_state.IC74HC595_COUNT || app_state.IC74HC165_COUNT) && (app_state.MCU=='MCU_RP2040' || app_state.MCU=='MCU_RP2350') && app_state.VERSION>11700">
+									<pin name="IC74HC595_PIO_CLK_PIN" label="Select the shift clock pin" initial="DOUT9"
+										if="!app_state.SHIFT_REGISTER_USE_HW_SPI && (app_state.IC74HC595_COUNT || app_state.IC74HC165_COUNT)"
+										filter="item.type.includes('generic_output')" configfile="boardmap"
+										tooltip="Assigns the µCNC pin that will perform the shift register clock signal"> </pin>
+									<pin name="IC74HC595_PIO_DATA_PIN" label="Select the data out pin" initial="DOUT8"
+										if="!app_state.SHIFT_REGISTER_USE_HW_SPI && app_state.IC74HC595_COUNT"
+										filter="item.type.includes('generic_output')" configfile="boardmap"
+										tooltip="Assigns the µCNC pin that will perform the shift register data signal"> </pin>
+									<pin name="IC74HC595_PIO_LATCH_PIN" label="Select the output latch pin" initial="DOUT10"
+										if="app_state.IC74HC595_COUNT" filter="item.type.includes('generic_output')"
+										tooltip="Assigns the µCNC pin that will perform the shift register data conversion from serial to parallel">
+									</pin>
+								</controlgroup>
 							</accordion-card> <accordion-card id="special-outputs-config" label="Stepper pins"
 								accordionid="boardmap-config-accordion">
 								<vtable :opts="app_options.UCNCPINS" keyname="pin" valname="pin" filter="item.type.includes('stepper')">
@@ -636,7 +651,8 @@
 										</td>
 									</template> </vtable>
 							</accordion-card> </accordion>
-						<div class="mb-3"> <button type="button" class="btn btn-outline-danger" @click="resetPins">Clear all pin definitions</button> </div>
+						<div class="mb-3"> <button type="button" class="btn btn-outline-danger" @click="resetPins">Clear all pin
+								definitions</button> </div>
 					</section>
 					<section class="workflow-panel" data-workflow-panel="pins" v-show="app_state.__WORKFLOW_STEP === 'pins'">
 						<accordion id="hal-config-accordion"> <accordion-card id="hal-config-pin-isr"
