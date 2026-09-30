@@ -134,7 +134,10 @@
 		// alone on CPUs with no port concept) or by its IO extender offset; the
 		// two namespaces are separate, so a gpio bit and an offset may share a
 		// value without colliding.
-		var pins = (options.UCNCPINS || []).map(function (item) { return item.pin; });
+		var ucncPins = options.UCNCPINS || [];
+		var pins = ucncPins.map(function (item) { return item.pin; });
+		var pinTypes = {};
+		ucncPins.forEach(function (item) { pinTypes[item.pin] = item.type || ''; });
 		var seenOffset = {};
 		// First µCNC pin that claimed each collision key, so a duplicate error
 		// can point at the earlier definition that the user should change.
@@ -148,12 +151,23 @@
 			var hasBit = bit !== '' && bit !== undefined && bit !== null;
 			var hasOffset = offset !== '' && offset !== undefined && offset !== null;
 			if (!hasBit && !hasOffset) continue;
+			if (hasBit && hasOffset) {
+				// A pin is either a hardware gpio pin (BIT/PORT) or an IO extender
+				// pin (IO_OFFSET). The firmware compiles both mappings, so keeping
+				// both silently drops one of the two definitions.
+				push('error', pin + '_IO_OFFSET', 'Pin ' + pin + ' is defined both as a physical pin (' + pin + '_BIT' + (port ? '/' + pin + '_PORT' : '') + ') and as an IO extender offset (' + pin + '_IO_OFFSET). Remove one of the two definitions.', 'board-mcu');
+				continue;
+			}
 			if (hasOffset) {
-				// IO extender pins live in their own namespace: two pins sharing an
-				// offset collide with each other, but never with a gpio port+bit.
-				var offsetKey = 'offset:' + offset;
+				// IO extender pins live in their own namespace, split by direction:
+				// the 74HC595 outputs and the 74HC165 inputs each number their own
+				// daisy-chain from 0, so an output and an input may share an offset
+				// while two pins of the same direction may not. Offsets never
+				// collide with a gpio port+bit.
+				var direction = pinTypes[pin] && pinTypes[pin].indexOf('input') !== -1 ? 'input' : 'output';
+				var offsetKey = 'offset:' + direction + ':' + offset;
 				if (Object.prototype.hasOwnProperty.call(seenOffset, offsetKey)) {
-					push('error', pin + '_IO_OFFSET', 'IO offset ' + offset + ' is assigned to more than one µCNC pin. The first define is in pin ' + seenOffsetOwner[offsetKey] + '.', 'board-mcu');
+					push('error', pin + '_IO_OFFSET', 'IO offset ' + offset + ' is assigned to more than one ' + direction + ' µCNC pin. The first define is in pin ' + seenOffsetOwner[offsetKey] + '.', 'board-mcu');
 				}
 				seenOffset[offsetKey] = true;
 				seenOffsetOwner[offsetKey] = seenOffsetOwner[offsetKey] || pin;

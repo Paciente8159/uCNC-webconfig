@@ -136,11 +136,35 @@ test('pin duplication: one pin on IO offset, another with same bit is NOT a dupl
 test('pin duplication: no port on CPU (bit only) allows same bit as IO offset', () => {
 	const context = createContext();
 	loadUiFoundation(context);
-	const scope = makeRootScope({ STEP0_BIT: 5, DIR0_BIT: 5, DIR0_IO_OFFSET: 5 });
+	const scope = makeRootScope({ STEP0_BIT: 5, DIR0_IO_OFFSET: 5 });
 	api = context.window.UiFoundation.initUiFoundation(scope, {});
 	const findings = api.runValidation(scope);
 	assert.ok(!matching(findings, 'STEP0_BIT', 'error', /more than one/));
 	assert.ok(!matching(findings, 'DIR0_IO_OFFSET', 'error', /more than one/));
+});
+
+test('pin conflict: pin with both a bit and an IO offset flags an error', () => {
+	const context = createContext();
+	loadUiFoundation(context);
+	const scope = makeRootScope({ STEP0_BIT: 5, STEP0_IO_OFFSET: 2 });
+	api = context.window.UiFoundation.initUiFoundation(scope, {});
+	const findings = api.runValidation(scope);
+	const match = findings.find(f => f.setting === 'STEP0_IO_OFFSET' && f.severity === 'error');
+	assert.ok(match, 'expected a STEP0 both-defined error');
+	assert.match(match.message, /both/);
+	assert.equal(match.target.step, 'board-mcu');
+	assert.equal(match.target.setting, 'STEP0_IO_OFFSET');
+});
+
+test('pin conflict: pin with both port+bit and an IO offset flags an error', () => {
+	const context = createContext();
+	loadUiFoundation(context);
+	const scope = makeRootScope({ STEP0_BIT: 5, STEP0_PORT: 'A', STEP0_IO_OFFSET: 2 });
+	api = context.window.UiFoundation.initUiFoundation(scope, {});
+	const findings = api.runValidation(scope);
+	const match = findings.find(f => f.setting === 'STEP0_IO_OFFSET' && f.severity === 'error');
+	assert.ok(match, 'expected a STEP0 both-defined error');
+	assert.match(match.message, /STEP0_PORT/);
 });
 
 test('pin duplication: bit only duplicated on CPU without port flags duplicate', () => {
@@ -154,6 +178,31 @@ test('pin duplication: bit only duplicated on CPU without port flags duplicate',
 	assert.match(match.message, /STEP0/);
 	assert.equal(match.target.step, 'board-mcu');
 	assert.equal(match.target.setting, 'DIR0_BIT');
+});
+
+test('pin duplication: same IO offset on an output and an input pin is NOT a duplicate', () => {
+	const context = createContext();
+	loadUiFoundation(context);
+	// STEP0 is a stepper (74HC595 output chain); LIMIT_X is a control input
+	// (74HC165 input chain). Each chain numbers its offsets from 0, so sharing
+	// offset 0 across directions is valid.
+	const scope = makeRootScope({ STEP0_IO_OFFSET: 0, LIMIT_X_IO_OFFSET: 0 });
+	api = context.window.UiFoundation.initUiFoundation(scope, {});
+	const findings = api.runValidation(scope);
+	assert.ok(!matching(findings, 'LIMIT_X_IO_OFFSET', 'error', /more than one/));
+	assert.ok(!matching(findings, 'STEP0_IO_OFFSET', 'error', /more than one/));
+});
+
+test('pin duplication: same IO offset on two input pins flags duplicate', () => {
+	const context = createContext();
+	loadUiFoundation(context);
+	const scope = makeRootScope({ LIMIT_X_IO_OFFSET: 3, PROBE_IO_OFFSET: 3 });
+	api = context.window.UiFoundation.initUiFoundation(scope, {});
+	const findings = api.runValidation(scope);
+	const match = findings.find(f => f.setting === 'PROBE_IO_OFFSET' && f.severity === 'error');
+	assert.ok(match, 'expected a PROBE_IO_OFFSET duplicate error');
+	assert.match(match.message, /more than one input/);
+	assert.match(match.message, /LIMIT_X/);
 });
 
 test('pin duplication: empty-port pin and ported pin with same bit on different ports are NOT duplicates', () => {
