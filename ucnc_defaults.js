@@ -205,11 +205,14 @@
 		const baselineKeySet = new Set(Object.keys(macros));
 		const PROTECTED_KEYS = new Set(['VERSION', 'MCU', 'BOARD', 'CUSTOM_BOARDMAP_CONFIGS', 'CUSTOM_HAL_CONFIGS']);
 
-		// Phase 0: save user values for keys that exist in the new baseline
+		// Phase 0: save user values for keys that exist in the new baseline.
+		// Empty-string values are the "unset" sentinel written by resetPins and
+		// component defaults — not real user input — so they must never be
+		// restored over the freshly loaded board defaults.
 		const savedUserValues = {};
 		for (const key of previousKeys) {
 			if (PROTECTED_KEYS.has(key)) continue;
-			if (key in state) {
+			if (key in state && state[key] !== '') {
 				if (MACHINE_IDENTITY.has(key)) {
 					// Machine identity always survives
 					savedUserValues[key] = state[key];
@@ -222,7 +225,7 @@
 		// Also capture any non-layer keys (set via UI after defaults loaded) that are in the baseline
 		for (const key of Object.keys(macros)) {
 			if (PROTECTED_KEYS.has(key) || MACHINE_IDENTITY.has(key)) continue;
-			if (!(key in savedUserValues) && key in state) {
+			if (!(key in savedUserValues) && key in state && state[key] !== '') {
 				savedUserValues[key] = state[key];
 			}
 		}

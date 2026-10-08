@@ -195,6 +195,54 @@ test('resetFilter filters custom block defines that collide with baseline', () =
 	assert.equal(scope.app_state.CUSTOM_BOARDMAP_CONFIGS.includes('STAYS'), true);
 });
 
+test('resetFilter does not restore empty-string sentinel over loaded board defaults', () => {
+	// resetPins() and component defaults write '' for unset pins; those must not
+	// clobber the board defaults that resetFilter is applying.
+	const scope = {
+		app_state: {
+			VERSION: 99999,
+			BOARD: 'src/board.h',
+			STEP0_BIT: '',
+			STEP0_PORT: '',
+			DIR0_BIT: '',
+			KINEMATIC: 'CORE_XY',
+			AXIS_COUNT: 3,
+		},
+		app_fields: {
+			STEP0_BIT: { type: 'int', nullable: true, file: 'boardmap' },
+			DIR0_BIT: { type: 'int', nullable: true, file: 'boardmap' },
+		},
+		__boardDefaultKeys: [],
+	};
+	defaults.resetFilter(scope, { STEP0_BIT: '2', STEP0_PORT: 'D', DIR0_BIT: '5' }, '__boardDefaultKeys');
+	assert.equal(scope.app_state.STEP0_BIT, 2);
+	assert.equal(scope.app_state.STEP0_PORT, 'D');
+	assert.equal(scope.app_state.DIR0_BIT, 5);
+	assert.equal(scope.app_state.KINEMATIC, 'CORE_XY');
+	assert.equal(scope.app_state.AXIS_COUNT, 3);
+});
+
+test('resetFilter keeps non-empty user values but not wiped pins on board change', () => {
+	const scope = {
+		app_state: {
+			VERSION: 99999,
+			BOARD: 'src/board.h',
+			STEP0_BIT: '', // wiped by resetPins on board change
+			UART_PORT: 2, // user-set value that should survive
+			KINEMATIC: 'CORE_XY',
+		},
+		app_fields: {
+			STEP0_BIT: { type: 'int', nullable: true, file: 'boardmap' },
+			UART_PORT: { type: 'int', nullable: true, file: 'boardmap' },
+		},
+		__boardDefaultKeys: ['STEP0_BIT', 'UART_PORT', 'KINEMATIC'],
+	};
+	defaults.resetFilter(scope, { STEP0_BIT: '2', UART_PORT: '1' }, '__boardDefaultKeys');
+	assert.equal(scope.app_state.STEP0_BIT, 2);
+	assert.equal(scope.app_state.UART_PORT, 2);
+	assert.equal(scope.app_state.KINEMATIC, 'CORE_XY');
+});
+
 test('keepFilter returns empty dropped array when all old keys exist in new baseline', () => {
 	const scope = {
 		app_state: { VERSION: 11700, PIN_A: '1', PIN_B: '2' },
