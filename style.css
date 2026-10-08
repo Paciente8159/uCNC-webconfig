@@ -14,7 +14,10 @@ body {
 	display: flex;
 }
 
-header, main, footer, div#app {
+header,
+main,
+footer,
+div#app {
 	width: 1240px;
 	max-width: 100%;
 	margin: 20px;
@@ -32,7 +35,7 @@ header {
 	max-width: 80px;
 }
 
-.center-content{
+.center-content {
 	width: 100%;
 	display: flex;
 	justify-content: center;
@@ -57,11 +60,11 @@ fieldset>legend {
 	width: fit-content;
 }
 
-.left-align{
-	text-align:initial;
+.left-align {
+	text-align: initial;
 }
 
-input[readonly]{
+input[readonly] {
 	background-color: #ccc;
 }
 
@@ -71,160 +74,179 @@ div.tab-content {
 
 /* The Modal (background) */
 .modal {
-	display: none; /* Hidden by default */
-	position: fixed; /* Stay in place */
-	z-index: 1; /* Sit on top */
+	display: none;
+	/* Hidden by default */
+	position: fixed;
+	/* Stay in place */
+	z-index: 1;
+	/* Sit on top */
 	left: 0;
 	top: 0;
-	width: 100%; /* Full width */
-	height: 100%; /* Full height */
-	overflow: auto; /* Enable scroll if needed */
-	background-color: rgb(0,0,0); /* Fallback color */
-	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  }
+	width: 100%;
+	/* Full width */
+	height: 100%;
+	/* Full height */
+	overflow: auto;
+	/* Enable scroll if needed */
+	background-color: rgb(0, 0, 0);
+	/* Fallback color */
+	background-color: rgba(0, 0, 0, 0.4);
+	/* Black w/ opacity */
+}
 
-  .modal>div {
+.modal>div {
 	display: flex;
-	width: 100%; /* Full width */
-	height: 100%; /* Full height */
-  }
-  
-  /* Modal Content/Box */
-  .modal-content {
+	width: 100%;
+	/* Full width */
+	height: 100%;
+	/* Full height */
+}
+
+/* Modal Content/Box */
+.modal-content {
 	background-color: #fefefe;
-	margin: auto auto; /* 15% from the top and centered */
+	margin: auto auto;
+	/* 15% from the top and centered */
 	padding: 20px;
 	border: 1px solid #888;
 	width: 50%;
-	min-width: 360px; /* Could be more or less, depending on screen size */
-  }
-  
-  /* The Close Button */
-  .close {
+	min-width: 360px;
+	/* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
 	color: #aaa;
 	float: right;
 	font-size: 28px;
 	font-weight: bold;
-  }
-  
-  .close:hover,
-  .close:focus {
+}
+
+.close:hover,
+.close:focus {
 	color: black;
 	text-decoration: none;
 	cursor: pointer;
-  }
+}
 
-  .form-check.form-switch {
+.form-check.form-switch {
 	margin-top: 20px;
-  }
+}
 
-  /* .table-container{
+/* .table-container{
 	overflow: auto;
 	position: relative;
   } */
 
-  table {
+table {
 	position: relative;
 	border-collapse: collapse;
 	/* max-height: 50vh; */
-  }
+}
 
-  thead {
+thead {
 	top: 0;
 	background-color: #ccc;
 	position: -webkit-sticky;
 	position: sticky;
-  }
+}
 
-  .load-config{
+.load-config {
 	background-color: #b6d8c8;
 	padding: 5px;
 	border-radius: 5px;
-  }
+}
 
-  .load-config p{
-	color:#146c43;
+.load-config p {
+	color: #146c43;
 	font-weight: 800;
-  }
+}
 
-  textarea.form-control{
+textarea.form-control {
 	width: 100%;
 	min-height: 250px !important;
-  }
+}
 
-	.d-gap-10{
-		gap: 10px;
-	}
+.d-gap-10 {
+	gap: 10px;
+}
 
-	.mode-toggle {
-  position: absolute;
+.mode-toggle {
+	position: absolute;
 	top: 0;
 	right: 0;
-  padding: 0;
-  width: 44px;
-  height: 24px;
-  min-width: 36px;
-  min-height: 20px;
-  background-color: #262626;
-  border: 0;
-  border-radius: 24px;
-  outline: 0;
-  overflow: hidden;
-  cursor: pointer;
-  z-index: 2;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  -webkit-touch-callout: none;
-  appearance: none;
-  transition: background-color 0.5s ease;
+	padding: 0;
+	width: 44px;
+	height: 24px;
+	min-width: 36px;
+	min-height: 20px;
+	background-color: #262626;
+	border: 0;
+	border-radius: 24px;
+	outline: 0;
+	overflow: hidden;
+	cursor: pointer;
+	z-index: 2;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	-webkit-touch-callout: none;
+	appearance: none;
+	transition: background-color 0.5s ease;
 }
+
 .mode-toggle .toggle {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  margin: auto;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 3px solid transparent;
-  box-shadow: inset 0 0 0 2px #a5abba;
-  overflow: hidden;
-  transition: transform 0.5s ease;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	margin: auto;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 3px solid transparent;
+	box-shadow: inset 0 0 0 2px #a5abba;
+	overflow: hidden;
+	transition: transform 0.5s ease;
 }
+
 .mode-toggle .toggle #dark-mode {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 50%;
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	border-radius: 50%;
 }
+
 .mode-toggle .toggle #dark-mode:before {
-  content: "";
-  position: relative;
-  width: 100%;
-  height: 100%;
-  left: 50%;
-  float: left;
-  background-color: #a5abba;
-  transition: border-radius 0.5s ease, width 0.5s ease, height 0.5s ease, left 0.5s ease, transform 0.5s ease;
+	content: "";
+	position: relative;
+	width: 100%;
+	height: 100%;
+	left: 50%;
+	float: left;
+	background-color: #a5abba;
+	transition: border-radius 0.5s ease, width 0.5s ease, height 0.5s ease, left 0.5s ease, transform 0.5s ease;
 }
 
 html[data-bs-theme="dark"] .mode-toggle {
-  background-color: #333;
+	background-color: #333;
 }
+
 html[data-bs-theme="dark"] .mode-toggle .toggle {
-  transform: translateX(19px);
+	transform: translateX(19px);
 }
+
 html[data-bs-theme="dark"] .mode-toggle .toggle #dark-mode:before {
-  border-radius: 50%;
-  width: 150%;
-  height: 85%;
-  left: 40%;
-  transform: translate(-10%, -40%), rotate(-35deg);
+	border-radius: 50%;
+	width: 150%;
+	height: 85%;
+	left: 40%;
+	transform: translate(-10%, -40%), rotate(-35deg);
 }
-html[data-bs-theme="dark"] fieldset > legend {
+
+html[data-bs-theme="dark"] fieldset>legend {
 	background-color: var(--bs-body-bg);
 }
+
 /* Board pin table: keep the pin name and its clear button side by side,
    vertically centered in the name cell. */
 .pin-name-cell {
