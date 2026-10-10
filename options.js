@@ -14,6 +14,7 @@ window.app_vars = {
 	app_options: {
 		VERSIONS: [
 			{ id: 'master', tag: 99999, src: 'https://github.com/Paciente8159/uCNC/archive/refs/heads/master.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
+			{ id: 'v1.17.2', tag: 11702, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.17.2.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
 			{ id: 'v.1.17.1', tag: 11701, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v.1.17.1.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
 			{ id: 'v1.17.0', tag: 11700, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.17.0.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/heads/master.zip' },
 			{ id: 'v1.16.6', tag: 11606, src: 'https://github.com/Paciente8159/uCNC/archive/refs/tags/v1.16.6.zip', mods: 'https://github.com/Paciente8159/uCNC-modules/archive/refs/tags/v11600.zip' },
